@@ -11,6 +11,7 @@ import {
   API_VERSION,
   VERIFY_TOKEN,
   REDIS_URL,
+  POSTGRES_URL,
 } from "./constants";
 
 @Injectable()
@@ -31,7 +32,11 @@ export class ConfigurationService {
     };
   }
 
-  getRedisUrl(): RedisConfig {
+  getRedisConfig(): RedisConfig {
     return { url: this.configService.get<string>(REDIS_URL) };
+  }
+
+  getPostgresConfig(): RedisConfig {
+    return { url: this.configService.get<string>(POSTGRES_URL) };
   }
 }
