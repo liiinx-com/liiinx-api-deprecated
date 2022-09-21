@@ -1,4 +1,6 @@
+import * as path from "path";
 import { Module } from "@nestjs/common";
+import { I18nModule } from "nestjs-i18n";
 import { BullModule } from "@nestjs/bull";
 import { ConfigModule } from "@nestjs/config";
 import { AppController } from "./app.controller";
@@ -8,6 +10,13 @@ import { ConfigurationService } from "./configuration/configuration.service";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    I18nModule.forRoot({
+      fallbackLanguage: "en",
+      loaderOptions: {
+        path: path.join(__dirname, "/i18n/"),
+        watch: true,
+      },
+    }),
     BullModule.forRootAsync({
       imports: [ConfigurationModule],
       useFactory: async (configurationService: ConfigurationService) => {
