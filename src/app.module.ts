@@ -6,6 +6,7 @@ import { ConfigModule } from "@nestjs/config";
 import { AppController } from "./app.controller";
 import { ConfigurationModule } from "./configuration/configuration.module";
 import { ConfigurationService } from "./configuration/configuration.service";
+import { BotModule } from './bot/bot.module';
 
 @Module({
   imports: [
@@ -28,6 +29,8 @@ import { ConfigurationService } from "./configuration/configuration.service";
     }),
 
     ConfigurationModule,
+
+    BotModule,
   ],
   controllers: [AppController],
 })
