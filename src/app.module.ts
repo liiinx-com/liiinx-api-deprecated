@@ -8,6 +8,8 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { ConfigurationModule } from "./configuration/configuration.module";
 import { ConfigurationService } from "./configuration/configuration.service";
+import { ReturnsModule } from "./returns/returns.module";
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -37,10 +39,10 @@ import { ConfigurationService } from "./configuration/configuration.service";
       },
       inject: [ConfigurationService],
     }),
-
     ConfigurationModule,
-
     BotModule,
+    ReturnsModule,
+    UserModule,
   ],
   controllers: [AppController],
 })
