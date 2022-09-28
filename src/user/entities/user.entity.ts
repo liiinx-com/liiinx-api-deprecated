@@ -1,12 +1,19 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from "typeorm";
 
 export enum UserStatus {
   ACTIVE = "ACTIVE",
   SUSPENDED = "SUSPENDED",
 }
 
+export enum UserRole {
+  USER = "USER",
+  EMPLOYEE = "EMPLOYEE",
+  BUSINESS_PARTNER = "BUSINESS_PARTNER",
+  ADMIN = "ADMIN",
+}
+
 @Entity()
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -15,6 +22,18 @@ export class User {
 
   @Column()
   lastName: string;
+
+  @Column()
+  email: string;
+
+  //TODO: credit or subscription will need to be in its own module
+
+  @Column({
+    type: "enum",
+    enum: UserRole,
+    default: [UserRole.USER],
+  })
+  roles: string[];
 
   @Column({
     type: "enum",

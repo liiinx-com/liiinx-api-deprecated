@@ -9,10 +9,7 @@ import { ReturnRequestItemSize } from "./entities/types";
 
 @Injectable()
 export class ReturnsService {
-  constructor(
-    @InjectRepository(ReturnRequest)
-    private readonly returnRequestsRepository: Repository<ReturnRequest>,
-  ) {}
+  constructor() {} // private readonly returnRequestsRepository: Repository<ReturnRequest>, // @InjectRepository(ReturnRequest)
 
   seedAdd() {
     const newReq = new ReturnRequest();
@@ -28,6 +25,6 @@ export class ReturnsService {
     newReq.pickupDate = new Date().toISOString();
     newReq.pickupTimeSlotCode = "MORNING";
 
-    this.returnRequestsRepository.save(newReq);
+    // this.returnRequestsRepository.save(newReq);
   }
 }

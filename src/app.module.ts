@@ -9,7 +9,8 @@ import { AppController } from "./app.controller";
 import { ConfigurationModule } from "./configuration/configuration.module";
 import { ConfigurationService } from "./configuration/configuration.service";
 import { ReturnsModule } from "./returns/returns.module";
-import { UserModule } from './user/user.module';
+import { UserModule } from "./user/user.module";
+import { User } from "./user/entities/user.entity";
 
 @Module({
   imports: [
@@ -17,11 +18,12 @@ import { UserModule } from './user/user.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigurationModule],
       inject: [ConfigurationService],
-      useFactory: async (configurationService: ConfigurationService) => {
-        return {
-          url: configurationService.getPostgresConfig().url,
-        };
-      },
+      useFactory: async (configurationService: ConfigurationService) => ({
+        type: "postgres",
+        entities: ["dist/**/*.entity{.ts,.js}"],
+        url: configurationService.getPostgresConfig().url,
+        synchronize: true,
+      }),
     }),
     I18nModule.forRoot({
       fallbackLanguage: "en",

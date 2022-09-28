@@ -30,10 +30,12 @@
     "bull": "^4.9.0",
     "messaging-api-messenger": "^1.1.0",
     "nestjs-i18n": "^9.1.10",
+    "pg": "^8.8.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "typeorm": "^0.3.10"
+    "typeorm": "^0.3.10",
+    "typeorm-extension": "^2.1.10"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

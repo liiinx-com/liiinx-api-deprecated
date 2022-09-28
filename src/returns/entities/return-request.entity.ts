@@ -9,10 +9,11 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  BaseEntity,
 } from "typeorm";
 
 @Entity()
-export class ReturnRequest {
+export class ReturnRequest extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -27,6 +28,8 @@ export class ReturnRequest {
 
   @Column()
   pickupTimeSlotCode: string;
+
+  //TODO: every request needs to have attachments which is a separate service with a FK/Pointer to its parent request
 
   //TODO: Check for auto generated DATE columns
 
@@ -46,7 +49,7 @@ export class ReturnRequest {
 }
 
 @Entity()
-export class ReturnRequestItem {
+export class ReturnRequestItem extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
