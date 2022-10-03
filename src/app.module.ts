@@ -12,6 +12,7 @@ import { ReturnsModule } from "./returns/returns.module";
 import { UserModule } from "./user/user.module";
 import { APP_INTERCEPTOR } from "@nestjs/core";
 import { AddOkToResponseInterceptor } from "./app.interceptor";
+import { ServiceDeskModule } from './service-desk/service-desk.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { AddOkToResponseInterceptor } from "./app.interceptor";
     BotModule,
     ReturnsModule,
     UserModule,
+    ServiceDeskModule,
   ],
   controllers: [AppController],
   providers: [
