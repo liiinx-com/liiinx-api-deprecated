@@ -1,22 +1,15 @@
 import {
+  PickupTimeSlot,
+  Retailer,
   ReturnRequestItemSize,
   ReturnRequestItemStatus,
   ReturnRequestStatus,
 } from "./types";
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  OneToMany,
-  BaseEntity,
-} from "typeorm";
+import { Entity, Column, ManyToOne, OneToMany } from "typeorm";
+import { BaseEntity } from "src/shared/base.entity";
 
 @Entity()
 export class ReturnRequest extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column()
   userId: string;
 
@@ -26,19 +19,18 @@ export class ReturnRequest extends BaseEntity {
   @Column({ type: "date" })
   pickupDate: string;
 
+  @Column({
+    type: "enum",
+    enum: PickupTimeSlot,
+    default: PickupTimeSlot.NOT_SET,
+  })
+  pickupTimeSlot: string;
+
   @Column()
-  pickupTimeSlotCode: string;
-
-  //TODO: every request needs to have attachments which is a separate service with a FK/Pointer to its parent request
-
-  //TODO: Check for auto generated DATE columns
-
-  //TODO: how to have comments here
-  //  @Column("simple-json")
-  //   userComment: { timestamp: number; message: string };
+  userNote: string;
 
   @Column({ nullable: true })
-  crmTicketUrl: string;
+  serviceDeskTicketUrl: string;
 
   @Column({
     type: "enum",
@@ -50,11 +42,12 @@ export class ReturnRequest extends BaseEntity {
 
 @Entity()
 export class ReturnRequestItem extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   //TODO: Separate entity
-  @Column() // "AMAZON, WALMART, ..."
+  @Column({
+    type: "enum",
+    enum: Retailer,
+    default: Retailer.NOT_SET,
+  })
   retailer: string;
 
   @Column({ nullable: true })
@@ -63,12 +56,23 @@ export class ReturnRequestItem extends BaseEntity {
   @Column({
     type: "enum",
     enum: ReturnRequestItemSize,
-    default: ReturnRequestItemSize.UNKNOWN,
+    default: ReturnRequestItemSize.NOT_SET,
   })
   productSize: ReturnRequestItemSize;
 
   @Column({ nullable: true })
   userComment: string;
+
+  @Column({ nullable: true })
+  cancellationUserNote: string;
+
+  @Column({ nullable: true })
+  cancellationEmployeeNote: string;
+
+  @Column({ type: "simple-json", nullable: true })
+  attachments: [
+    { dateTime: string; url: string; desc: string; by: "USER" | "EMPLOYEE" },
+  ];
 
   @Column({ default: true })
   hasOriginalPackaging: boolean;

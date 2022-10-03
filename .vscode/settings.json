@@ -1,0 +1,6 @@
+{
+  "rest-client.environmentVariables": {
+    "$shared": {},
+    "localEnv": { "apiUrl": "http://localhost:3000" }
+  }
+}

@@ -10,7 +10,8 @@ import { ConfigurationModule } from "./configuration/configuration.module";
 import { ConfigurationService } from "./configuration/configuration.service";
 import { ReturnsModule } from "./returns/returns.module";
 import { UserModule } from "./user/user.module";
-import { User } from "./user/entities/user.entity";
+import { APP_INTERCEPTOR } from "@nestjs/core";
+import { AddOkToResponseInterceptor } from "./app.interceptor";
 
 @Module({
   imports: [
@@ -47,5 +48,11 @@ import { User } from "./user/entities/user.entity";
     UserModule,
   ],
   controllers: [AppController],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AddOkToResponseInterceptor,
+    },
+  ],
 })
 export class AppModule {}

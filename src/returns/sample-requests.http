@@ -1,0 +1,33 @@
+@returnsUrl = returns
+@sampleOrderId = 96712f18-93f2-48bf-8325-c8c8d7852676
+
+GET {{apiUrl}}/{{returnsUrl}}
+
+###
+
+GET {{apiUrl}}/{{returnsUrl}}/{{sampleOrderId}}
+
+###
+
+POST {{apiUrl}}/{{returnsUrl}}
+Content-Type: application/json
+
+{
+  "pickupDate": "2022-10-01",
+  "pickupTimeSlot" : "SLOT_A",
+  "items": [{
+    "hasOriginalPackaging" :true,
+    "needShippingBox" : true,
+    "productSize" : "SMALL",
+    "retailer" : "AMAZON",
+    "productUrl" : "https://amazon.com/my-product"
+  },
+  {
+    "hasOriginalPackaging" :false,
+    "needShippingBox" : true,
+    "productSize" : "SMALL",
+    "retailer" : "WALMART"
+  }
+  ],
+  "userNote": "this is my note for this order"
+}

@@ -26,6 +26,9 @@ export class User extends BaseEntity {
   @Column()
   email: string;
 
+  @Column()
+  serviceDeskUserId: string;
+
   //TODO: credit or subscription will need to be in its own module
 
   @Column({

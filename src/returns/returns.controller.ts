@@ -1,9 +1,41 @@
-import { Controller, Get } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Body,
+} from "@nestjs/common";
+import {
+  NewReturnRequestReqDto,
+  NewReturnRequestResDto,
+} from "./dtos/return-request";
+import { ReturnRequest } from "./entities/return-request.entity";
+import { ReturnsDomainService } from "./returns.domain.service";
 
 @Controller("returns")
 export class ReturnsController {
+  constructor(private readonly returnsDomainService: ReturnsDomainService) {}
+
   @Get()
-  root(): string {
-    return `this is`;
+  async getAll(): Promise<ReturnRequest[]> {
+    return this.returnsDomainService.getActiveRequests();
+  }
+
+  @Get(":id")
+  async getById(
+    @Param("id", ParseUUIDPipe) id: string,
+  ): Promise<ReturnRequest> {
+    return this.returnsDomainService.getActiveDetailedRequestById(id);
+  }
+
+  @Post()
+  async placeReturnRequest(
+    @Body() returnRequestDto: NewReturnRequestReqDto,
+  ): Promise<NewReturnRequestResDto> {
+    const userId = "11557";
+    this.returnsDomainService.createRequest(userId, returnRequestDto);
+
+    return { ...returnRequestDto, created_at: "dkdk" };
   }
 }
