@@ -11,3 +11,12 @@ export interface BotCredentials {
 export interface RedisConfig {
   url: string;
 }
+
+export interface JiraConfig {
+  host: string;
+  username: string;
+  token: string;
+  protocol: string;
+  apiVersion: string;
+  strictSSL: boolean;
+}

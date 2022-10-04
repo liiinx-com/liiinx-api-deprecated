@@ -3,6 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import {
   ApiInfo,
   BotCredentials,
+  JiraConfig,
   RedisConfig,
 } from "./configuration.interface";
 import {
@@ -12,6 +13,7 @@ import {
   VERIFY_TOKEN,
   REDIS_URL,
   POSTGRES_URL,
+  JIRA_CONFIG,
 } from "./constants";
 
 @Injectable()
@@ -38,5 +40,16 @@ export class ConfigurationService {
 
   getPostgresConfig(): RedisConfig {
     return { url: this.configService.get<string>(POSTGRES_URL) };
+  }
+
+  getJiraConfig(): JiraConfig {
+    return {
+      token: this.configService.get<string>(JIRA_CONFIG.TOKEN),
+      username: this.configService.get<string>(JIRA_CONFIG.USERNAME),
+      host: this.configService.get<string>(JIRA_CONFIG.HOST),
+      apiVersion: "2",
+      protocol: "https",
+      strictSSL: true,
+    };
   }
 }

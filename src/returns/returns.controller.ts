@@ -6,6 +6,7 @@ import {
   ParseUUIDPipe,
   Body,
 } from "@nestjs/common";
+import { ServiceDeskService } from "src/service-desk/service-desk.service";
 import {
   NewReturnRequestReqDto,
   NewReturnRequestResDto,
@@ -15,7 +16,10 @@ import { ReturnsDomainService } from "./returns.domain.service";
 
 @Controller("returns")
 export class ReturnsController {
-  constructor(private readonly returnsDomainService: ReturnsDomainService) {}
+  constructor(
+    private readonly returnsDomainService: ReturnsDomainService,
+    private readonly serviceDeskService: ServiceDeskService,
+  ) {}
 
   @Get()
   async getAll(): Promise<ReturnRequest[]> {
@@ -26,7 +30,14 @@ export class ReturnsController {
   async getById(
     @Param("id", ParseUUIDPipe) id: string,
   ): Promise<ReturnRequest> {
-    return this.returnsDomainService.getActiveDetailedRequestById(id);
+    const item = await this.returnsDomainService.getActiveDetailedRequestById(
+      id,
+    );
+    this.serviceDeskService.createJiraTicket({
+      title: item.id,
+      description: item.id,
+    });
+    return item;
   }
 
   @Post()

@@ -1,31 +1,33 @@
 import { Injectable } from "@nestjs/common";
 import { NewJiraTicketQueueMessage } from "liiinx-utils/dist/jira/types";
 import { ConfigurationService } from "src/configuration/configuration.service";
-const JiraClient = require("jira-client");
+import JiraClient from "jira-client";
 
 @Injectable()
 export class ServiceDeskService {
-  private jiraClient: any;
+  private jiraClient: JiraClient;
 
   constructor(private readonly config: ConfigurationService) {
-    console.log("c", config.getApiInfo().name);
+    this.initJiraClient();
   }
 
   async createJiraTicket(ticketInfo: NewJiraTicketQueueMessage) {
     console.log("ticket info received:", ticketInfo);
+    // const newIssue = await this.jiraClient.addNewIssue({});
+    // console.log("newIssue", newIssue);
   }
 
   private initJiraClient() {
     if (this.jiraClient) return this.jiraClient;
-
-    // this.jiraClient = new JiraClient({
-    //   username: agentUsername,
-    //   password: agentPassword,
-    //   host,
-    //   protocol,
-    //   apiVersion,
-    //   strictSSL,
-    // });
-    // };
+    const { apiVersion, host, protocol, strictSSL, token, username } =
+      this.config.getJiraConfig();
+    this.jiraClient = new JiraClient({
+      password: token,
+      username,
+      host,
+      protocol,
+      apiVersion,
+      strictSSL,
+    });
   }
 }

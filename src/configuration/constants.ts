@@ -16,3 +16,8 @@ export const REDIS_MESSENGER_QUEUE = {
     sendSenderAction: "send-sender-action",
   },
 };
+export const JIRA_CONFIG = {
+  HOST: "HOST",
+  USERNAME: "USERNAME",
+  TOKEN: "TOKEN",
+};
