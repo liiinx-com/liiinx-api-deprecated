@@ -5,6 +5,6 @@ POST {{apiUrl}}/{{authUrl}}/{{loginUrl}}
 Content-Type: application/json
 
 {
-  "email": "2022-10-01",
-  "password" : "SLOT_A",
+  "email": "amir.zad@liiinx.com",
+  "password" : "PASS"
 }

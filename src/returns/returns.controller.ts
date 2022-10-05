@@ -16,10 +16,7 @@ import { ReturnsDomainService } from "./returns.domain.service";
 
 @Controller("returns")
 export class ReturnsController {
-  constructor(
-    private readonly returnsDomainService: ReturnsDomainService,
-    private readonly serviceDeskService: ServiceDeskService,
-  ) {}
+  constructor(private readonly returnsDomainService: ReturnsDomainService) {}
 
   @Get()
   async getAll(): Promise<ReturnRequest[]> {
@@ -30,21 +27,14 @@ export class ReturnsController {
   async getById(
     @Param("id", ParseUUIDPipe) id: string,
   ): Promise<ReturnRequest> {
-    const item = await this.returnsDomainService.getActiveDetailedRequestById(
-      id,
-    );
-    this.serviceDeskService.createJiraTicket({
-      title: item.id,
-      description: item.id,
-    });
-    return item;
+    return this.returnsDomainService.getActiveDetailedRequestById(id);
   }
 
   @Post()
   async placeReturnRequest(
     @Body() returnRequestDto: NewReturnRequestReqDto,
   ): Promise<NewReturnRequestResDto> {
-    const userId = "11557";
+    const userId = "11557"; //TODO: fix this
     this.returnsDomainService.createRequest(userId, returnRequestDto);
 
     return { ...returnRequestDto, created_at: "dkdk" };
