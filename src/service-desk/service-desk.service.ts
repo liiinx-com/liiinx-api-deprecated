@@ -17,22 +17,21 @@ export class ServiceDeskService {
     console.log("ticket info received:", ticketInfo);
     const { description, title } = ticketInfo;
 
-    const params = JiraUtils.getIssue({
-      description,
-      summary: title,
-      isSubTask: false,
-      issueTypeId: WorkManagementIssueType.TASK,
-      assigneeId: "631f6d48ce3e476e42ac13f2",
-      labels: ["Label_1"],
-      priorityId: ServiceDeskPriority.MEDIUM,
-      projectKey: "LNXR",
-      reportedId: "631f6d48ce3e476e42ac13f2",
-    });
-    const newIssue = await this.jiraClient
-      .addNewIssue(params)
-      .catch((e) => console.error("===>", e));
-
-    console.log("newIssue", newIssue);
+    // const params = JiraUtils.getIssue({
+    //   description,
+    //   summary: title,
+    //   isSubTask: false,
+    //   issueTypeId: WorkManagementIssueType.TASK,
+    //   assigneeId: "631f6d48ce3e476e42ac13f2",
+    //   labels: ["Label_1"],
+    //   priorityId: ServiceDeskPriority.MEDIUM,
+    //   projectKey: "LNXR",
+    //   reportedId: "631f6d48ce3e476e42ac13f2",
+    // });
+    // const newIssue = await this.jiraClient
+    //   .addNewIssue(params)
+    //   .catch((e: Error) => console.error("===>", e.message));
+    // console.log("newIssue", newIssue);
   }
 
   private initJiraClient() {

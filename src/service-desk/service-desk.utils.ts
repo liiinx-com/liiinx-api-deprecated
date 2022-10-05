@@ -14,7 +14,10 @@ interface GetIssueParam {
 }
 
 export class JiraUtils {
-  static getIssue(params: GetIssueParam) {
+  static getPickupRequestTicket() {}
+  static getPickupItemSubTicket() {}
+
+  private static getIssue(params: GetIssueParam) {
     const {
       assigneeId,
       description,
