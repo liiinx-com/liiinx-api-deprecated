@@ -13,7 +13,7 @@ import { JwtStrategy } from "./jwt.strategy";
     UserModule,
     PassportModule,
     JwtModule.register({
-      secret: "secret from config service",
+      secret: "secret",
       signOptions: { expiresIn: "60m" },
     }),
   ], //TODO: separate this or not
