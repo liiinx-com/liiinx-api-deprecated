@@ -25,10 +25,13 @@ export class ServiceDeskService {
       assigneeId: "631f6d48ce3e476e42ac13f2",
       labels: ["Label_1"],
       priorityId: ServiceDeskPriority.MEDIUM,
-      projectKey: "TEST",
+      projectKey: "LNXR",
       reportedId: "631f6d48ce3e476e42ac13f2",
     });
-    const newIssue = await this.jiraClient.addNewIssue(params);
+    const newIssue = await this.jiraClient
+      .addNewIssue(params)
+      .catch((e) => console.error("===>", e));
+
     console.log("newIssue", newIssue);
   }
 

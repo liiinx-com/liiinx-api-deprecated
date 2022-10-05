@@ -1,5 +1,5 @@
 export enum WorkManagementIssueType {
-  TASK = "10009",
+  TASK = "10015",
   SUB_TASK = "10010",
   SUB_TASK_2 = "10016", //TODO: remove if other one works
 }

@@ -17,7 +17,7 @@ export const REDIS_MESSENGER_QUEUE = {
   },
 };
 export const JIRA_CONFIG = {
-  HOST: "HOST",
-  USERNAME: "USERNAME",
-  TOKEN: "TOKEN",
+  HOST: "JIRA_HOST",
+  USERNAME: "JIRA_USERNAME",
+  TOKEN: "JIRA_TOKEN",
 };
