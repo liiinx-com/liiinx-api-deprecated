@@ -5,9 +5,9 @@ import {
   Param,
   ParseUUIDPipe,
   Body,
+  Request,
   UseGuards,
 } from "@nestjs/common";
-import { ServiceDeskService } from "src/service-desk/service-desk.service";
 import {
   NewReturnRequestReqDto,
   NewReturnRequestResDto,
@@ -22,7 +22,8 @@ export class ReturnsController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async getAll(): Promise<ReturnRequest[]> {
+  async getAll(@Request() req: any): Promise<ReturnRequest[]> {
+    console.log("req.user==>", req.user);
     return this.returnsDomainService.getActiveRequests();
   }
 
@@ -40,6 +41,6 @@ export class ReturnsController {
     const userId = "11557"; //TODO: fix this
     this.returnsDomainService.createRequest(userId, returnRequestDto);
 
-    return { ...returnRequestDto, created_at: "dkdk" };
+    return { ...returnRequestDto, created_at: "dkdk" }; //TODO: create_at?!!
   }
 }

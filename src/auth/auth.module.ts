@@ -14,6 +14,7 @@ import { ConfigurationService } from "src/configuration/configuration.service";
   imports: [
     UserModule,
     PassportModule,
+    ConfigurationModule,
     JwtModule.registerAsync({
       imports: [ConfigurationModule],
       inject: [ConfigurationService],
