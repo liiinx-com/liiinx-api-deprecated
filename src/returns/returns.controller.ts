@@ -5,6 +5,7 @@ import {
   Param,
   ParseUUIDPipe,
   Body,
+  UseGuards,
 } from "@nestjs/common";
 import { ServiceDeskService } from "src/service-desk/service-desk.service";
 import {
@@ -13,11 +14,13 @@ import {
 } from "./dtos/return-request";
 import { ReturnRequest } from "./entities/return-request.entity";
 import { ReturnsDomainService } from "./returns.domain.service";
+import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 
 @Controller("returns")
 export class ReturnsController {
   constructor(private readonly returnsDomainService: ReturnsDomainService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getAll(): Promise<ReturnRequest[]> {
     return this.returnsDomainService.getActiveRequests();
