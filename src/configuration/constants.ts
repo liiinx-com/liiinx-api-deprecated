@@ -1,5 +1,6 @@
 export const API_VERSION = "API_VERSION";
 export const API_NAME = "API_NAME";
+export const JWT_SECRET = "JWT_SECRET";
 
 export const VERIFY_TOKEN = "VERIFY_TOKEN";
 export const FACEBOOK_PAGE_ACCESS_TOKEN = "FACEBOOK_PAGE_ACCESS_TOKEN";

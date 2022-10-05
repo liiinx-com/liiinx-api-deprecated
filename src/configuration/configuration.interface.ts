@@ -12,6 +12,11 @@ export interface RedisConfig {
   url: string;
 }
 
+export interface JwtConfig {
+  secret: string;
+  expiresIn: string;
+}
+
 export interface JiraConfig {
   host: string;
   username: string;

@@ -4,6 +4,7 @@ import {
   ApiInfo,
   BotCredentials,
   JiraConfig,
+  JwtConfig,
   RedisConfig,
 } from "./configuration.interface";
 import {
@@ -14,11 +15,19 @@ import {
   REDIS_URL,
   POSTGRES_URL,
   JIRA_CONFIG,
+  JWT_SECRET,
 } from "./constants";
 
 @Injectable()
 export class ConfigurationService {
   constructor(private readonly configService: ConfigService) {}
+
+  getJwtConfig(): JwtConfig {
+    return {
+      secret: this.configService.get<string>(JWT_SECRET),
+      expiresIn: "15m",
+    };
+  }
 
   getApiInfo(): ApiInfo {
     return {
