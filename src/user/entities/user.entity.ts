@@ -29,6 +29,9 @@ export class User extends BaseEntity {
   @Column()
   serviceDeskUserId: string;
 
+  @Column("simple-json")
+  metaData: { facebookAccountInfo: object };
+
   //TODO: credit or subscription will need to be in its own module
 
   @Column({

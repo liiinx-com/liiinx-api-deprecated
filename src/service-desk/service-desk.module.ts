@@ -13,6 +13,6 @@ import { ConfigurationModule } from "src/configuration/configuration.module";
     }),
   ],
   providers: [ServiceDeskProcessor, ServiceDeskService],
-  exports: [ServiceDeskService],
+  // exports: [ServiceDeskService],
 })
 export class ServiceDeskModule {}

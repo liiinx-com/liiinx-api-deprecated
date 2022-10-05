@@ -13,6 +13,7 @@ import { UserModule } from "./user/user.module";
 import { APP_INTERCEPTOR } from "@nestjs/core";
 import { AddOkToResponseInterceptor } from "./app.interceptor";
 import { ServiceDeskModule } from './service-desk/service-desk.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { ServiceDeskModule } from './service-desk/service-desk.module';
     ReturnsModule,
     UserModule,
     ServiceDeskModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
