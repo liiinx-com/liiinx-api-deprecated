@@ -20,6 +20,9 @@ import { ConfigurationModule } from "src/configuration/configuration.module";
         name: queueHelper.getQueueConfig().returns.queueName,
       },
       {
+        name: queueHelper.getQueueConfig().notification.queueName,
+      },
+      {
         name: queueHelper.getQueueConfig().helpDesk.queueName,
       },
     ),

@@ -1,6 +1,6 @@
 @returnsUrl = returns
 @sampleOrderId = 96712f18-93f2-48bf-8325-c8c8d7852676
-@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFtaXIuemFkQGxpaWlueC5jb20iLCJzdWIiOjEsImlhdCI6MTY2NTAwMjE4NywiZXhwIjoxNjY1MDAzMDg3fQ.A3NvWQu2hu3LZf-8DhSQIiza1c95raeEzNZZ8tqTXYg
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFtaXIuemFkQGxpaWlueC5jb20iLCJzdWIiOjEsImlhdCI6MTY2NTA5OTQyOCwiZXhwIjoxNjY1MTA4NDI4fQ.Janwut_7RfQ86g1WHMKNnvmjh6i3k5pf2EdnIDpLU38
 
 GET {{apiUrl}}/{{returnsUrl}}
 Authorization: {{token}}

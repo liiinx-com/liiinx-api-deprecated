@@ -25,3 +25,9 @@ export interface JiraConfig {
   apiVersion: string;
   strictSSL: boolean;
 }
+
+export interface MailConfig {
+  host: string;
+  username: string;
+  password: string;
+}

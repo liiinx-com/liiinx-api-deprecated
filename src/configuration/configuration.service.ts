@@ -5,6 +5,7 @@ import {
   BotCredentials,
   JiraConfig,
   JwtConfig,
+  MailConfig,
   RedisConfig,
 } from "./configuration.interface";
 import {
@@ -16,6 +17,7 @@ import {
   POSTGRES_URL,
   JIRA_CONFIG,
   JWT_SECRET,
+  MAIL_CONFIG,
 } from "./constants";
 
 @Injectable()
@@ -59,6 +61,14 @@ export class ConfigurationService {
       apiVersion: "2",
       protocol: "https",
       strictSSL: true,
+    };
+  }
+
+  getMailConfig(): MailConfig {
+    return {
+      host: this.configService.get<string>(MAIL_CONFIG.HOST),
+      password: this.configService.get<string>(MAIL_CONFIG.PASSWORD),
+      username: this.configService.get<string>(MAIL_CONFIG.USERNAME),
     };
   }
 }
