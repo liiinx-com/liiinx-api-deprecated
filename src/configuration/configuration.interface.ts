@@ -30,4 +30,5 @@ export interface MailConfig {
   host: string;
   username: string;
   password: string;
+  defaultSender: string;
 }

@@ -25,6 +25,11 @@ export class SendEmailDto {
   @IsString()
   subject?: string;
 
-  // @IsObject()
-  // data: object;
+  @IsObject()
+  @IsDefined()
+  templateData: object;
+
+  @IsString()
+  @IsDefined()
+  templateName: string;
 }

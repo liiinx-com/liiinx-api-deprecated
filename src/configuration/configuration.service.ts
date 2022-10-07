@@ -69,6 +69,7 @@ export class ConfigurationService {
       host: this.configService.get<string>(MAIL_CONFIG.HOST),
       password: this.configService.get<string>(MAIL_CONFIG.PASSWORD),
       username: this.configService.get<string>(MAIL_CONFIG.USERNAME),
+      defaultSender: this.configService.get<string>(MAIL_CONFIG.DEFAULT_SENDER),
     };
   }
 }

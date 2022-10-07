@@ -15,9 +15,16 @@ export class ReturnsDomainService {
     private readonly returnsService: ReturnsService,
     @InjectQueue(queueHelper.getQueueConfig().helpDesk.queueName)
     private readonly helpDeskQueue: Queue,
+    @InjectQueue(queueHelper.getQueueConfig().notification.queueName) //TODO: this is for test: remove this later
+    private readonly notificationQueue: Queue,
   ) {}
 
   async getActiveRequests(): Promise<ReturnRequest[]> {
+    // TODO: remove when implemented mailDto helper in utils
+    // this.notificationQueue.add(
+    //   queueHelper.getQueueConfig().notification.keys.sendEmail,
+    //   { data: "mailDto from liiinx-utils" },
+    // );
     return this.returnsService.getRequests({
       where: { status: Not(ReturnRequestStatus.DELETED) },
     });
