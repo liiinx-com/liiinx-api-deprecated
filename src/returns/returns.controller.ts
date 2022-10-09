@@ -15,6 +15,7 @@ import {
 import { ReturnRequest } from "./entities/return-request.entity";
 import { ReturnsDomainService } from "./returns.domain.service";
 import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
+import { RequestUser, User } from "src/shared/user.decorator";
 
 @Controller("returns")
 export class ReturnsController {
@@ -22,8 +23,8 @@ export class ReturnsController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async getAll(@Request() req: any): Promise<ReturnRequest[]> {
-    console.log("req.user==>", req.user);
+  async getAll(@User() user: RequestUser): Promise<ReturnRequest[]> {
+    console.log("req.user==>", user.id);
     return this.returnsDomainService.getActiveRequests();
   }
 
@@ -37,9 +38,9 @@ export class ReturnsController {
   @Post()
   async placeReturnRequest(
     @Body() returnRequestDto: NewReturnRequestReqDto,
+    @User() user: RequestUser,
   ): Promise<NewReturnRequestResDto> {
-    const userId = "11557"; //TODO: fix this
-    this.returnsDomainService.createRequest(userId, returnRequestDto);
+    this.returnsDomainService.createRequest(user.id, returnRequestDto);
 
     return { ...returnRequestDto, created_at: "dkdk" }; //TODO: create_at?!!
   }

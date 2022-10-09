@@ -11,10 +11,11 @@ import { ConfigurationService } from "./configuration/configuration.service";
 import { ReturnsModule } from "./returns/returns.module";
 import { UserModule } from "./user/user.module";
 import { APP_INTERCEPTOR } from "@nestjs/core";
-import { AddOkToResponseInterceptor } from "./app.interceptor";
-import { ServiceDeskModule } from './service-desk/service-desk.module';
-import { AuthModule } from './auth/auth.module';
-import { NotificationModule } from './notification/notification.module';
+import { AddOkToResponseInterceptor } from "./shared/response.interceptor";
+import { ServiceDeskModule } from "./service-desk/service-desk.module";
+import { AuthModule } from "./auth/auth.module";
+import { NotificationModule } from "./notification/notification.module";
+import { UserInterceptor } from "./shared/user.interceptor";
 
 @Module({
   imports: [
@@ -58,6 +59,10 @@ import { NotificationModule } from './notification/notification.module';
     {
       provide: APP_INTERCEPTOR,
       useClass: AddOkToResponseInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: UserInterceptor,
     },
   ],
 })
