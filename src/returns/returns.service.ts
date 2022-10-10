@@ -2,12 +2,14 @@ import { dateHelper } from "liiinx-utils";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindManyOptions, FindOneOptions, Repository } from "typeorm";
-import { NewReturnRequestReqDto } from "./dtos/return-request";
+import {
+  NewReturnRequestReqDto,
+  UpdateReturnsRequestReqDto,
+} from "./dtos/return-request";
 import {
   ReturnRequest,
   ReturnRequestItem,
 } from "./entities/return-request.entity";
-import { ReturnRequestItemSize, ReturnRequestStatus } from "./entities/types";
 
 @Injectable()
 export class ReturnsService {
@@ -27,11 +29,11 @@ export class ReturnsService {
 
   async getRequestById(
     id: string,
-    params: FindOneOptions<ReturnRequest>,
+    params?: FindOneOptions<ReturnRequest>,
   ): Promise<ReturnRequest> {
     return this.returnRequestsRepository.findOne({
-      ...params,
-      where: { ...params.where, id },
+      ...(params ? params : {}),
+      where: { ...(params?.where ? params.where : {}), id },
     });
   }
 
@@ -70,7 +72,7 @@ export class ReturnsService {
         }),
     );
 
-    this.returnReqItemRepository
+    await this.returnReqItemRepository
       .createQueryBuilder()
       .insert()
       .values(newRequestItems)
@@ -79,36 +81,18 @@ export class ReturnsService {
     return newRequest;
   }
 
-  // async create(requests: ReturnRequest[]) {}
+  async update(
+    id: string,
+    validatedRequest: UpdateReturnsRequestReqDto,
+  ): Promise<ReturnRequest> {
+    const { pickupDate, pickupTimeSlot, userNote } = validatedRequest;
 
-  // private async update(request: ReturnRequest) {}
-
-  // async updateStatusTo(
-  //   request: ReturnRequest,
-  //   newStatus: ReturnRequestStatus,
-  // ) {}
-
-  // async seedAdd() {
-  //   const newReq = new ReturnRequest();
-  //   newReq.pickupDate = new Date().toISOString();
-  //   newReq.pickupTimeSlot = "TIME-SLOT-1";
-  //   newReq.userId = "11557";
-  //   const res = await this.returnRequestsRepository.save(newReq);
-
-  //   const reqItem = new ReturnRequestItem();
-  //   reqItem.hasOriginalPackaging = true;
-  //   reqItem.needShippingBox = true;
-  //   reqItem.productSize = ReturnRequestItemSize.SMALL;
-  //   reqItem.productUrl = "https://amazon.com/my-product";
-  //   reqItem.retailer = "AMAZON";
-  //   reqItem.request = newReq;
-  //   // this.returnReqItemRepository.save(reqItem);
-  //   this.returnReqItemRepository
-  //     .createQueryBuilder()
-  //     .insert()
-  //     .values([reqItem])
-  //     .execute();
-
-  //   console.log("res", res);
-  // }
+    const updateResult = await this.returnRequestsRepository.update(id, {
+      pickupDate: dateHelper.toDateString(dateHelper.toJsDate(pickupDate)),
+      pickupTimeSlot,
+      userNote,
+    });
+    if (updateResult) return this.getRequestById(id);
+    return null;
+  }
 }

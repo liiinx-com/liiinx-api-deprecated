@@ -1,17 +1,26 @@
 import { Injectable } from "@nestjs/common";
-import { ReturnRequest } from "./entities/return-request.entity";
+import {
+  ReturnRequest,
+  ReturnRequestItem,
+} from "./entities/return-request.entity";
 import { ReturnsService } from "./returns.service";
 import { Not } from "typeorm";
-import { ReturnRequestStatus } from "./entities/types";
-import { NewReturnRequestReqDto } from "./dtos/return-request";
+import { ReturnRequestItemStatus, ReturnRequestStatus } from "./entities/types";
+import {
+  NewReturnRequestReqDto,
+  UpdateReturnRequestReqItemDto,
+  UpdateReturnsRequestReqDto,
+} from "./dtos/return-request";
 import { ReturnsUtils } from "./returns.utils";
 import { Queue } from "bull";
 import { InjectQueue } from "@nestjs/bull";
 import { queueHelper } from "liiinx-utils";
+import { ReturnsItemService } from "./return-item.service";
 
 @Injectable()
 export class ReturnsDomainService {
   constructor(
+    private readonly returnItemService: ReturnsItemService,
     private readonly returnsService: ReturnsService,
     @InjectQueue(queueHelper.getQueueConfig().helpDesk.queueName)
     private readonly helpDeskQueue: Queue,
@@ -30,11 +39,31 @@ export class ReturnsDomainService {
     });
   }
 
+  async getRequestItemById(id: string): Promise<ReturnRequestItem> {
+    return this.returnItemService.getRequestById(id, {
+      where: { status: Not(ReturnRequestItemStatus.DELETED) },
+    });
+  }
+
   async getDetailedActiveRequests(): Promise<ReturnRequest[]> {
     return this.returnsService.getRequests({
       relations: { items: true },
       where: { status: Not(ReturnRequestStatus.DELETED) },
     });
+  }
+
+  async updateRequest(
+    id: string,
+    validatedRequest: UpdateReturnsRequestReqDto,
+  ): Promise<ReturnRequest> {
+    return this.returnsService.update(id, validatedRequest);
+  }
+
+  async updateRequestItem(
+    id: string,
+    validatedRequest: UpdateReturnRequestReqItemDto,
+  ): Promise<ReturnRequestItem> {
+    return this.returnItemService.update(id, validatedRequest);
   }
 
   async getActiveDetailedRequestById(id: string): Promise<ReturnRequest> {

@@ -35,7 +35,7 @@ export class ReturnRequest extends BaseEntity {
   @Column({
     type: "enum",
     enum: ReturnRequestStatus,
-    default: ReturnRequestStatus.PROCESSING,
+    default: ReturnRequestStatus.INHERIT_FROM_ITEM,
   })
   status: ReturnRequestStatus;
 }

@@ -1,5 +1,6 @@
 @returnsUrl = returns
-@sampleOrderId = 96712f18-93f2-48bf-8325-c8c8d7852676
+@sampleOrderId = e3eb3b21-7870-4948-9a42-31033c01bd34
+@sampleOrderItemId = d4074f84-d227-48cd-8c9e-47cd70aa932b
 @token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY2NTM0MDk3MiwiZXhwIjoxNjY1MzQxODcyfQ.Ypk0a0SIVPuqX62UpR4bmMqJM8cR8O8gjKyPDXXlmPY
 
 GET {{apiUrl}}/{{returnsUrl}}
@@ -33,3 +34,30 @@ Content-Type: application/json
   ],
   "userNote": "this is my note for this order"
 }
+
+###
+
+PUT {{apiUrl}}/{{returnsUrl}}/{{sampleOrderId}}
+Content-Type: application/json
+
+{
+  "userNote": "This is updated user note",
+  "pickupDate": "2022-10-18",
+  "pickupTimeSlot" : "SLOT_A"
+}
+
+###
+
+PUT {{apiUrl}}/{{returnsUrl}}/items/{{sampleOrderItemId}}
+Content-Type: application/json
+
+{
+  //"hasOriginalPackaging" :false,
+  //"needShippingBox" : false,
+  //"productSize" : "MEDIUM",
+  //"retailer" : "WALMART",
+  //"productUrl" : "https://walmart.ca/updated-product",
+  "status": "APPROVED"
+}
+
+###
