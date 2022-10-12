@@ -1,10 +1,12 @@
 import { Controller, Get } from "@nestjs/common";
-import pkg from "../package.json";
+import { ConfigurationService } from "./configuration/configuration.service";
 
 @Controller()
 export class AppController {
+  constructor(private readonly configurationService: ConfigurationService) {}
   @Get()
   root(): string {
-    return `${pkg.name} ${pkg.version}`;
+    const { name, version } = this.configurationService.getApiInfo();
+    return `${name} ${version}`;
   }
 }

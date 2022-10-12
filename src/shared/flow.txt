@@ -1,0 +1,39 @@
+01. CUSTOMER places an order
+
+02. System sends an order email to CUSTOMER. (NEW-ORDER-RECEIPT Template)
+03. 
+04. System creates a new Package-Pickup Service-Desk ticket.
+05. System assigns the ticket to Liiinx-Order-Manager (OM)
+ 05.1 System finds the best CONTRACTOR based on the order information.
+ 05.2 System sets the contractor field of the ticket to the CONTRACTOR(but not assignee)
+
+06. OM checks the order info
+ 6.1 OM rejects the order. => design it============================
+07. OM approves the order. (/returns/[ORDER-ID]/approve)
+ 07.1 System assigns the ticket to the contractor
+ 07.2 System updates the ticket's status to IN-PROGRESS
+[07.3 System sends an update email to CUSTOMER to notify the new status. (Template X)]
+[08. System prepares and send a PICKUP-PLAN and sends it the Contractor]
+
+[CC FLOW BEGINS - INTERNAL PROCESS]
+09. CC prepares the pickup-plan by 
+ 9.1 Assigns the tickets to the DRIVERs.
+ 9.2 Ordering tickets by time-slot, location and priority
+10. Driver checks his pickup-plan and drives to the ticket's location
+11. Driver notifys CUSTOMER he is arriving============================
+12. Driver reaches at the CUSTOMER doorstep
+ 12.1 if the package is there, the driver checks for the return label============================
+ 12.2 driver knocks on the door
+ 12.3 Customer hand over the package and shows the order QR-CODE============================
+ 12.4 if everything is fine, the driver picks up the package
+13. Driver continues until the pickup-plan is done
+14. Driver delivers the packages
+[CC FLOW FINISHES]
+
+By using the provided link,
+15. CC 
+ 15.1 uploads the package's postal RECEIPT to the system
+16. System 
+ 16.1 Updates the status of the tickets from IN-PROGRESS to COMPLETE
+ 16.1 Sends an update email to CUSTOMER to notify the new status with its receipt. (ORDER-COMPLETE Template)
+

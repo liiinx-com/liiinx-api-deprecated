@@ -1,0 +1,10 @@
+@authUrl = auth
+@loginUrl = login
+
+POST {{apiUrl}}/{{authUrl}}/{{loginUrl}}
+Content-Type: application/json
+
+{
+  "email": "amir.zad@liiinx.com",
+  "password" : "PASS"
+}

@@ -1,0 +1,98 @@
+import { Injectable } from "@nestjs/common";
+import {
+  ReturnRequest,
+  ReturnRequestItem,
+} from "./entities/return-request.entity";
+import { ReturnsService } from "./returns.service";
+import { Not } from "typeorm";
+import { ReturnRequestItemStatus, ReturnRequestStatus } from "./entities/types";
+import {
+  NewReturnRequestReqDto,
+  UpdateReturnRequestReqItemDto,
+  UpdateReturnsRequestReqDto,
+} from "./dtos/return-request";
+import { ReturnsUtils } from "./returns.utils";
+import { Queue } from "bull";
+import { InjectQueue } from "@nestjs/bull";
+import { queueHelper } from "liiinx-utils";
+import { ReturnsItemService } from "./return-item.service";
+
+@Injectable()
+export class ReturnsDomainService {
+  constructor(
+    private readonly returnItemService: ReturnsItemService,
+    private readonly returnsService: ReturnsService,
+    @InjectQueue(queueHelper.getQueueConfig().helpDesk.queueName)
+    private readonly helpDeskQueue: Queue,
+    @InjectQueue(queueHelper.getQueueConfig().notification.queueName) //TODO: this is for test: remove this later
+    private readonly notificationQueue: Queue,
+  ) {}
+
+  async getActiveRequests(): Promise<ReturnRequest[]> {
+    // TODO: remove when implemented mailDto helper in utils
+    // this.notificationQueue.add(
+    //   queueHelper.getQueueConfig().notification.keys.sendEmail,
+    //   { data: "mailDto from liiinx-utils" },
+    // );
+    return this.returnsService.getRequests({
+      where: { status: Not(ReturnRequestStatus.DELETED) },
+    });
+  }
+
+  async getRequestItemById(id: string): Promise<ReturnRequestItem> {
+    return this.returnItemService.getRequestById(id, {
+      where: { status: Not(ReturnRequestItemStatus.DELETED) },
+    });
+  }
+
+  async getDetailedActiveRequests(): Promise<ReturnRequest[]> {
+    return this.returnsService.getRequests({
+      relations: { items: true },
+      where: { status: Not(ReturnRequestStatus.DELETED) },
+    });
+  }
+
+  async updateRequest(
+    id: string,
+    validatedRequest: UpdateReturnsRequestReqDto,
+  ): Promise<ReturnRequest> {
+    return this.returnsService.update(id, validatedRequest);
+  }
+
+  async updateRequestItem(
+    id: string,
+    validatedRequest: UpdateReturnRequestReqItemDto,
+  ): Promise<ReturnRequestItem> {
+    return this.returnItemService.update(id, validatedRequest);
+  }
+
+  async getActiveDetailedRequestById(id: string): Promise<ReturnRequest> {
+    return this.returnsService.getRequestById(id, {
+      relations: { items: true },
+      where: { status: Not(ReturnRequestStatus.DELETED) },
+    });
+  }
+
+  async createRequest(
+    userId: string,
+    validatedRequest: NewReturnRequestReqDto,
+  ) {
+    // 1.persist request
+    const newRequest = await this.returnsService.createRequest(
+      userId,
+      validatedRequest,
+    );
+
+    // 2.create service-desk ticket via queue
+    const serviceDeskMessage = ReturnsUtils.toServiceDeskMessage({
+      ...validatedRequest,
+      id: newRequest.id,
+    });
+    this.helpDeskQueue.add(
+      queueHelper.getQueueConfig().helpDesk.keys.createTicket,
+      serviceDeskMessage,
+    );
+
+    // 3.create order via ordering queue
+  }
+}
