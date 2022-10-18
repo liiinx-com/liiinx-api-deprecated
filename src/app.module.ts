@@ -16,6 +16,7 @@ import { ServiceDeskModule } from "./service-desk/service-desk.module";
 import { AuthModule } from "./auth/auth.module";
 import { NotificationModule } from "./notification/notification.module";
 import { UserInterceptor } from "./shared/user.interceptor";
+import { WooCommerceModule } from './woo-commerce/woo-commerce.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { UserInterceptor } from "./shared/user.interceptor";
     ServiceDeskModule,
     AuthModule,
     NotificationModule,
+    WooCommerceModule,
   ],
   controllers: [AppController],
   providers: [

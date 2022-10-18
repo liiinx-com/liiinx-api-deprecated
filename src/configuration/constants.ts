@@ -30,3 +30,9 @@ export const MAIL_CONFIG = {
   PORT: "MAIL_PORT",
   DEFAULT_SENDER: "MAIL_DEFAULT_SENDER",
 };
+
+export const WOO_COMMERCE_CONFIG = {
+  URL: "URL",
+  KEY: "KEY",
+  SECRET: "SECRET",
+};
