@@ -32,7 +32,7 @@ export const MAIL_CONFIG = {
 };
 
 export const WOO_COMMERCE_CONFIG = {
-  URL: "URL",
-  KEY: "KEY",
-  SECRET: "SECRET",
+  URL: "WOO_COMMERCE_URL",
+  KEY: "WOO_COMMERCE_KEY",
+  SECRET: "WOO_COMMERCE_SECRET",
 };

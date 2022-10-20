@@ -80,8 +80,7 @@ export class ConfigurationService {
       url: this.configService.get<string>(WOO_COMMERCE_CONFIG.URL),
       key: this.configService.get<string>(WOO_COMMERCE_CONFIG.KEY),
       secret: this.configService.get<string>(WOO_COMMERCE_CONFIG.SECRET),
-      version: "wc/v2",
-      wpAPI: true,
+      version: null, // is set in WooCommerceService
     };
   }
 }

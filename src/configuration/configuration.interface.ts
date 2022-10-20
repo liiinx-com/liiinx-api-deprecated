@@ -37,6 +37,5 @@ export interface WooCommerceConfig {
   url: string;
   key: string;
   secret: string;
-  wpAPI: boolean;
   version: string;
 }
