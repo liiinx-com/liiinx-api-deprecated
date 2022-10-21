@@ -7,6 +7,7 @@ import {
   JwtConfig,
   MailConfig,
   RedisConfig,
+  WooCommerceConfig,
 } from "./configuration.interface";
 import {
   FACEBOOK_PAGE_ACCESS_TOKEN,
@@ -18,6 +19,7 @@ import {
   JIRA_CONFIG,
   JWT_SECRET,
   MAIL_CONFIG,
+  WOO_COMMERCE_CONFIG,
 } from "./constants";
 
 @Injectable()
@@ -70,6 +72,15 @@ export class ConfigurationService {
       password: this.configService.get<string>(MAIL_CONFIG.PASSWORD),
       username: this.configService.get<string>(MAIL_CONFIG.USERNAME),
       defaultSender: this.configService.get<string>(MAIL_CONFIG.DEFAULT_SENDER),
+    };
+  }
+
+  getWooCommerceConfig(): WooCommerceConfig {
+    return {
+      url: this.configService.get<string>(WOO_COMMERCE_CONFIG.URL),
+      key: this.configService.get<string>(WOO_COMMERCE_CONFIG.KEY),
+      secret: this.configService.get<string>(WOO_COMMERCE_CONFIG.SECRET),
+      version: null, // is set in WooCommerceService
     };
   }
 }
