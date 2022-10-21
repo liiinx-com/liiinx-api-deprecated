@@ -5,7 +5,6 @@ import {
   Param,
   ParseUUIDPipe,
   Body,
-  Request,
   UseGuards,
   Put,
   NotFoundException,
@@ -24,15 +23,10 @@ import {
 import { ReturnsDomainService } from "./returns.domain.service";
 import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 import { RequestUser, User } from "src/shared/decorators/user.decorator";
-import { PickupTimeSlot } from "./entities/types";
-import { WooCommerceService } from "src/woo-commerce/woo-commerce.service";
 
 @Controller("returns")
 export class ReturnsController {
-  constructor(
-    private readonly returnsDomainService: ReturnsDomainService,
-    private readonly wooCommerceUserService: WooCommerceService,
-  ) {}
+  constructor(private readonly returnsDomainService: ReturnsDomainService) {}
 
   @UseGuards(JwtAuthGuard)
   @Get()
