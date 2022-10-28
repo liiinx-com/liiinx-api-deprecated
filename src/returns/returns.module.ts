@@ -7,7 +7,6 @@ import {
   ReturnRequestItem,
 } from "./entities/return-request.entity";
 import { ReturnsController } from "./returns.controller";
-import { ReturnsService } from "./returns.service";
 import { ReturnsDomainService } from "./returns.domain.service";
 import { ConfigurationModule } from "src/configuration/configuration.module";
 import { ReturnsItemService } from "./return-item.service";
@@ -31,6 +30,6 @@ import { WooCommerceModule } from "src/woo-commerce/woo-commerce.module";
     ),
   ],
   controllers: [ReturnsController],
-  providers: [ReturnsService, ReturnsDomainService, ReturnsItemService],
+  providers: [ReturnsDomainService, ReturnsItemService],
 })
 export class ReturnsModule {}

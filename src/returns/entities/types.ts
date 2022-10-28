@@ -1,4 +1,5 @@
 export enum ReturnRequestItemStatus {
+  NOT_SET = "NOT_SET",
   PROCESSING = "PROCESSING",
   APPROVED = "APPROVED",
   DELETED = "DELETED",

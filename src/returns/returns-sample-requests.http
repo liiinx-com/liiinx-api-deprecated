@@ -1,5 +1,5 @@
 @returnsUrl = returns
-@sampleOrderId = e3eb3b21-7870-4948-9a42-31033c01bd34
+@sampleOrderId = 117
 @sampleOrderItemId = d4074f84-d227-48cd-8c9e-47cd70aa932b
 @token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY2NTM0MDk3MiwiZXhwIjoxNjY1MzQxODcyfQ.Ypk0a0SIVPuqX62UpR4bmMqJM8cR8O8gjKyPDXXlmPY
 
@@ -16,21 +16,22 @@ POST {{apiUrl}}/{{returnsUrl}}
 Content-Type: application/json
 
 {
+  "couponCode": "510-curran",
   "pickupDate": "2022-10-01",
   "pickupTimeSlot" : "SLOT_A",
   "items": [{
-    "hasOriginalPackaging" :true,
     "needShippingBox" : true,
     "productSize" : "SMALL",
     "retailer" : "AMAZON",
     "productUrl" : "https://amazon.com/my-product"
-  },
-  {
-    "hasOriginalPackaging" :false,
-    "needShippingBox" : true,
-    "productSize" : "SMALL",
-    "retailer" : "WALMART"
   }
+  //,
+  //{
+  //  "hasOriginalPackaging" :false,
+  //  "needShippingBox" : true,
+  //  "productSize" : "SMALL",
+  //  "retailer" : "WALMART"
+  //}
   ],
   "userNote": "this is my note for this order"
 }
@@ -52,7 +53,6 @@ PUT {{apiUrl}}/{{returnsUrl}}/items/{{sampleOrderItemId}}
 Content-Type: application/json
 
 {
-  //"hasOriginalPackaging" :false,
   //"needShippingBox" : false,
   //"productSize" : "MEDIUM",
   //"retailer" : "WALMART",

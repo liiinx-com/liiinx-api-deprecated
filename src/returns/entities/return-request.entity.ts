@@ -7,86 +7,50 @@ import {
 } from "./types";
 import { Entity, Column, ManyToOne, OneToMany } from "typeorm";
 import { BaseEntity } from "src/shared/base.entity";
+import { Expose } from "class-transformer";
 
-@Entity()
-export class ReturnRequest extends BaseEntity {
-  @Column()
+export class ReturnRequest {
+  @Expose()
   userId: string;
 
-  @OneToMany(() => ReturnRequestItem, (item) => item.request)
   items: ReturnRequestItem[];
 
-  @Column({ type: "date" })
+  @Expose()
   pickupDate: string;
 
-  @Column({
-    type: "enum",
-    enum: PickupTimeSlot,
-    default: PickupTimeSlot.NOT_SET,
-  })
-  pickupTimeSlot: string;
+  pickupTimeSlot: PickupTimeSlot;
 
-  @Column()
+  @Expose()
   userNote: string;
 
-  @Column({ nullable: true })
+  @Expose()
+  total: string;
+
   serviceDeskTicketUrl: string;
 
-  @Column({
-    type: "enum",
-    enum: ReturnRequestStatus,
-    default: ReturnRequestStatus.INHERIT_FROM_ITEM,
-  })
+  @Expose()
+  createdAt: Date;
+
+  @Expose()
   status: ReturnRequestStatus;
 }
 
-@Entity()
-export class ReturnRequestItem extends BaseEntity {
-  //TODO: Separate entity
-  @Column({
-    type: "enum",
-    enum: Retailer,
-    default: Retailer.NOT_SET,
-  })
-  retailer: string;
+export class ReturnRequestItem {
+  retailer: Retailer;
 
-  @Column({ nullable: true })
-  productUrl: string;
+  productUrl?: string;
 
-  @Column({
-    type: "enum",
-    enum: ReturnRequestItemSize,
-    default: ReturnRequestItemSize.NOT_SET,
-  })
   productSize: ReturnRequestItemSize;
 
-  @Column({ nullable: true })
-  userComment: string;
+  // userNote?: string;
 
-  @Column({ nullable: true })
-  cancellationUserNote: string;
+  // attachments: [
+  //   { dateTime: string; url: string; desc: string; by: "USER" | "EMPLOYEE" },
+  // ];
 
-  @Column({ nullable: true })
-  cancellationEmployeeNote: string;
-
-  @Column({ type: "simple-json", nullable: true })
-  attachments: [
-    { dateTime: string; url: string; desc: string; by: "USER" | "EMPLOYEE" },
-  ];
-
-  @Column({ default: true })
-  hasOriginalPackaging: boolean;
-
-  @Column()
   needShippingBox: boolean;
 
-  @ManyToOne(() => ReturnRequest, (request) => request.items)
-  request: ReturnRequest;
+  // request: ReturnRequest;
 
-  @Column({
-    type: "enum",
-    enum: ReturnRequestItemStatus,
-    default: ReturnRequestItemStatus.PROCESSING,
-  })
   status: ReturnRequestItemStatus;
 }

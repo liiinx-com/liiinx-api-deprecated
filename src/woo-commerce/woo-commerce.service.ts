@@ -8,14 +8,17 @@ import { ConfigurationService } from "src/configuration/configuration.service";
 import WooCommerceApi from "@woocommerce/woocommerce-rest-api";
 import {
   Customer,
+  NewOrder,
   Order,
   OrderStatus,
   UserRole,
   UserStatus,
   WooCustomer,
   WooOrder,
+  WooOrderLineItem,
 } from "./types";
 import { WooUtils } from "./woo-utils";
+import { plainToClass } from "class-transformer";
 
 @Injectable()
 export class WooCommerceService {
@@ -36,7 +39,7 @@ export class WooCommerceService {
     });
   }
 
-  // USER-SERVICES
+  // CUSTOMER-SERVICES
   async getCustomerByEmail(email: string) {
     const response = await this.wooClient
       .get("customers", {
@@ -49,14 +52,14 @@ export class WooCommerceService {
     return WooUtils.handleFindOneResponse(response.data);
   }
 
-  async getCustomerById(id: number) {
+  async getCustomerById(id: number): Promise<Customer> {
     const response = await this.wooClient
       .get(`customers/${id}`)
       .catch(({ response: { status, statusText } }) => {
         throw new HttpException(statusText, status);
       });
 
-    const customer = response.data;
+    const customer = response.data as Customer;
     if (customer.role !== "customer") throw new NotFoundException();
 
     return customer;
@@ -65,7 +68,12 @@ export class WooCommerceService {
   async newCustomer(customer: Customer) {
     const { shipping, email, firstName, lastName } = customer;
 
-    const existingCustomer = await this.getCustomerByEmail(email);
+    let existingCustomer;
+    try {
+      existingCustomer = await this.getCustomerByEmail(email);
+    } catch (e) {
+      if (e.status !== 404) throw e;
+    }
     if (existingCustomer) throw new ConflictException("already_exists");
 
     const wooCustomer: WooCustomer = {
@@ -75,6 +83,7 @@ export class WooCommerceService {
       billing: shipping,
       shipping,
     };
+
     const res = await this.wooClient.post("customers", wooCustomer);
     return res.data;
   }
@@ -104,7 +113,7 @@ export class WooCommerceService {
   }
 
   // ORDER-SERVICES
-  async getOrdersByCustomerId(customerId: number) {
+  async getOrdersByCustomerId(customerId: number): Promise<Order[]> {
     const response = await this.wooClient
       .get("orders", {
         status: WooUtils.getValidOrderStatusList(),
@@ -113,10 +122,10 @@ export class WooCommerceService {
       .catch(({ response: { status, statusText } }) => {
         throw new HttpException(statusText, status);
       });
-    return response.data;
+    return response.data.map(WooUtils.mapWooOrderToOrder);
   }
 
-  async getOrderById(id: number) {
+  async getOrderById(id: number): Promise<Order> {
     const response = await this.wooClient
       .get(`orders/${id}`)
       .catch(({ response: { status, statusText } }) => {
@@ -126,7 +135,7 @@ export class WooCommerceService {
     if (!WooUtils.getValidOrderStatusList().includes(order.status))
       throw new NotFoundException();
 
-    return order;
+    return WooUtils.mapWooOrderToOrder(order);
   }
 
   async getCouponByCode(code: string) {
@@ -138,35 +147,47 @@ export class WooCommerceService {
       .catch(({ response: { status, statusText } }) => {
         throw new HttpException(statusText, status);
       });
-    return WooUtils.handleFindOneResponse(response.data);
+
+    return WooUtils.handleFindOneResponse(response.data, {
+      notFoundMsg: "coupon_not_found",
+    });
   }
 
-  async newOrder(order: Order) {
+  async newOrder(order: NewOrder) {
     const {
-      setPaid,
+      // setPaid,
       lineItems,
-      paymentMethod,
-      paymentMethodTitle,
-      shipping,
-      customerId,
-      customerNote,
+      // paymentMethod,
+      // paymentMethodTitle,
+      shippingInfo,
+      userId: customerId,
+      userNote: customerNote,
       couponCodes,
       metaData,
     } = order;
     const wooOrder: WooOrder = {
-      shipping,
-      billing: shipping,
-      line_items: lineItems,
+      shipping: shippingInfo,
+      billing: shippingInfo,
+      line_items: lineItems.map(
+        (i) =>
+          ({
+            product_id: i.productId,
+            quantity: i.quantity,
+            meta_data: i.metaData,
+            variation_id: i.variationId,
+          } as WooOrderLineItem),
+      ),
       ...(customerNote ? { customer_note: customerNote } : {}),
       ...(metaData ? { meta_data: metaData } : {}),
-      payment_method: paymentMethod,
-      payment_method_title: paymentMethodTitle,
-      set_paid: setPaid,
+      // payment_method: paymentMethod,
+      // payment_method_title: paymentMethodTitle,
+      // set_paid: setPaid,
       customer_id: customerId,
       ...(couponCodes
         ? { coupon_lines: couponCodes.map((code) => ({ code })) }
         : {}),
     };
+
     const res = await this.wooClient.post("orders", wooOrder);
     return res.data;
   }
