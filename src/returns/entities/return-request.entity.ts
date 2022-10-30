@@ -1,19 +1,22 @@
 import {
   PickupTimeSlot,
   Retailer,
+  ReturnRequestItemProductType,
   ReturnRequestItemSize,
   ReturnRequestItemStatus,
   ReturnRequestStatus,
 } from "./types";
-import { Entity, Column, ManyToOne, OneToMany } from "typeorm";
 import { BaseEntity } from "src/shared/base.entity";
 import { Expose } from "class-transformer";
 
 export class ReturnRequest {
   @Expose()
+  id: number;
+
+  @Expose()
   userId: string;
 
-  items: ReturnRequestItem[];
+  items: ReturnRequestItem[] | ReturnRequestShippingBox[];
 
   @Expose()
   pickupDate: string;
@@ -24,7 +27,13 @@ export class ReturnRequest {
   userNote: string;
 
   @Expose()
+  itemsTotal: string;
+
+  @Expose()
   total: string;
+
+  @Expose()
+  totalTax: string;
 
   serviceDeskTicketUrl: string;
 
@@ -35,22 +44,22 @@ export class ReturnRequest {
   status: ReturnRequestStatus;
 }
 
-export class ReturnRequestItem {
-  retailer: Retailer;
+class ReturnRequestItemBase {
+  productId: number;
+  productType: ReturnRequestItemProductType;
+  price: string;
+  quantity: number;
+}
 
-  productUrl?: string;
-
+export class ReturnRequestShippingBox extends ReturnRequestItemBase {
   productSize: ReturnRequestItemSize;
+}
 
-  // userNote?: string;
-
-  // attachments: [
-  //   { dateTime: string; url: string; desc: string; by: "USER" | "EMPLOYEE" },
-  // ];
-
+export class ReturnRequestItem extends ReturnRequestItemBase {
+  retailer: Retailer;
+  productUrl?: string;
+  productSize: ReturnRequestItemSize;
+  userNote?: string;
   needShippingBox: boolean;
-
-  // request: ReturnRequest;
-
   status: ReturnRequestItemStatus;
 }

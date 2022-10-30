@@ -30,6 +30,9 @@ export class NewReturnRequestReqItemDto {
 
   @IsEnum(Retailer)
   retailer: Retailer;
+
+  @IsOptional()
+  userNote: string;
 }
 
 export class UpdateReturnRequestReqItemDto {

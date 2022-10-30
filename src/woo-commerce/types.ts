@@ -5,6 +5,11 @@ export enum UserStatus {
   PUBLISH = "publish",
 }
 
+export enum ProductType {
+  UNKNOWN = "unknown",
+  PACKAGE_RETURNS = "package-return",
+}
+
 export enum OrderStatus {
   ANY = "any",
   COMPLETED = "completed",
@@ -54,6 +59,7 @@ export class WooOrderLineItem {
   product_id: number;
   variation_id?: number;
   quantity: number;
+  price: string;
   meta_data?: Array<OrderMetaData>;
 }
 
@@ -64,8 +70,13 @@ export class OrderLineItem {
   @Expose({ name: "product_id" })
   productId: number;
 
+  productType: ProductType;
+
   @Expose()
   variationId?: number;
+
+  @Expose()
+  price: string;
 
   @Expose()
   quantity: number;
@@ -75,6 +86,7 @@ export class OrderLineItem {
 }
 
 export type WooOrder = {
+  id?: number;
   payment_method?: string;
   payment_method_title?: string;
   set_paid?: boolean;
@@ -119,6 +131,9 @@ export class NewOrder {
 }
 
 export class Order {
+  @Expose()
+  id: string;
+
   @Expose({ name: "payment_method" })
   paymentMethod?: string;
   @Expose({ name: "payment_method_title" })
@@ -145,6 +160,9 @@ export class Order {
 
   @Expose()
   total: string;
+
+  @Expose({ name: "total_tax" })
+  totalTax: string;
 
   @Expose({ name: "currency_symbol" })
   currencySymbol: string;

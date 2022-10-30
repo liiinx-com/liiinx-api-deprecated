@@ -39,11 +39,11 @@ export class ReturnsDomainService {
     return orders.map(ReturnsUtils.mapOrderToReturnRequest);
   }
 
-  async getRequestItemById(id: number): Promise<ReturnRequestItem> {
-    return this.returnItemService.getRequestById(id, {
-      where: { status: Not(ReturnRequestItemStatus.DELETED) },
-    });
-  }
+  // async getRequestItemById(id: number): Promise<ReturnRequestItem> {
+  //   return this.returnItemService.getRequestById(id, {
+  //     where: { status: Not(ReturnRequestItemStatus.DELETED) },
+  //   });
+  // }
 
   async getDetailedActiveRequests(): Promise<ReturnRequest[]> {
     // return this.returnsService.getRequests({
@@ -84,7 +84,7 @@ export class ReturnsDomainService {
 
     const customer = await this.wooCommerceService.getCustomerById(userId);
     const newOrder: NewOrder =
-      ReturnsUtils.getNewOrderFromReturnRequest(validatedRequest);
+      ReturnsUtils.mapReturnRequestToNewOrder(validatedRequest);
     newOrder.userId = userId;
     newOrder.shippingInfo = customer.shipping;
 

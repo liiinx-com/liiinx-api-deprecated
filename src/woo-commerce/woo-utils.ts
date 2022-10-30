@@ -5,9 +5,18 @@ import {
   Order,
   OrderLineItem,
   OrderStatus,
+  ProductType,
 } from "./types";
 
 export class WooUtils {
+  static getProductTypeByLineItemId(lineItemId: number): ProductType {
+    const packageReturnProductIds = [85, 86, 95]; // from WooCommerce
+
+    if (packageReturnProductIds.includes(lineItemId))
+      return ProductType.PACKAGE_RETURNS;
+    return ProductType.UNKNOWN;
+  }
+
   static getValidOrderStatusList() {
     return [
       OrderStatus.CANCELLED,
@@ -40,6 +49,14 @@ export class WooUtils {
       }),
     );
 
+    result.lineItems = result.lineItems.map(
+      (i) =>
+        ({
+          ...i,
+          productType: WooUtils.getProductTypeByLineItemId(i.productId),
+        } as OrderLineItem),
+    );
+
     return result;
   }
 
@@ -47,6 +64,10 @@ export class WooUtils {
     const result = {
       ...order,
       total: order.currencySymbol + order.total,
+      itemsTotal:
+        order.currencySymbol +
+        (Number(order.total) - Number(order.totalTax)).toString(),
+      totalTax: order.currencySymbol + order.totalTax,
     } as Order;
 
     return result;

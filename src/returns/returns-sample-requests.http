@@ -16,22 +16,28 @@ POST {{apiUrl}}/{{returnsUrl}}
 Content-Type: application/json
 
 {
-  "couponCode": "510-curran",
+  //"couponCode": "510-curran",
   "pickupDate": "2022-10-01",
   "pickupTimeSlot" : "SLOT_A",
   "items": [{
     "needShippingBox" : true,
     "productSize" : "SMALL",
     "retailer" : "AMAZON",
-    "productUrl" : "https://amazon.com/my-product"
+    "productUrl" : "https://amazon.com/my-product",
+    "userNote": "Electronic item"
+  },
+  {
+    "needShippingBox" : false,
+    "productSize" : "SMALL",
+    "retailer" : "WALMART",
+    "userNote":"Please handle with care1"
+  },
+  {
+    "needShippingBox" : true,
+    "productSize" : "SMALL",
+    "retailer" : "WALMART",
+    "userNote":"Please handle with care2"
   }
-  //,
-  //{
-  //  "hasOriginalPackaging" :false,
-  //  "needShippingBox" : true,
-  //  "productSize" : "SMALL",
-  //  "retailer" : "WALMART"
-  //}
   ],
   "userNote": "this is my note for this order"
 }
