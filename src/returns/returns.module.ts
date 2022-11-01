@@ -7,9 +7,8 @@ import {
   ReturnRequestItem,
 } from "./entities/return-request.entity";
 import { ReturnsController } from "./returns.controller";
-import { ReturnsDomainService } from "./returns.domain.service";
+import { ReturnsService } from "./returns.service";
 import { ConfigurationModule } from "src/configuration/configuration.module";
-import { ReturnsItemService } from "./return-item.service";
 import { WooCommerceModule } from "src/woo-commerce/woo-commerce.module";
 
 @Module({
@@ -30,6 +29,6 @@ import { WooCommerceModule } from "src/woo-commerce/woo-commerce.module";
     ),
   ],
   controllers: [ReturnsController],
-  providers: [ReturnsDomainService, ReturnsItemService],
+  providers: [ReturnsService],
 })
 export class ReturnsModule {}

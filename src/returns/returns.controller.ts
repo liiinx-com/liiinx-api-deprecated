@@ -21,7 +21,7 @@ import {
   ReturnRequest,
   ReturnRequestItem,
 } from "./entities/return-request.entity";
-import { ReturnsDomainService } from "./returns.domain.service";
+import { ReturnsService } from "./returns.service";
 import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 import { RequestUser, User } from "src/shared/decorators/user.decorator";
 import { plainToClass } from "class-transformer";
@@ -30,7 +30,7 @@ import { plainToClass } from "class-transformer";
 export class ReturnsController {
   user = { id: 4 };
 
-  constructor(private readonly returnsDomainService: ReturnsDomainService) {}
+  constructor(private readonly returnsDomainService: ReturnsService) {}
 
   // @UseGuards(JwtAuthGuard)
   @Get()

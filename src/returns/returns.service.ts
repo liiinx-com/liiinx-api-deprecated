@@ -15,16 +15,14 @@ import { ReturnsUtils } from "./returns.utils";
 import { Queue } from "bull";
 import { InjectQueue } from "@nestjs/bull";
 import { queueHelper } from "liiinx-utils";
-import { ReturnsItemService } from "./return-item.service";
 import { WooCommerceService } from "src/woo-commerce/woo-commerce.service";
 
 // TODO: move this types to Utils
 import { NewOrder, Order } from "src/woo-commerce/types";
 
 @Injectable()
-export class ReturnsDomainService {
+export class ReturnsService {
   constructor(
-    private readonly returnItemService: ReturnsItemService,
     private readonly wooCommerceService: WooCommerceService,
     @InjectQueue(queueHelper.getQueueConfig().helpDesk.queueName)
     private readonly helpDeskQueue: Queue,
