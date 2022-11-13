@@ -7,8 +7,7 @@ export class AppController {
 
   @Get()
   root(): string {
-    return "worx";
-    // const { name, version } = this.configurationService.getApiInfo();
-    // return `${name} ${version}`;
+    const { name, version } = this.configurationService.getApiInfo();
+    return `${name} ${version}`;
   }
 }

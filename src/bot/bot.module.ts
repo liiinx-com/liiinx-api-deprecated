@@ -4,6 +4,7 @@ import { BotService } from "./bot.service";
 import { MessageProcessor } from "./processors/message.processor";
 // import { REDIS_MESSENGER_QUEUE } from "src/configuration/constants";
 import { ConfigurationModule } from "src/configuration/configuration.module";
+import { BotController } from './bot.controller';
 
 @Module({
   imports: [
@@ -12,5 +13,6 @@ import { ConfigurationModule } from "src/configuration/configuration.module";
   ],
   providers: [BotService, MessageProcessor],
   exports: [BotService],
+  controllers: [BotController],
 })
 export class BotModule {}
