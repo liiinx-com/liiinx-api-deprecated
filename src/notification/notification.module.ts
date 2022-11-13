@@ -6,15 +6,15 @@ import { MailerModule } from "@nestjs-modules/mailer";
 import { ConfigurationService } from "src/configuration/configuration.service";
 import { PugAdapter } from "@nestjs-modules/mailer/dist/adapters/pug.adapter";
 import path from "path";
-import { queueHelper } from "liiinx-utils";
+import { queueHelper } from "src/shared/utils";
 import { BullModule } from "@nestjs/bull";
 
 @Module({
   imports: [
     ConfigurationModule,
-    BullModule.registerQueue({
-      name: queueHelper.getQueueConfig().notification.queueName,
-    }),
+    // BullModule.registerQueue({
+    //   name: queueHelper.getQueueConfig().notification.queueName,
+    // }),
 
     MailerModule.forRootAsync({
       imports: [ConfigurationModule],

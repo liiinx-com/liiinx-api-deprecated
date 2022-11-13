@@ -1,7 +1,7 @@
 import * as path from "path";
 import { Module } from "@nestjs/common";
 import { I18nModule } from "nestjs-i18n";
-import { BullModule } from "@nestjs/bull";
+// import { BullModule } from "@nestjs/bull";
 import { BotModule } from "./bot/bot.module";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -38,15 +38,15 @@ import { WooCommerceModule } from "./woo-commerce/woo-commerce.module";
         watch: true,
       },
     }),
-    BullModule.forRootAsync({
-      imports: [ConfigurationModule],
-      useFactory: async (configurationService: ConfigurationService) => {
-        return {
-          url: configurationService.getRedisConfig().url,
-        };
-      },
-      inject: [ConfigurationService],
-    }),
+    // BullModule.forRootAsync({
+    //   imports: [ConfigurationModule],
+    //   useFactory: async (configurationService: ConfigurationService) => {
+    //     return {
+    //       url: configurationService.getRedisConfig().url,
+    //     };
+    //   },
+    //   inject: [ConfigurationService],
+    // }),
     ConfigurationModule,
     BotModule,
     ReturnsModule,

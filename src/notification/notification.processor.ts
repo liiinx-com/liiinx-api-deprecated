@@ -1,6 +1,6 @@
 import { Job, Queue } from "bull";
 import { Logger } from "@nestjs/common";
-import { queueHelper } from "liiinx-utils";
+import { queueHelper } from "src/shared/utils";
 // import { NewJiraTicketQueueMessage } from "liiinx-utils/dist/jira/types";
 import { Process, Processor } from "@nestjs/bull";
 import { NotificationService } from "./notification.service";

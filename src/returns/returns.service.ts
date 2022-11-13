@@ -12,9 +12,9 @@ import {
   UpdateReturnsRequestReqDto,
 } from "./dtos/return-request";
 import { ReturnsUtils } from "./returns.utils";
-import { Queue } from "bull";
-import { InjectQueue } from "@nestjs/bull";
-import { queueHelper } from "liiinx-utils";
+// import { Queue } from "bull";
+// import { InjectQueue } from "@nestjs/bull";
+// import { queueHelper } from "src/shared/utils";
 import { WooCommerceService } from "src/woo-commerce/woo-commerce.service";
 
 // TODO: move this types to Utils
@@ -24,11 +24,11 @@ import { NewOrder, Order } from "src/woo-commerce/types";
 export class ReturnsService {
   constructor(
     private readonly wooCommerceService: WooCommerceService,
-    @InjectQueue(queueHelper.getQueueConfig().helpDesk.queueName)
-    private readonly helpDeskQueue: Queue,
-    @InjectQueue(queueHelper.getQueueConfig().notification.queueName) //TODO: this is for test: remove this later
-    private readonly notificationQueue: Queue,
-  ) {}
+  ) // @InjectQueue(queueHelper.getQueueConfig().helpDesk.queueName)
+  // private readonly helpDeskQueue: Queue,
+  // @InjectQueue(queueHelper.getQueueConfig().notification.queueName) //TODO: this is for test: remove this later
+  // private readonly notificationQueue: Queue,
+  {}
 
   async getRequestsByUserId(userId: number): Promise<ReturnRequest[]> {
     const orders: Order[] = await this.wooCommerceService.getOrdersByCustomerId(

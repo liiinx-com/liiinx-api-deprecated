@@ -10,8 +10,8 @@ import {
   ReturnRequestItemStatus,
 } from "./entities/types";
 import { ReturnRequestResDto } from "./dtos/return-request";
-import { NewJiraTicketQueueMessage } from "liiinx-utils/dist/jira/types";
-import { jiraHelper } from "liiinx-utils";
+import { NewJiraTicketQueueMessage } from "src/shared/utils/jira/types";
+import { jira, dateHelper } from "src/shared/utils";
 import {
   NewOrder,
   Order,
@@ -19,7 +19,6 @@ import {
   OrderMetaData,
   ProductType,
 } from "src/woo-commerce/types";
-import { DateHelper } from "src/shared/utils/date";
 import { plainToClass } from "class-transformer";
 import {
   ReturnRequest,
@@ -108,7 +107,7 @@ export class ReturnsUtils {
   ): NewJiraTicketQueueMessage {
     const { id, items } = request;
 
-    return jiraHelper.getServiceDeskMessage({
+    return jira.helper.getServiceDeskMessage({
       description: `Request id: ${id}`,
       title: `${items.length} items has been received`,
     });
@@ -138,7 +137,7 @@ export class ReturnsUtils {
         },
         {
           key: ReturnPackageItemMetadata.PICKUP_DATE,
-          value: DateHelper.jsDateToString(pickupDate),
+          value: dateHelper.jsDateToString(pickupDate),
         },
         {
           key: ReturnPackageItemMetadata.PICKUP_TIME_SLOT,

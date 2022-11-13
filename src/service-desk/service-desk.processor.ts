@@ -1,9 +1,9 @@
 import { Job, Queue } from "bull";
 import { Logger } from "@nestjs/common";
-import { queueHelper } from "liiinx-utils";
-import { NewJiraTicketQueueMessage } from "liiinx-utils/dist/jira/types";
+import { queueHelper } from "src/shared/utils";
 import { Process, Processor } from "@nestjs/bull";
 import { ServiceDeskService } from "./service-desk.service";
+import { NewJiraTicketQueueMessage } from "src/shared/utils/jira/types";
 
 @Processor(queueHelper.getQueueConfig().helpDesk.queueName)
 export class ServiceDeskProcessor {
