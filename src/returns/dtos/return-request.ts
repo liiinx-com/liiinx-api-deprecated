@@ -5,20 +5,19 @@ import {
   ReturnRequestItemStatus,
 } from "../entities/types";
 import {
-  IsDateString,
   IsUrl,
   IsEnum,
   IsBoolean,
   IsOptional,
   ValidateNested,
   ArrayNotEmpty,
+  IsDate,
+  IsNumberString,
+  IsString,
 } from "class-validator";
 import { Type } from "class-transformer";
 
-class NewReturnRequestReqItemDto {
-  @IsBoolean()
-  hasOriginalPackaging: boolean;
-
+export class NewReturnRequestReqItemDto {
   @IsBoolean()
   needShippingBox: boolean;
 
@@ -31,13 +30,12 @@ class NewReturnRequestReqItemDto {
 
   @IsEnum(Retailer)
   retailer: Retailer;
+
+  @IsOptional()
+  userNote: string;
 }
 
 export class UpdateReturnRequestReqItemDto {
-  @IsBoolean()
-  @IsOptional()
-  hasOriginalPackaging?: boolean;
-
   @IsBoolean()
   @IsOptional()
   needShippingBox?: boolean;
@@ -59,11 +57,16 @@ export class UpdateReturnRequestReqItemDto {
   status?: ReturnRequestItemStatus;
 }
 
-export class NewReturnRequestBaseDto {
-  @IsOptional()
-  id: string;
+export class ReturnRequestBaseDto {
+  constructor() {
+    this.items = [];
+  }
 
-  @IsDateString()
+  @IsString()
+  @IsOptional()
+  couponCode?: string;
+
+  @IsDate()
   pickupDate: Date;
 
   @IsEnum(PickupTimeSlot)
@@ -78,21 +81,18 @@ export class NewReturnRequestBaseDto {
   userNote: string;
 }
 
-export class NewReturnRequestReqDto extends NewReturnRequestBaseDto {}
-
-export class NewReturnRequestResDto extends NewReturnRequestBaseDto {
-  created_at: string;
+export class NewReturnRequestReqDto extends ReturnRequestBaseDto {
+  constructor() {
+    super();
+  }
 }
 
-export class UpdateReturnsRequestReqDto {
-  @IsOptional()
-  @IsDateString()
-  pickupDate?: Date;
+export class ReturnRequestResDto extends ReturnRequestBaseDto {
+  @IsNumberString()
+  id: string;
+}
 
-  @IsEnum(PickupTimeSlot)
-  @IsOptional()
-  pickupTimeSlot?: PickupTimeSlot;
-
-  @IsOptional()
-  userNote?: string;
+export class UpdateReturnsRequestReqDto extends ReturnRequestBaseDto {
+  @IsNumberString()
+  id: string;
 }

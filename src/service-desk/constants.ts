@@ -13,7 +13,6 @@ export enum OrderCustomFields {
 
 export enum OrderItemCustomFields {
   productSize = "customfield_10053",
-  hasOriginalPackaging = "customfield_10054",
   needShippingBox = "customfield_10055",
   retailer = "customfield_10056",
   productUrl = "customfield_10057",

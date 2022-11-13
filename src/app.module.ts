@@ -16,7 +16,7 @@ import { ServiceDeskModule } from "./service-desk/service-desk.module";
 import { AuthModule } from "./auth/auth.module";
 import { NotificationModule } from "./notification/notification.module";
 import { UserInterceptor } from "./shared/user.interceptor";
-import { WooCommerceModule } from './woo-commerce/woo-commerce.module';
+import { WooCommerceModule } from "./woo-commerce/woo-commerce.module";
 
 @Module({
   imports: [

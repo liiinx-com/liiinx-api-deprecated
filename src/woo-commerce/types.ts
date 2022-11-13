@@ -1,5 +1,13 @@
+import { Expose, Type } from "class-transformer";
+import { IsArray } from "class-validator";
+
 export enum UserStatus {
   PUBLISH = "publish",
+}
+
+export enum ProductType {
+  UNKNOWN = "unknown",
+  PACKAGE_RETURNS = "package-return",
 }
 
 export enum OrderStatus {
@@ -9,6 +17,7 @@ export enum OrderStatus {
   REFUNDED = "refunded",
   ON_HOLD = "on-hold",
   PROCESSING = "processing",
+  PENDING = "pending",
 }
 
 export enum UserRole {
@@ -33,34 +42,60 @@ export type Customer = {
   firstName: string;
   lastName: string;
   email: string;
+  role: string;
   shipping: BillingShippingInfo;
 };
 
-type OrderLineItem = {
-  product_id: number;
-  variation_id?: number;
-  quantity: number;
-};
-
-type CouponLineItem = {
+type WooCouponLineItem = {
   code: string;
 };
 
-type OrderMetaData = {
+export type OrderMetaData = {
   key: string;
   value: string;
 };
 
+export class WooOrderLineItem {
+  product_id: number;
+  variation_id?: number;
+  quantity: number;
+  price: string;
+  meta_data?: Array<OrderMetaData>;
+}
+
+export class OrderLineItem {
+  constructor() {
+    this.metaData = [];
+  }
+  @Expose({ name: "product_id" })
+  productId: number;
+
+  productType: ProductType;
+
+  @Expose()
+  variationId?: number;
+
+  @Expose()
+  price: string;
+
+  @Expose()
+  quantity: number;
+
+  @Expose({ name: "meta_data" })
+  metaData?: Array<OrderMetaData>;
+}
+
 export type WooOrder = {
-  payment_method: string;
-  payment_method_title: string;
-  set_paid: boolean;
-  billing: BillingShippingInfo;
-  shipping: BillingShippingInfo;
-  line_items: Array<OrderLineItem>;
+  id?: number;
+  payment_method?: string;
+  payment_method_title?: string;
+  set_paid?: boolean;
+  billing?: BillingShippingInfo;
+  shipping?: BillingShippingInfo;
+  line_items: Array<WooOrderLineItem>;
   customer_id: number;
   customer_note?: string;
-  coupon_lines?: Array<CouponLineItem>;
+  coupon_lines?: Array<WooCouponLineItem>;
   meta_data?: Array<OrderMetaData>;
   status?: OrderStatus;
   //   shipping_lines: [
@@ -72,25 +107,69 @@ export type WooOrder = {
   //   ];
 };
 
-export type Order = {
-  paymentMethod: string;
-  paymentMethodTitle: string;
-  setPaid: boolean;
-  shipping: BillingShippingInfo;
+export class NewOrder {
+  constructor() {
+    this.metaData = [];
+    this.lineItems = [];
+    this.couponCodes = [];
+  }
+  shippingInfo: BillingShippingInfo;
+
+  @Type(() => OrderLineItem)
+  @IsArray()
   lineItems: Array<OrderLineItem>;
-  customerId: number;
+
+  userId: number;
+
   couponCodes?: Array<string>;
-  customerNote?: string;
+
+  userNote?: string;
+
   metaData?: Array<OrderMetaData>;
+
   status?: OrderStatus;
-  //   shippingLines: [
-  //     {
-  //       method_id: 'flat_rate';
-  //       method_title: 'Flat Rate';
-  //       total: '10.00';
-  //     },
-  //   ];
-};
+}
+
+export class Order {
+  @Expose()
+  id: string;
+
+  @Expose({ name: "payment_method" })
+  paymentMethod?: string;
+  @Expose({ name: "payment_method_title" })
+  paymentMethodTitle?: string;
+  setPaid?: boolean;
+  shipping: BillingShippingInfo;
+
+  @Expose({ name: "line_items" })
+  @Type(() => OrderLineItem)
+  lineItems: Array<OrderLineItem>;
+
+  @Expose({ name: "customer_id" })
+  userId: string;
+
+  @Expose({ name: "date_created" })
+  createdAt: Date;
+
+  couponCodes?: Array<string>;
+  @Expose({ name: "customer_note" })
+  userNote?: string;
+
+  @Expose({ name: "meta_data" })
+  metaData?: Array<OrderMetaData>;
+
+  @Expose()
+  total: string;
+
+  @Expose({ name: "total_tax" })
+  totalTax: string;
+
+  @Expose({ name: "currency_symbol" })
+  currencySymbol: string;
+
+  @Expose()
+  status: OrderStatus;
+}
 
 export type WooCustomer = {
   email: string;
@@ -102,3 +181,7 @@ export type WooCustomer = {
 };
 
 export type Service = {};
+
+export type HandleFindOneResponseOptions = {
+  notFoundMsg: string;
+};

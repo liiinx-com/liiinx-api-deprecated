@@ -1,4 +1,5 @@
 export enum ReturnRequestItemStatus {
+  NOT_SET = "NOT_SET",
   PROCESSING = "PROCESSING",
   APPROVED = "APPROVED",
   DELETED = "DELETED",
@@ -21,6 +22,12 @@ export enum ReturnRequestStatus {
   DELIVERED = "DELIVERED",
 
   PARTIALLY_COMPLETED = "PARTIALLY_COMPLETED", // TODO: Candidate to remove
+}
+
+export enum ReturnRequestItemProductType {
+  NOT_SET = "NOT_SET",
+  ReturnPackage = "returnPackage",
+  ShippingBox = "shippingBox",
 }
 
 //TODO: define sizes
