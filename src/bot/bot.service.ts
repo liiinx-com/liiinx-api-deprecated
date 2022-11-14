@@ -1,21 +1,23 @@
-import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
-import { MessengerClient } from "messaging-api-messenger";
+import { Injectable } from "@nestjs/common";
 import { ConfigurationService } from "src/configuration/configuration.service";
+import { IncomingMessage } from "./bot.type";
 
 @Injectable()
 export class BotService {
-  private readonly messengerClient: MessengerClient = new MessengerClient({
-    accessToken: this.configurationService.getBotCredentials().accessToken,
-  });
-
   constructor(private readonly configurationService: ConfigurationService) {}
 
-  getClient(): MessengerClient {
-    if (!this.messengerClient)
-      throw new HttpException(
-        "MESSENGER_CLIENT_NOT_INITIALIZED",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    return this.messengerClient;
+  async textMessageHandler(receivedMessage: IncomingMessage) {
+    const supportedMessages: string[] = [];
+
+    return receivedMessage.customer.profile.name;
+  }
+
+  async handleMessage(receivedMessage: IncomingMessage) {
+    const type = receivedMessage.message.type;
+    if (type === "text") {
+      return this.textMessageHandler(receivedMessage);
+    }
+
+    return Promise.reject("NOT_SUPPORTED_MESSAGE_TYPE");
   }
 }

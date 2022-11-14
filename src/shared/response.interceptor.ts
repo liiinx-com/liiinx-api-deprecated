@@ -8,6 +8,12 @@ export class AddOkToResponseInterceptor implements NestInterceptor {
   ): Observable<any> | Promise<Observable<any>> {
     return next.handle().pipe(
       map((response) => {
+        const request = context.switchToHttp().getRequest();
+        const isGetRequest = request.method === "GET";
+        const [requestUrl] = request.url.split("?");
+        const excludeUrls = ["/bot/webhook"];
+        if (isGetRequest && excludeUrls.includes(requestUrl)) return response;
+
         return { ok: true, result: response };
       }),
     );

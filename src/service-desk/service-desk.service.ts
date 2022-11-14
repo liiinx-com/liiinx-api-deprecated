@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { NewJiraTicketQueueMessage } from "liiinx-utils/dist/jira/types";
+import { NewJiraTicketQueueMessage } from "src/shared/utils/jira/types";
 import { ConfigurationService } from "src/configuration/configuration.service";
 import JiraClient from "jira-client";
+
 import { JiraUtils } from "./service-desk.utils";
 import { ServiceDeskPriority, WorkManagementIssueType } from "./constants";
 
