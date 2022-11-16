@@ -5,7 +5,6 @@ import {
   Post,
   Get,
   Query,
-  Param,
   HttpException,
 } from "@nestjs/common";
 import { Request } from "express";
@@ -38,8 +37,8 @@ export class BotController {
     throw new HttpException("INVALID_VERIFY_TOKEN", 403);
   }
 
-  @Post(":userId/webhook")
-  async post(@Req() req: Request, @Param("userId") userId: string) {
+  @Post("webhook")
+  async post(@Req() req: Request) {
     const body: any = req.body;
     if (!body.object) throw new NotFoundException();
     if (body.object !== "whatsapp_business_account") return "NOT_SUPPORTED";
@@ -47,9 +46,11 @@ export class BotController {
     //   return "INVALID_WEBHOOK";
 
     const messages = BotUtils.getMessagesFromWebhook(body);
-    const response = await Promise.all(
+    await Promise.all(
       messages.map((msg) => this.botService.handleMessage(msg)),
     );
-    return response;
+    return "OK";
+    // console.log("==>", response);
+    // return response;
   }
 }

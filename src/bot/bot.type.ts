@@ -1,12 +1,12 @@
 export class IncomingMessage {
   id: string;
   business: {
-    displayPhoneNumber: string;
+    phoneNumber: string;
     phoneNumberId: string;
   };
-  message: { type: string };
+  message: { type: string; from: string; id: string; timestamp: string };
   customer: {
-    customerWhatsappId: string;
+    phoneNumber: string;
     profile: { name: string };
   };
 }
