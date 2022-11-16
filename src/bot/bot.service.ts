@@ -1,53 +1,87 @@
 import { Injectable } from "@nestjs/common";
+import { HttpService } from "@nestjs/axios";
+import { firstValueFrom } from "rxjs";
 import { ConfigurationService } from "src/configuration/configuration.service";
 import { IncomingMessage } from "./bot.type";
 
+const TOKEN =
+  "EAAPYZCJH2zBwBAIXaZBBBPBYmiZBuZAeRVCYTo3FWLzLlaFzXJrpxqkCWbC1QKAlvwOEPK51CmnmMggoNyLn0QoNWMTZAnpG78NNpzJZBapvMwJ4WoMNjT9TzN5kBPQHRuCOUhGM2v7QMaLSCuRFCA9ai5eugypfn2EWSuCWFO1MDBIrL5X6oQuYOIJGgluSpL3sJ3TpFBnIQmj69iVbaF";
+
 @Injectable()
 export class BotService {
-  constructor(private readonly configurationService: ConfigurationService) {}
+  private static baseUrl = "https://graph.facebook.com/v15.0/";
+
+  constructor(
+    // private readonly configurationService: ConfigurationService,
+    private readonly http: HttpService,
+  ) {}
 
   async textMessageHandler(receivedMessage: IncomingMessage) {
-    const supportedMessages: string[] = [];
+    // const supportedMessages: string[] = [];
+    const response = this.getTextMessageFrom({
+      text: "Hi " + receivedMessage.customer.profile.name,
+      to: receivedMessage.customer.phoneNumber,
+      replyingMessageId: receivedMessage.message.id,
+    });
 
-    return receivedMessage.customer.profile.name;
+    console.log("00->", response);
+    return response;
+  }
+
+  getTextMessageFrom({
+    to,
+    text,
+    replyingMessageId = null,
+    previewUrl = false,
+  }): any {
+    const result: any = {
+      type: "text",
+      to,
+      text: { body: text, preview_url: previewUrl },
+    };
+    if (replyingMessageId) result.context = { message_id: replyingMessageId };
+    return result;
   }
 
   async handleMessage(receivedMessage: IncomingMessage) {
-    const type = receivedMessage.message.type;
-    if (type === "text") {
-      return this.textMessageHandler(receivedMessage);
-    }
+    const {
+      business: { phoneNumberId },
+      message: { type },
+    } = receivedMessage;
 
-    return Promise.reject("NOT_SUPPORTED_MESSAGE_TYPE");
+    let response: any;
+    if (type === "text")
+      response = await this.textMessageHandler(receivedMessage);
+    if (response) return this.send(response, { phoneNumberId });
+
+    return Promise.resolve("NOT_SUPPORTED_MESSAGE_TYPE");
   }
 
-  async sendWhatsappResponse(senderPsid: string, response: any) {
-    // The page access token we have generated in your app settings
-    const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+  private getUrl({ phoneNumberId }) {
+    return BotService.baseUrl + phoneNumberId + "/messages";
+  }
 
-    // Construct the message body
-    const requestBody = {
-      recipient: {
-        id: senderPsid,
-      },
-      message: response,
+  private getHeaders() {
+    return {
+      Authorization: "Bearer " + TOKEN,
+    };
+  }
+
+  async send(data: object, { phoneNumberId, recipient_type = "individual" }) {
+    const updatedPayload = {
+      ...data,
+      recipient_type,
+      messaging_product: "whatsapp",
     };
 
-    // Send the HTTP request to the Messenger Platform
-    request(
-      {
-        uri: "https://graph.facebook.com/v2.6/me/messages",
-        qs: { access_token: PAGE_ACCESS_TOKEN },
-        method: "POST",
-        json: requestBody,
-      },
-      (err, _res, _body) => {
-        if (!err) {
-          console.log("Message sent!");
-        } else {
-          console.error("Unable to send message:" + err);
-        }
-      },
+    console.log("sending => ", JSON.stringify(updatedPayload, null, 2));
+    const headers = this.getHeaders();
+    return firstValueFrom(
+      this.http.post(this.getUrl({ phoneNumberId }), updatedPayload, {
+        headers,
+      }),
     );
+
+    // console.log("----", res);
   }
 }

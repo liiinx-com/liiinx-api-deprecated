@@ -46,10 +46,11 @@ export class BotController {
     //   return "INVALID_WEBHOOK";
 
     const messages = BotUtils.getMessagesFromWebhook(body);
-    const response = await Promise.all(
+    await Promise.all(
       messages.map((msg) => this.botService.handleMessage(msg)),
     );
-    console.log("==>", response);
-    return response;
+    return "OK";
+    // console.log("==>", response);
+    // return response;
   }
 }
