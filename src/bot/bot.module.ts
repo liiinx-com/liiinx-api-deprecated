@@ -7,6 +7,7 @@ import { MessageProcessor } from "./processors/message.processor";
 import { ConfigurationModule } from "src/configuration/configuration.module";
 import { BotController } from "./bot.controller";
 import { BotUtils } from "./bot.utils";
+import { IntentManager } from "./bot.intent-manager";
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { BotUtils } from "./bot.utils";
     HttpModule,
     // BullModule.registerQueue({ name: REDIS_MESSENGER_QUEUE.name }),
   ],
-  providers: [BotService, MessageProcessor, BotUtils],
+  providers: [BotService, MessageProcessor, BotUtils, IntentManager],
   exports: [BotService],
   controllers: [BotController],
 })

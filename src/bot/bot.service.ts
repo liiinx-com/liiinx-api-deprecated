@@ -1,43 +1,79 @@
-import { Injectable } from "@nestjs/common";
-import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
-import { ConfigurationService } from "src/configuration/configuration.service";
+import { HttpService } from "@nestjs/axios";
+import { Injectable } from "@nestjs/common";
 import { IncomingMessage } from "./bot.type";
+import intents from "./flows/intents.json";
+import messageIntentMap from "./flows/message-intent.json";
+import { IntentManager } from "./bot.intent-manager";
 
 const TOKEN =
-  "EAAPYZCJH2zBwBAIXaZBBBPBYmiZBuZAeRVCYTo3FWLzLlaFzXJrpxqkCWbC1QKAlvwOEPK51CmnmMggoNyLn0QoNWMTZAnpG78NNpzJZBapvMwJ4WoMNjT9TzN5kBPQHRuCOUhGM2v7QMaLSCuRFCA9ai5eugypfn2EWSuCWFO1MDBIrL5X6oQuYOIJGgluSpL3sJ3TpFBnIQmj69iVbaF";
+  "EAAPYZCJH2zBwBAMYlfBszP9ZBbOQYlOWEZArXZBPgZADR9PzZAzMm3ChDv0Sj4fCnDeJhLGwL5kW5SjzR2AO6bbb0B9w6CaybZBtZCmXZB93smbB8m768luWyhGg7TaE1R8YiZAtBSuDZBmvnR3fULNzgRHgZBzRobOXHzSLy6UIJsZBVKAqJiRW1sXMPary02XZCyQxcLvZBZCZAz79d6c9WK8Qm3NGZB";
 
-const intents = [
-  {
-    id: 1,
-    title: "get_started",
-    examples: ["hi", "hey"],
-    messageTemplateId: "get_started",
-  },
-];
+const getOptions = (buttons) => {
+  return [{ id: "someGivenId", key: "back", value: "Back" }];
+};
+let output = {};
 
 @Injectable()
 export class BotService {
   private static baseUrl = "https://graph.facebook.com/v15.0/";
 
   constructor(
-    // private readonly configurationService: ConfigurationService,
+    private readonly intentManager: IntentManager,
     private readonly http: HttpService,
-  ) {}
+  ) {
+    this.intentManager.loadAssets({ intents, messageIntentMap });
+  }
+
+  async getMessageFromStep(step) {
+    let result = "";
+    result += step.question;
+    result += "\n";
+    result += step.options
+      .map((option) => `${option.displayValue}. ${option.value}`)
+      .join("\n");
+    return result;
+  }
 
   async textMessageHandler(receivedMessage: IncomingMessage) {
-    // const supportedMessages: string[] = [];
     const {
       message: {
-        text: { body: text },
+        text: { body: lastStepInput },
       },
     } = receivedMessage;
 
-    const intent = intents.find();
+    let intent;
+    if (!this.intentManager.lastStepKey) {
+      intent = this.intentManager.getIntentByMessage(lastStepInput);
+      this.intentManager.lastStepKey = intent.firstStepId;
+      // console.log("set too ", this.intentManager.lastStepKey);
+    } else {
+      console.log("  now here to run intent ", this.intentManager.lastStepKey);
+      intent = this.intentManager.getIntent(
+        this.intentManager.getIntentKeyFromStepKey(
+          this.intentManager.lastStepKey,
+        ),
+      );
+    }
 
-    let responseText = "1. for a joke " + "\n" + "2. for a random image";
-    if (text === "1") responseText = "ye rooz ye torke";
-    if (text === "2") responseText = "ali.jpg";
+    let responseText;
+    const validation = this.intentManager.validateResponseForStepId(
+      this.intentManager.lastStepKey,
+      lastStepInput,
+    );
+    if (!validation.ok) responseText = "[!] " + validation.errorCode;
+    else {
+      this.intentManager.lastStepKey = validation.nextStepId;
+      output = { ...output, ...validation.response };
+    }
+
+    const [question, options] = this.intentManager.run(
+      intent,
+      this.intentManager.lastStepKey
+        ? this.intentManager.lastStepKey
+        : intent.firstStepId,
+    );
+    responseText = question + "\n \n" + options;
 
     const response = this.getTextMessageFrom({
       text: responseText,
@@ -46,7 +82,7 @@ export class BotService {
       replyingMessageId: receivedMessage.message.id,
     });
 
-    console.log("00->", response);
+    // console.log("00->", response);
     return response;
   }
 
