@@ -19,11 +19,18 @@ export class IntentService {
     return db.find((user) => user.phone === phone);
   }
 
-  async updateActiveIntentFor(userId: number, { stepId, output }) {
+  async resetUserOutput(userId: number) {
     const user = await this.getUserById(userId);
-    user.activeStepId = stepId;
-    if (output) user.output = { ...user.output, ...output };
-    console.log("updated user", user);
+    user.output = {};
+  }
+
+  async updateActiveIntentFor(
+    userId: number,
+    { stepId = undefined, changes = undefined },
+  ) {
+    const user = await this.getUserById(userId);
+    if (stepId) user.activeStepId = stepId;
+    if (changes) user.output = { ...user.output, ...changes };
     return user;
   }
 

@@ -83,13 +83,21 @@ export class IntentManager {
 
   async processCompletedIntent(intent, output, params) {
     const result = { stepId: this.fallbackStepId };
-
+    console.log("completed", intent.id, output);
     if (intent.id === "hi") {
       console.log(
         `now ${intent.id} process is completed and output is `,
         JSON.stringify(output, null, 2),
       );
       return { stepId: "new_return_order*1" };
+    }
+
+    if (intent.id === "new_return_order") {
+      console.log(
+        `hala ${intent.id} process is completed and output is `,
+        JSON.stringify(output, null, 2),
+      );
+      return result;
     }
 
     return result;
@@ -99,8 +107,9 @@ export class IntentManager {
     const result = { isIntentComplete: false, intent: null, nextStep: null };
 
     const [intent, step] = this.getIntentAndStepByStepId(stepId);
+
     if (step.nextStepId) {
-      const [, nextStep] = this.getIntentAndStepByStepId(stepId);
+      const [, nextStep] = this.getIntentAndStepByStepId(step.nextStepId);
       return { ...result, intent, nextStep };
     }
     return { ...result, isIntentComplete: true };

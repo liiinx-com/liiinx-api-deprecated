@@ -7,7 +7,7 @@ import { IntentManager } from "./bot.intent-manager";
 import { IntentService } from "./bot-intent.service";
 
 const TOKEN =
-  "EAAPYZCJH2zBwBAGbBS384iH2wDTmOTXOhZCcJ7AGMnJVJGFNDNo4ikpku4INhUZAu77YQSAnZABt34NeANkwfNArQB8r6Nx61P0XsHnpHyRwq2ZCJMbjmMlC00xaGlmW2M27lLY1LSF6kWoK2sLJdr5e1er8DWnmJt3AVJKojxR3xfmA2AZCIJcFhyZAwSDZAGZCePkGxCbg6y2Jq4ZAbXWnMA";
+  "EAAPYZCJH2zBwBABUtDnRlKbMXoJLUbPj5o7IarZCMxX3gVg8iK5AZCxLYfP8HKApeCv7OFb7Ne4nz5CKGMVuZBCnMngIWGmizGf03dBCHk3SB7Et0yZCuZAExPUmdvbBKXdYIqlMbDcqf8KRlu2ypZBqtrL4ZCdhCZBVTOb6CqXUzdrjitxCNCGRQlaxWsLkGxubrZBw938mr8uZAsiAQx6jeI8";
 
 const getOptions = (buttons) => {
   return [{ id: "someGivenId", key: "back", value: "Back" }];
@@ -56,14 +56,10 @@ export class BotService {
     const { stepId: userStepId } =
       await this.intentService.getUserActiveIntentInfo(userId);
 
+    // 0. user active stepId
     const activeStepId = userStepId
       ? userStepId
       : this.intentManager.fallbackStepId;
-    console.log(
-      `User ${userId} active stepId = `,
-      // this.intentManager.activeStepId,
-      activeStepId,
-    );
 
     // 1. validate input for step regardless of user
     const {
@@ -87,44 +83,44 @@ export class BotService {
       });
     }
 
+    await this.intentService.updateActiveIntentFor(userId, {
+      changes: validatedResponse,
+    });
+
     let responseText;
+    let nextStepId;
     const { isIntentComplete, nextStep } =
       await this.intentManager.getNextStepFor(activeStepId);
-    await this.intentService.updateActiveIntentFor(userId, {
-      output: validatedResponse,
-      stepId: nextStep.id,
-    });
 
     if (isIntentComplete) {
       const { output } = await this.intentService.getUserActiveIntentInfo(
         userId,
       );
       const additionalParams = null;
+      console.log("----------output", output);
       const { stepId } = await this.intentManager.processCompletedIntent(
         intent,
         output,
         additionalParams,
       );
-      const [question, options] = this.intentManager.getMenuItemFor(stepId);
+      nextStepId = stepId;
+      await this.intentService.resetUserOutput(userId);
+      await this.intentService.updateActiveIntentFor(userId, {
+        stepId: nextStepId,
+      });
+      const [question, options] = this.intentManager.getMenuItemFor(nextStepId);
       responseText = question + "\n \n" + options;
     } else {
+      console.log("------------next", nextStep);
+      nextStepId = nextStep.id;
       const [question, options] = this.intentManager.getMenuItemFor(
         nextStep.id,
       );
       responseText = question + "\n \n" + options;
     }
-
-    // .update user active step AND accumulated output
-    // .if intent is completed
-
-    // const [question, options] = this.intentManager.getMenuItemFor(nextStepId);
-    // responseText = question + "\n \n" + options;
-
-    // if (stepsCompleted) {
-    //   const { type, response } = await this.handleStepsCompleted({
-    //     intent,
-    //     payload: output,
-    //   });
+    await this.intentService.updateActiveIntentFor(userId, {
+      stepId: nextStepId,
+    });
 
     //   if (type === "SWITCH_TO_STEP_ID") {
     //     this.intentManager.activeStepId = response;
