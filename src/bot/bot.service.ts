@@ -46,7 +46,7 @@ export class BotService {
       intent,
       response: validatedResponse,
       errorCode,
-    } = await this.intentManager.validateInputForStepId(
+    } = await this.intentManager.validateInputForStep(
       activeStepId,
       receivedInput,
     );

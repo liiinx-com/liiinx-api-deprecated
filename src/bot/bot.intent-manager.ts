@@ -48,7 +48,7 @@ export class IntentManager {
     return [step.question, this.getOptionsForStep(step)];
   }
 
-  async validateInputForStepId(stepId: string, value: string) {
+  async validateInputForStep(stepId: string, value: string) {
     const [intent, step] = this.getIntentAndStepByStepId(stepId);
     if (!value || typeof value !== "string")
       return {
