@@ -48,7 +48,65 @@ export class IntentManager {
     return [step.question, this.getOptionsForStep(step)];
   }
 
-  processResponseForStepId(stepId, value) {
+  async validateInputForStepId(stepId: string, value: string) {
+    const [intent, step] = this.getIntentAndStepByStepId(stepId);
+    if (!value || typeof value !== "string")
+      return {
+        ok: false,
+        errorCode: ERRORS.INVALID_INPUT,
+        response: null,
+        intent,
+      };
+
+    const validValues = step.options.map(({ numericValue }) => numericValue);
+    if (!validValues.includes(value.toString()))
+      return {
+        ok: false,
+        errorCode: ERRORS.INVALID_INPUT,
+        response: null,
+        intent,
+      };
+
+    const selectedOption = step.options.find(
+      ({ numericValue }) => numericValue === value.toString(),
+    );
+
+    return {
+      ok: true,
+      intent,
+      response: {
+        [step.key]: selectedOption.value,
+      },
+      errorCode: undefined,
+    };
+  }
+
+  async processCompletedIntent(intent, output, params) {
+    const result = { stepId: this.fallbackStepId };
+
+    if (intent.id === "hi") {
+      console.log(
+        `now ${intent.id} process is completed and output is `,
+        JSON.stringify(output, null, 2),
+      );
+      return { stepId: "new_return_order*1" };
+    }
+
+    return result;
+  }
+
+  async getNextStepFor(stepId: string) {
+    const result = { isIntentComplete: false, intent: null, nextStep: null };
+
+    const [intent, step] = this.getIntentAndStepByStepId(stepId);
+    if (step.nextStepId) {
+      const [, nextStep] = this.getIntentAndStepByStepId(stepId);
+      return { ...result, intent, nextStep };
+    }
+    return { ...result, isIntentComplete: true };
+  }
+
+  processResponseForStepId(stepId: string, value: string) {
     const [intent, step] = this.getIntentAndStepByStepId(stepId);
     if (!value || typeof value !== "string")
       return {
