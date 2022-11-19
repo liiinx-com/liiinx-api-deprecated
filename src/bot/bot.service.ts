@@ -1,30 +1,112 @@
-import { Injectable } from "@nestjs/common";
-import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from "rxjs";
-import { ConfigurationService } from "src/configuration/configuration.service";
+import { HttpService } from "@nestjs/axios";
+import { Injectable } from "@nestjs/common";
 import { IncomingMessage } from "./bot.type";
+import intents from "./flows/intents.json";
+import { IntentManager } from "./bot.intent-manager";
+import { IntentService } from "./bot-intent.service";
 
 const TOKEN =
-  "EAAPYZCJH2zBwBAIXaZBBBPBYmiZBuZAeRVCYTo3FWLzLlaFzXJrpxqkCWbC1QKAlvwOEPK51CmnmMggoNyLn0QoNWMTZAnpG78NNpzJZBapvMwJ4WoMNjT9TzN5kBPQHRuCOUhGM2v7QMaLSCuRFCA9ai5eugypfn2EWSuCWFO1MDBIrL5X6oQuYOIJGgluSpL3sJ3TpFBnIQmj69iVbaF";
+  "EAAPYZCJH2zBwBAOceEbzjmXBZBMMNlC5pkDCojfQKZCHcjdKXhZAZCUAPphf2xCmzVR98qKY4YjMB4gzIllWimGlGioxXWVqKGn9B7lDW0zYHeP3ZChMKcX4xeknkoXdVYcbJgFcnE0USet4qfeOZBCBr7gRanvf21ckdZBQazqSemSqZCa87nyeUfiJCl7ur0nvZC1g09ZAxmueFtZA3GFhvIul";
+
+const getOptions = (buttons) => {
+  return [{ id: "someGivenId", key: "back", value: "Back" }];
+};
 
 @Injectable()
 export class BotService {
   private static baseUrl = "https://graph.facebook.com/v15.0/";
 
   constructor(
-    // private readonly configurationService: ConfigurationService,
+    private readonly intentManager: IntentManager,
+    private readonly intentService: IntentService,
     private readonly http: HttpService,
-  ) {}
+  ) {
+    this.intentManager.loadAssets({ intentsObject: intents });
+  }
 
-  async textMessageHandler(receivedMessage: IncomingMessage) {
-    // const supportedMessages: string[] = [];
+  async textMessageHandler(userId: number, receivedMessage: IncomingMessage) {
+    const {
+      message: {
+        text: { body: receivedInput },
+      },
+    } = receivedMessage;
+
+    const { stepId: userStepId } =
+      await this.intentService.getUserActiveIntentInfo(userId);
+
+    // 0. user active stepId
+    const activeStepId = userStepId
+      ? userStepId
+      : this.intentManager.fallbackStepId;
+
+    // 1. validate input for step regardless of user
+    const {
+      ok: validationOk,
+      intent,
+      response: validatedResponse,
+      errorCode,
+    } = await this.intentManager.validateInputForStepId(
+      activeStepId,
+      receivedInput,
+    );
+    console.log("[i] validation result", validationOk);
+
+    if (!validationOk) {
+      const [question, options] =
+        this.intentManager.getMenuItemFor(activeStepId);
+      return this.getTextMessageFrom({
+        text: question + "\n \n" + options,
+        to: receivedMessage.customer.phoneNumber,
+        replyingMessageId: receivedMessage.message.id,
+      });
+    }
+
+    await this.intentService.updateActiveIntentFor(userId, {
+      changes: validatedResponse,
+    });
+
+    let responseText: string;
+    let nextStepId: string;
+    const { isIntentComplete, nextStep } =
+      await this.intentManager.getNextStepFor(activeStepId);
+
+    if (isIntentComplete) {
+      const { output } = await this.intentService.getUserActiveIntentInfo(
+        userId,
+      );
+      const additionalParams = null;
+      console.log("----------output", output);
+      const { stepId } = await this.intentManager.processCompletedIntent(
+        intent,
+        output,
+        additionalParams,
+      );
+      nextStepId = stepId;
+      await this.intentService.resetUserOutput(userId);
+      await this.intentService.updateActiveIntentFor(userId, {
+        stepId: nextStepId,
+      });
+      const [question, options] = this.intentManager.getMenuItemFor(nextStepId);
+      responseText = question + "\n \n" + options;
+    } else {
+      console.log("------------next", nextStep.id);
+      nextStepId = nextStep.id;
+      const [question, options] = this.intentManager.getMenuItemFor(
+        nextStep.id,
+      );
+      responseText = question + "\n \n" + options;
+    }
+    await this.intentService.updateActiveIntentFor(userId, {
+      stepId: nextStepId,
+    });
+
     const response = this.getTextMessageFrom({
-      text: "Hi " + receivedMessage.customer.profile.name,
+      text: responseText,
       to: receivedMessage.customer.phoneNumber,
       replyingMessageId: receivedMessage.message.id,
     });
 
-    console.log("00->", response);
     return response;
   }
 
@@ -45,14 +127,18 @@ export class BotService {
 
   async handleMessage(receivedMessage: IncomingMessage) {
     const {
+      customer: { phoneNumber },
       business: { phoneNumberId },
       message: { type },
     } = receivedMessage;
 
+    const { id: userId } = await this.intentService.getUserByPhone(phoneNumber);
+
     let response: any;
     if (type === "text")
-      response = await this.textMessageHandler(receivedMessage);
+      response = await this.textMessageHandler(userId, receivedMessage);
     if (response) return this.send(response, { phoneNumberId });
+    //return this.send(getNotSupportedResponse(), {phoneNumberId})
 
     return Promise.resolve("NOT_SUPPORTED_MESSAGE_TYPE");
   }
@@ -81,7 +167,5 @@ export class BotService {
         headers,
       }),
     );
-
-    // console.log("----", res);
   }
 }
