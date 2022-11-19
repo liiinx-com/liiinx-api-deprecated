@@ -1,6 +1,6 @@
 {
   "hi": {
-    "id": "1",
+    "id": "hi",
     "sampleMessages": ["hi"],
     "firstStepId": "hi*1",
     "steps": {
@@ -14,8 +14,8 @@
           {
             "id": "hi*1*1",
             "order": 1,
-            "label": "Menu",
-            "value": "1",
+            "label": "New package return",
+            "value": "new_return_order",
             "numericValue": "1"
           }
         ]
@@ -23,7 +23,7 @@
     }
   },
   "new_return_order": {
-    "id": "2",
+    "id": "new_return_order",
     "sampleMessages": ["order", "return"],
     "messageTemplateId": "new_return_order",
     "firstStepId": "new_return_order*1",

@@ -7,7 +7,7 @@ import messageIntentMap from "./flows/message-intent.json";
 import { IntentManager } from "./bot.intent-manager";
 
 const TOKEN =
-  "EAAPYZCJH2zBwBAMYlfBszP9ZBbOQYlOWEZArXZBPgZADR9PzZAzMm3ChDv0Sj4fCnDeJhLGwL5kW5SjzR2AO6bbb0B9w6CaybZBtZCmXZB93smbB8m768luWyhGg7TaE1R8YiZAtBSuDZBmvnR3fULNzgRHgZBzRobOXHzSLy6UIJsZBVKAqJiRW1sXMPary02XZCyQxcLvZBZCZAz79d6c9WK8Qm3NGZB";
+  "EAAPYZCJH2zBwBAKBZAdAyor9arSMonK57yW5g559qngKRNPrMM9OMzPwe18oux7nZCtORDcsNQaoSPfFo00p705eGeJm2DWSxUzIH5635RYTVkakOUagTdVFYFNIZAavL19623j6DT3E7RKajOCnTb0SZBWZBZCidaPtWTYAYzP0SDDUTWUu1ZCMXF4llj4gDmqfoSGmZB71kX0RcS06bV7ZB5";
 
 const getOptions = (buttons) => {
   return [{ id: "someGivenId", key: "back", value: "Back" }];
@@ -22,7 +22,7 @@ export class BotService {
     private readonly intentManager: IntentManager,
     private readonly http: HttpService,
   ) {
-    this.intentManager.loadAssets({ intents, messageIntentMap });
+    this.intentManager.loadAssets({ intentsObject: intents });
   }
 
   async getMessageFromStep(step) {
@@ -35,45 +35,61 @@ export class BotService {
     return result;
   }
 
+  async handleStepsCompleted({ intent, payload }) {
+    console.log(`[!] intent ${intent.id} completed`);
+    console.log("[!] here is the payload => ", payload);
+
+    output = {};
+
+    return { type: "SWITCH_TO_STEP_ID", response: "new_return_order*1" };
+    // return "Namaki";
+  }
+
   async textMessageHandler(receivedMessage: IncomingMessage) {
     const {
       message: {
-        text: { body: lastStepInput },
+        text: { body: receivedInput },
       },
     } = receivedMessage;
 
-    let intent;
-    if (!this.intentManager.lastStepKey) {
-      intent = this.intentManager.getIntentByMessage(lastStepInput);
-      this.intentManager.lastStepKey = intent.firstStepId;
-      // console.log("set too ", this.intentManager.lastStepKey);
-    } else {
-      console.log("  now here to run intent ", this.intentManager.lastStepKey);
-      intent = this.intentManager.getIntent(
-        this.intentManager.getIntentKeyFromStepKey(
-          this.intentManager.lastStepKey,
-        ),
-      );
+    console.log("ACTIVE STEP ID = ", this.intentManager.activeStepId);
+
+    // 1. process the input based on the active step
+    const {
+      ok: validationOk,
+      nextStepId,
+      intent,
+      response: validatedResponse,
+      stepsCompleted,
+      errorCode,
+    } = this.intentManager.processResponseForStepId(
+      this.intentManager.activeStepId,
+      receivedInput,
+    );
+    console.log("[i] validation result", validationOk);
+    if (validationOk) {
+      output = { ...output, ...validatedResponse };
+      console.log("[!] activeStepId = ", this.intentManager.activeStepId);
     }
 
     let responseText;
-    const validation = this.intentManager.validateResponseForStepId(
-      this.intentManager.lastStepKey,
-      lastStepInput,
-    );
-    if (!validation.ok) responseText = "[!] " + validation.errorCode;
-    else {
-      this.intentManager.lastStepKey = validation.nextStepId;
-      output = { ...output, ...validation.response };
-    }
+    if (stepsCompleted) {
+      const { type, response } = await this.handleStepsCompleted({
+        intent,
+        payload: output,
+      });
 
-    const [question, options] = this.intentManager.run(
-      intent,
-      this.intentManager.lastStepKey
-        ? this.intentManager.lastStepKey
-        : intent.firstStepId,
-    );
-    responseText = question + "\n \n" + options;
+      if (type === "SWITCH_TO_STEP_ID") {
+        this.intentManager.activeStepId = response;
+        const [question, options] = this.intentManager.getMenuItemFor(response);
+        responseText = question + "\n \n" + options;
+      } else {
+        responseText = response;
+      }
+    } else {
+      const [question, options] = this.intentManager.getMenuItemFor(nextStepId);
+      responseText = question + "\n \n" + options;
+    }
 
     const response = this.getTextMessageFrom({
       text: responseText,
