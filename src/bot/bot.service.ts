@@ -7,12 +7,11 @@ import { IntentManager } from "./bot.intent-manager";
 import { IntentService } from "./bot-intent.service";
 
 const TOKEN =
-  "EAAPYZCJH2zBwBABUtDnRlKbMXoJLUbPj5o7IarZCMxX3gVg8iK5AZCxLYfP8HKApeCv7OFb7Ne4nz5CKGMVuZBCnMngIWGmizGf03dBCHk3SB7Et0yZCuZAExPUmdvbBKXdYIqlMbDcqf8KRlu2ypZBqtrL4ZCdhCZBVTOb6CqXUzdrjitxCNCGRQlaxWsLkGxubrZBw938mr8uZAsiAQx6jeI8";
+  "EAAPYZCJH2zBwBAOceEbzjmXBZBMMNlC5pkDCojfQKZCHcjdKXhZAZCUAPphf2xCmzVR98qKY4YjMB4gzIllWimGlGioxXWVqKGn9B7lDW0zYHeP3ZChMKcX4xeknkoXdVYcbJgFcnE0USet4qfeOZBCBr7gRanvf21ckdZBQazqSemSqZCa87nyeUfiJCl7ur0nvZC1g09ZAxmueFtZA3GFhvIul";
 
 const getOptions = (buttons) => {
   return [{ id: "someGivenId", key: "back", value: "Back" }];
 };
-let output = {};
 
 @Injectable()
 export class BotService {
@@ -24,26 +23,6 @@ export class BotService {
     private readonly http: HttpService,
   ) {
     this.intentManager.loadAssets({ intentsObject: intents });
-  }
-
-  async getMessageFromStep(step) {
-    let result = "";
-    result += step.question;
-    result += "\n";
-    result += step.options
-      .map((option) => `${option.displayValue}. ${option.value}`)
-      .join("\n");
-    return result;
-  }
-
-  async handleStepsCompleted({ intent, payload }) {
-    console.log(`[!] intent ${intent.id} completed`);
-    console.log("[!] here is the payload => ", payload);
-
-    output = {};
-
-    return { type: "SWITCH_TO_STEP_ID", response: "new_return_order*1" };
-    // return "Namaki";
   }
 
   async textMessageHandler(userId: number, receivedMessage: IncomingMessage) {
@@ -87,8 +66,8 @@ export class BotService {
       changes: validatedResponse,
     });
 
-    let responseText;
-    let nextStepId;
+    let responseText: string;
+    let nextStepId: string;
     const { isIntentComplete, nextStep } =
       await this.intentManager.getNextStepFor(activeStepId);
 
@@ -111,7 +90,7 @@ export class BotService {
       const [question, options] = this.intentManager.getMenuItemFor(nextStepId);
       responseText = question + "\n \n" + options;
     } else {
-      console.log("------------next", nextStep);
+      console.log("------------next", nextStep.id);
       nextStepId = nextStep.id;
       const [question, options] = this.intentManager.getMenuItemFor(
         nextStep.id,
@@ -122,26 +101,12 @@ export class BotService {
       stepId: nextStepId,
     });
 
-    //   if (type === "SWITCH_TO_STEP_ID") {
-    //     this.intentManager.activeStepId = response;
-    //     const [question, options] = this.intentManager.getMenuItemFor(response);
-    //     responseText = question + "\n \n" + options;
-    //   } else {
-    //     responseText = response;
-    //   }
-    // } else {
-    //   const [question, options] = this.intentManager.getMenuItemFor(nextStepId);
-    //   responseText = question + "\n \n" + options;
-    // }
-
     const response = this.getTextMessageFrom({
       text: responseText,
-      // text: "1. for a joke " + receivedMessage.customer.profile.name,
       to: receivedMessage.customer.phoneNumber,
       replyingMessageId: receivedMessage.message.id,
     });
 
-    // console.log("00->", response);
     return response;
   }
 
