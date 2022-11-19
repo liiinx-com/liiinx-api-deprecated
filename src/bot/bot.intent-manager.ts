@@ -44,7 +44,7 @@ export class IntentManager {
   getMenuItemFor(stepId) {
     console.log("running stepId", stepId);
     const [, step] = this.getIntentAndStepByStepId(stepId);
-    this.activeStepId = stepId; //TODO: for single user
+    this.activeStepId = stepId;
     return [step.question, this.getOptionsForStep(step)];
   }
 
@@ -83,13 +83,15 @@ export class IntentManager {
 
   async processCompletedIntent(intent, output, params) {
     const result = { stepId: this.fallbackStepId };
-    console.log("completed", intent.id, output);
+
+    // Send message to queue
+
     if (intent.id === "hi") {
       console.log(
         `now ${intent.id} process is completed and output is `,
         JSON.stringify(output, null, 2),
       );
-      return { stepId: "new_return_order*1" };
+      return { ...result, stepId: "new_return_order*1" };
     }
 
     if (intent.id === "new_return_order") {
@@ -97,7 +99,7 @@ export class IntentManager {
         `hala ${intent.id} process is completed and output is `,
         JSON.stringify(output, null, 2),
       );
-      return result;
+      return { ...result };
     }
 
     return result;
