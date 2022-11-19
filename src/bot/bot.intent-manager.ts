@@ -84,7 +84,7 @@ export class IntentManager {
   async processCompletedIntent(intent, output, params) {
     const result = { stepId: this.fallbackStepId };
 
-    // Send message to queue
+    // TODO: Send message to queue
 
     if (intent.id === "hi") {
       console.log(
