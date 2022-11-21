@@ -17,10 +17,11 @@ export class IntentManager {
   fallbackStepId = DEFAULT_STEP_ID;
 
   async getOptionsForStep(step: any, messageParams: any) {
-    return step.options
-      .map(({ numericValue, label }) => `${numericValue} ${label}`)
-      .push(`\n yes ${messageParams.name}`)
-      .join(NEW_LINE);
+    const options = step.options.map(
+      ({ numericValue, label }) => `${numericValue} ${label}`,
+    );
+    options.push(`9 yes for ${messageParams.name}`);
+    return options.join(NEW_LINE);
   }
 
   loadAssets({ intentsObject }) {
