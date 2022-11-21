@@ -8,7 +8,7 @@
         "previousStepId": null,
         "id": "hi*1",
         "nextStepId": null,
-        "textFn": "hi",
+        "textFn": "mainMenu",
         "key": "selectedMenuItem",
         "options": [
           {

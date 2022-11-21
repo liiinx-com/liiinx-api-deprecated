@@ -42,7 +42,7 @@ export class IntentManager {
     throw new Error(ERRORS.STEP_NOT_FOUND);
   }
 
-  async getMenuItemFor(stepId: string) {
+  async getMenuItemFor(stepId: string, messageParams = {}) {
     console.log("running stepId", stepId);
     const [, step] = this.getIntentAndStepByStepId(stepId);
     this.activeStepId = stepId;
@@ -50,8 +50,7 @@ export class IntentManager {
     let message: string;
     if (step.text) message = step.text;
     else if (step.textFn) {
-      console.log("----------------", step.textFn);
-      message = "Hello there!\nThis is liiinx, How can I help you?";
+      message = await messageHelper[step.textFn](messageParams);
     }
 
     return [message, this.getOptionsForStep(step)];

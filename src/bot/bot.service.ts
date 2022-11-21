@@ -7,7 +7,7 @@ import { IntentManager } from "./bot.intent-manager";
 import { IntentService } from "./bot-intent.service";
 
 const TOKEN =
-  "EAAPYZCJH2zBwBALWAODZCacR7ZCKALqvmZBSzukjk394oWhRKDsgDfIpZBenFH2bP7reAyVQPBp40NqWv0jRK9MFLDBmfYjMkPgLRqSYAeNly5i5NArYMh3g8fD3ftZBZCOhZBjoNJ3tvmZC7SJZCZABBggymp8se0BfZBMtZCL5ZB1l47SZBe7VOR0vGhvAn7yz4fQ2nyRsJNlQBLOJQzQgaNbTFGj";
+  "EAAPYZCJH2zBwBAAI3tZBU4RaQZAXJ4Moe3mVximkYBxgxNFvAi50xBz6sKHfzapKCe9npqNxDVVCuiYrKZCBxuJWCZBx1kIeaLGNAyD9veZBgYSTGamh7losqgnXtraJCuVfxd7H47sjWfgbkZCVD9EBX1kVZBpBoHdhtaBS1nDZAOXZBwHsI9ZCOI8GH6awb5EmQDfUT5AcsOUHBNDpWyJJTRP";
 
 const getOptions = (buttons) => {
   return [{ id: "someGivenId", key: "back", value: "Back" }];
@@ -29,6 +29,9 @@ export class BotService {
     const {
       message: {
         text: { body: receivedInput },
+      },
+      customer: {
+        profile: { name },
       },
     } = receivedMessage;
 
@@ -52,9 +55,12 @@ export class BotService {
     );
     console.log("[i] validation result", validationOk);
 
+    const messageGeneratorParams = { name };
+
     if (!validationOk) {
       const [question, options] = await this.intentManager.getMenuItemFor(
         activeStepId,
+        messageGeneratorParams,
       );
       return this.getTextMessageFrom({
         text: question + "\n \n" + options,
@@ -90,6 +96,7 @@ export class BotService {
       });
       const [question, options] = await this.intentManager.getMenuItemFor(
         nextStepId,
+        messageGeneratorParams,
       );
       responseText = question + "\n \n" + options;
     } else {
@@ -97,6 +104,7 @@ export class BotService {
       nextStepId = nextStep.id;
       const [question, options] = await this.intentManager.getMenuItemFor(
         nextStep.id,
+        messageGeneratorParams,
       );
       responseText = question + "\n \n" + options;
     }
