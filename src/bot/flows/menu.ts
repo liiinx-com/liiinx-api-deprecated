@@ -1,6 +1,6 @@
 const NEW_LINE = "\n";
 
-const randomIntBetween = ({inclusiveMin = 0, exclusiveMax=0}) => {
+const randomIntBetween = ({inclusiveMin= 0, exclusiveMax=0}) => {
     
      const minValue = Math.ceil(inclusiveMin);
   const maxValue = Math.floor(exclusiveMax);
