@@ -53,8 +53,9 @@ export class BotService {
     console.log("[i] validation result", validationOk);
 
     if (!validationOk) {
-      const [question, options] =
-        this.intentManager.getMenuItemFor(activeStepId);
+      const [question, options] = await this.intentManager.getMenuItemFor(
+        activeStepId,
+      );
       return this.getTextMessageFrom({
         text: question + "\n \n" + options,
         to: receivedMessage.customer.phoneNumber,
@@ -87,12 +88,14 @@ export class BotService {
       await this.intentService.updateActiveIntentFor(userId, {
         stepId: nextStepId,
       });
-      const [question, options] = this.intentManager.getMenuItemFor(nextStepId);
+      const [question, options] = await this.intentManager.getMenuItemFor(
+        nextStepId,
+      );
       responseText = question + "\n \n" + options;
     } else {
       console.log("------------next", nextStep.id);
       nextStepId = nextStep.id;
-      const [question, options] = this.intentManager.getMenuItemFor(
+      const [question, options] = await this.intentManager.getMenuItemFor(
         nextStep.id,
       );
       responseText = question + "\n \n" + options;
