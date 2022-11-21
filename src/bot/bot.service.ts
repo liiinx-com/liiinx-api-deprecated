@@ -54,12 +54,12 @@ export class BotService {
     const messageGeneratorParams = { name };
 
     if (!validationOk) {
-      const [question, options] = await this.intentManager.getMenuItemFor(
+      const [text, options] = await this.intentManager.getMenuItemFor(
         activeStepId,
         messageGeneratorParams,
       );
       return this.getTextMessageFrom({
-        text: question + "\n \n" + options,
+        text: text + "\n \n" + options,
         to: receivedMessage.customer.phoneNumber,
         replyingMessageId: receivedMessage.message.id,
       });
