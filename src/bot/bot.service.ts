@@ -9,10 +9,6 @@ import { IntentService } from "./bot-intent.service";
 const TOKEN =
   "EAAPYZCJH2zBwBAAI3tZBU4RaQZAXJ4Moe3mVximkYBxgxNFvAi50xBz6sKHfzapKCe9npqNxDVVCuiYrKZCBxuJWCZBx1kIeaLGNAyD9veZBgYSTGamh7losqgnXtraJCuVfxd7H47sjWfgbkZCVD9EBX1kVZBpBoHdhtaBS1nDZAOXZBwHsI9ZCOI8GH6awb5EmQDfUT5AcsOUHBNDpWyJJTRP";
 
-const getOptions = (buttons) => {
-  return [{ id: "someGivenId", key: "back", value: "Back" }];
-};
-
 @Injectable()
 export class BotService {
   private static baseUrl = "https://graph.facebook.com/v15.0/";
