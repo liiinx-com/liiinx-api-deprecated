@@ -7,7 +7,7 @@ import { IntentManager } from "./bot.intent-manager";
 import { IntentService } from "./bot-intent.service";
 
 const TOKEN =
-  "EAAPYZCJH2zBwBAOceEbzjmXBZBMMNlC5pkDCojfQKZCHcjdKXhZAZCUAPphf2xCmzVR98qKY4YjMB4gzIllWimGlGioxXWVqKGn9B7lDW0zYHeP3ZChMKcX4xeknkoXdVYcbJgFcnE0USet4qfeOZBCBr7gRanvf21ckdZBQazqSemSqZCa87nyeUfiJCl7ur0nvZC1g09ZAxmueFtZA3GFhvIul";
+  "EAAPYZCJH2zBwBABrZCumWr4C6xsHj9dFrcWullIjlWuchl60cggeEd0E1HoZAZCr13XYQpL6uXnST00PiyVJlmoAXZCxQQQxUYCb0SuVWKqZC6FoYP1t9By6fTlQohGkbn5Uu4Kf2ZBU17HVZCf2u0R3WxB5kDV6NOilAOXA9w1zTABdwaw2MXJu2ns2jygZC8DLWb6qaiEqN3gEljZCEj6XNb";
 
 const getOptions = (buttons) => {
   return [{ id: "someGivenId", key: "back", value: "Back" }];
