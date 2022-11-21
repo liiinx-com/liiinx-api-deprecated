@@ -51,7 +51,7 @@ export class IntentManager {
     if (step.text) message = step.text;
     else if (step.textFn) {
       console.log("----------------", step.textFn);
-      //-----------------------
+      message = "Hello there!\nThis is liiinx, How can I help you?";
     }
 
     return [message, this.getOptionsForStep(step)];
