@@ -46,7 +46,7 @@ export class BotService {
       intent,
       response: validatedResponse,
       errorCode,
-    } = await this.intentManager.validateInputForStepId(
+    } = await this.intentManager.validateInputForStep(
       activeStepId,
       receivedInput,
     );
@@ -138,7 +138,6 @@ export class BotService {
     if (type === "text")
       response = await this.textMessageHandler(userId, receivedMessage);
     if (response) return this.send(response, { phoneNumberId });
-    //return this.send(getNotSupportedResponse(), {phoneNumberId})
 
     return Promise.resolve("NOT_SUPPORTED_MESSAGE_TYPE");
   }
