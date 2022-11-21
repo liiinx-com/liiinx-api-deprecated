@@ -7,7 +7,7 @@ import { IntentManager } from "./bot.intent-manager";
 import { IntentService } from "./bot-intent.service";
 
 const TOKEN =
-  "EAAPYZCJH2zBwBALAdjDxBNnJHbZBNX4gEYUgxLnzxdsCYs3MPtPpZCJDVYNq22PT2ZCoZAm90UAXbiSQGSMpRsLpZCj1IV7l2K8Bn5yb9GovcTExCNzRjuPfsRbSHxcn4u0KewhTt6qWcueQmR3mTU35P0IRDy0P0rARpksXaUS4lYUwhcO4T3uxETjZAAELPXqBHp6IL8H9XpGheZCWHk5o";
+  "EAAPYZCJH2zBwBABqJCm2rbPfbzema72YajwG0hwOk5dssg3FDhgCfmXBg63u2UAEaxAfGZBWISYAE7EJ0ewKZCEzS5igLQvXPMOlC3rtKlavSsmRu8TZA9vIiyWuoleJMoN9tR6xXbuSZAsvoXZCjtijZAQnfiYzrUt7b4AstNih5DuNdoODyJqfJR4tGcdCUAoBgUYBnmi7BqoAHYQAZAjf";
 
 @Injectable()
 export class BotService {
@@ -51,7 +51,7 @@ export class BotService {
     );
     console.log("[i] validation result", validationOk);
 
-    const messageGeneratorParams = { name };
+    const messageGeneratorParams = { name, userId };
 
     if (!validationOk) {
       const [text, options] = await this.intentManager.getMenuItemFor(

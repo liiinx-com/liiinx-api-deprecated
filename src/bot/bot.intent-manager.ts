@@ -18,9 +18,8 @@ export class IntentManager {
 
   async getOptionsForStep(step: any, messageParams: any) {
     const options = step.options.map(
-      ({ numericValue, label }) => `${numericValue} ${label}`,
+      ({ numericValue, label }) => `${numericValue}. ${label}`,
     );
-    options.push(`9 yes for ${messageParams.name}`);
     return options.join(NEW_LINE);
   }
 
