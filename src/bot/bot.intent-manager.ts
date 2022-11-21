@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import messageHelper from "./message-helper";
+import messageHandler from "./message-handler";
 
 const NEW_LINE = "\n";
 const STEP_ID_DELIMITER = "*";
@@ -17,9 +17,9 @@ export class IntentManager {
   fallbackStepId = DEFAULT_STEP_ID;
 
   async getOptionsForStep(step: any, messageParams: any) {
-    const options = step.options.map(
-      ({ numericValue, label }) => `${numericValue}. ${label}`,
-    );
+    const options = step.options
+      .sort((a, b) => (a.order > b.order ? 1 : b.order > a.order ? -1 : 0))
+      .map(({ numericValue, label }) => `${numericValue}. ${label}`);
     return options.join(NEW_LINE);
   }
 
@@ -46,12 +46,14 @@ export class IntentManager {
   async getMenuItemFor(stepId: string, messageParams = {}) {
     console.log("running stepId", stepId);
     const [, step] = this.getIntentAndStepByStepId(stepId);
-    this.activeStepId = stepId;
+    this.activeStepId = stepId; // TODO: candidate to remove
 
     let message: string;
     if (step.text) message = step.text;
-    else if (step.textFn)
-      message = await messageHelper[step.textFn](messageParams);
+    else if (step.textFn) {
+      const [msg] = await messageHandler[step.textFn](messageParams);
+      message = msg;
+    }
 
     return [message, await this.getOptionsForStep(step, messageParams)];
   }

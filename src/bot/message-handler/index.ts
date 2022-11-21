@@ -1,5 +1,6 @@
-import mainMenu from "./main-menu";
+import mainMenuHandler from "./main-menu/index";
 
 export default {
-  mainMenu,
+  // mainMenu: () => ["111", "222"],
+  mainMenu: mainMenuHandler,
 };
