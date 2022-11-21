@@ -8,7 +8,7 @@
         "previousStepId": null,
         "id": "hi*1",
         "nextStepId": null,
-        "question": "Hello!\nThis is liiinx, How can I help you?",
+        "text": "Hello!\nThis is liiinx, How can I help you?",
         "key": "selectedMenuItem",
         "options": [
           {
@@ -32,7 +32,7 @@
         "previousStepId": null,
         "id": "new_return_order*1",
         "nextStepId": "new_return_order*2",
-        "question": "What retailer are you returning this package to?",
+        "text": "What retailer are you returning this package to?",
         "key": "retailer",
         "options": [
           {
@@ -55,7 +55,7 @@
         "previousStepId": "new_return_order*1",
         "id": "new_return_order*2",
         "nextStepId": "new_return_order*3",
-        "question": "What size is the package?",
+        "text": "What size is the package?",
         "key": "size",
         "options": [
           {
@@ -78,7 +78,7 @@
         "previousStepId": "new_return_order*2",
         "id": "new_return_order*3",
         "nextStepId": null,
-        "question": "Does it need a shipping box?",
+        "text": "Does it need a shipping box?",
         "key": "shippingBox",
         "options": [
           {

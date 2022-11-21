@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import messageHelper from "./message-helper";
 
 const NEW_LINE = "\n";
 const STEP_ID_DELIMITER = "*";
@@ -12,10 +13,10 @@ const ERRORS = {
 @Injectable()
 export class IntentManager {
   intentsMap = new Map();
-  activeStepId = DEFAULT_STEP_ID;
+  activeStepId = DEFAULT_STEP_ID; // TODO:  remove this
   fallbackStepId = DEFAULT_STEP_ID;
 
-  getOptionsForStep(step) {
+  getOptionsForStep(step: any) {
     return step.options
       .map(({ numericValue, label }) => `${numericValue} ${label}`)
       .join(NEW_LINE);
@@ -31,7 +32,7 @@ export class IntentManager {
     console.log(`[i] ${this.intentsMap.size} intents loaded successfully `);
   }
 
-  getIntentAndStepByStepId(stepId) {
+  getIntentAndStepByStepId(stepId: string) {
     if (!stepId) return null;
     const [intentId] = stepId.split(STEP_ID_DELIMITER);
     if (this.intentsMap.has(intentId)) {
@@ -41,11 +42,19 @@ export class IntentManager {
     throw new Error(ERRORS.STEP_NOT_FOUND);
   }
 
-  getMenuItemFor(stepId) {
+  async getMenuItemFor(stepId: string) {
     console.log("running stepId", stepId);
     const [, step] = this.getIntentAndStepByStepId(stepId);
     this.activeStepId = stepId;
-    return [step.question, this.getOptionsForStep(step)];
+
+    let message: string;
+    if (step.text) message = step.text;
+    else if (step.textFn) {
+      console.log("----------------", step.textFn);
+      //-----------------------
+    }
+
+    return [message, this.getOptionsForStep(step)];
   }
 
   async validateInputForStep(stepId: string, value: string) {
@@ -81,7 +90,7 @@ export class IntentManager {
     };
   }
 
-  async processCompletedIntent(intent, output, params) {
+  async processCompletedIntent(intent: any, output: any, params: any) {
     const result = { stepId: this.fallbackStepId };
 
     // TODO: Send message to queue
