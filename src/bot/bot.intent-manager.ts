@@ -16,9 +16,10 @@ export class IntentManager {
   activeStepId = DEFAULT_STEP_ID; // TODO:  remove this
   fallbackStepId = DEFAULT_STEP_ID;
 
-  getOptionsForStep(step: any) {
+  async getOptionsForStep(step: any, messageParams: any) {
     return step.options
       .map(({ numericValue, label }) => `${numericValue} ${label}`)
+      .push(`\n yes ${messageParams.name}`)
       .join(NEW_LINE);
   }
 
@@ -49,11 +50,10 @@ export class IntentManager {
 
     let message: string;
     if (step.text) message = step.text;
-    else if (step.textFn) {
+    else if (step.textFn)
       message = await messageHelper[step.textFn](messageParams);
-    }
 
-    return [message, this.getOptionsForStep(step)];
+    return [message, await this.getOptionsForStep(step, messageParams)];
   }
 
   async validateInputForStep(stepId: string, value: string) {
