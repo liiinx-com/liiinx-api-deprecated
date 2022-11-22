@@ -7,11 +7,7 @@ import { IntentManager } from "./bot.intent-manager";
 import { IntentService } from "./bot-intent.service";
 
 const TOKEN =
-  "EAAPYZCJH2zBwBAOceEbzjmXBZBMMNlC5pkDCojfQKZCHcjdKXhZAZCUAPphf2xCmzVR98qKY4YjMB4gzIllWimGlGioxXWVqKGn9B7lDW0zYHeP3ZChMKcX4xeknkoXdVYcbJgFcnE0USet4qfeOZBCBr7gRanvf21ckdZBQazqSemSqZCa87nyeUfiJCl7ur0nvZC1g09ZAxmueFtZA3GFhvIul";
-
-const getOptions = (buttons) => {
-  return [{ id: "someGivenId", key: "back", value: "Back" }];
-};
+  "EAAPYZCJH2zBwBAGY7Epq2WFgZAuNuULi68LB2j5FrMK4BXULWJxfgmGiaxym7uNQSKqaoDtNgQr8R3lrFubl0Mx1drqGrlWyuPPCHRj5x1NCk3xQligrb6IhXpQhW8ZCmJU6du1jIDEifiJtZCM6ZCtDjOPOqqypUygwCfeYcov4WZBA6u06BkpjAe3v3o8ZCEEW9exvBhQf3wVN1IWHZB6K";
 
 @Injectable()
 export class BotService {
@@ -29,6 +25,9 @@ export class BotService {
     const {
       message: {
         text: { body: receivedInput },
+      },
+      customer: {
+        profile: { name },
       },
     } = receivedMessage;
 
@@ -52,11 +51,15 @@ export class BotService {
     );
     console.log("[i] validation result", validationOk);
 
+    const messageGeneratorParams = { name, userId };
+
     if (!validationOk) {
-      const [question, options] =
-        this.intentManager.getMenuItemFor(activeStepId);
+      const [text, options] = await this.intentManager.getMenuItemFor(
+        activeStepId,
+        messageGeneratorParams,
+      );
       return this.getTextMessageFrom({
-        text: question + "\n \n" + options,
+        text: text + "\n \n" + options,
         to: receivedMessage.customer.phoneNumber,
         replyingMessageId: receivedMessage.message.id,
       });
@@ -87,13 +90,17 @@ export class BotService {
       await this.intentService.updateActiveIntentFor(userId, {
         stepId: nextStepId,
       });
-      const [question, options] = this.intentManager.getMenuItemFor(nextStepId);
+      const [question, options] = await this.intentManager.getMenuItemFor(
+        nextStepId,
+        messageGeneratorParams,
+      );
       responseText = question + "\n \n" + options;
     } else {
       console.log("------------next", nextStep.id);
       nextStepId = nextStep.id;
-      const [question, options] = this.intentManager.getMenuItemFor(
+      const [question, options] = await this.intentManager.getMenuItemFor(
         nextStep.id,
+        messageGeneratorParams,
       );
       responseText = question + "\n \n" + options;
     }

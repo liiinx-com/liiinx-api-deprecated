@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import messageHandler from "./message-handler";
 
 const NEW_LINE = "\n";
 const STEP_ID_DELIMITER = "*";
@@ -12,13 +13,16 @@ const ERRORS = {
 @Injectable()
 export class IntentManager {
   intentsMap = new Map();
-  activeStepId = DEFAULT_STEP_ID;
+  activeStepId = DEFAULT_STEP_ID; // TODO:  remove this
   fallbackStepId = DEFAULT_STEP_ID;
 
-  getOptionsForStep(step) {
-    return step.options
-      .map(({ numericValue, label }) => `${numericValue} ${label}`)
-      .join(NEW_LINE);
+  async getOptionsForStep(step: any, messageParams: any) {
+    const options = step.options
+      .sort((a: any, b: any) =>
+        a.order > b.order ? 1 : b.order > a.order ? -1 : 0,
+      )
+      .map(({ numericValue, label }) => `${numericValue}. ${label}`);
+    return options.join(NEW_LINE);
   }
 
   loadAssets({ intentsObject }) {
@@ -31,7 +35,7 @@ export class IntentManager {
     console.log(`[i] ${this.intentsMap.size} intents loaded successfully `);
   }
 
-  getIntentAndStepByStepId(stepId) {
+  getIntentAndStepByStepId(stepId: string) {
     if (!stepId) return null;
     const [intentId] = stepId.split(STEP_ID_DELIMITER);
     if (this.intentsMap.has(intentId)) {
@@ -41,11 +45,13 @@ export class IntentManager {
     throw new Error(ERRORS.STEP_NOT_FOUND);
   }
 
-  getMenuItemFor(stepId) {
+  async getMenuItemFor(stepId: string, messageParams = {}) {
     console.log("running stepId", stepId);
     const [, step] = this.getIntentAndStepByStepId(stepId);
-    this.activeStepId = stepId;
-    return [step.question, this.getOptionsForStep(step)];
+    this.activeStepId = stepId; // TODO: candidate to remove
+
+    // return await messageHandler[step.textFn](messageParams);
+    return [step.text, await this.getOptionsForStep(step, messageParams)];
   }
 
   async validateInputForStep(stepId: string, value: string) {
@@ -81,7 +87,7 @@ export class IntentManager {
     };
   }
 
-  async processCompletedIntent(intent, output, params) {
+  async processCompletedIntent(intent: any, output: any, params: any) {
     const result = { stepId: this.fallbackStepId };
 
     // TODO: Send message to queue
