@@ -18,7 +18,9 @@ export class IntentManager {
 
   async getOptionsForStep(step: any, messageParams: any) {
     const options = step.options
-      .sort((a, b) => (a.order > b.order ? 1 : b.order > a.order ? -1 : 0))
+      .sort((a: any, b: any) =>
+        a.order > b.order ? 1 : b.order > a.order ? -1 : 0,
+      )
       .map(({ numericValue, label }) => `${numericValue}. ${label}`);
     return options.join(NEW_LINE);
   }

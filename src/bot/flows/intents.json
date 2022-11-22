@@ -10,6 +10,7 @@
         "nextStepId": null,
         "textFn": "mainMenu",
         "key": "selectedMenuItem",
+        "optionsFn": "mainMenuOptions",
         "options": [
           {
             "id": "hi*1*1",
