@@ -8,6 +8,7 @@
         "previousStepId": null,
         "id": "hi*1",
         "nextStepId": null,
+        "text": "Hello!\nThis is liiinx, How can I help you?",
         "textFn": "mainMenu",
         "key": "selectedMenuItem",
         "optionsFn": "mainMenuOptions",
