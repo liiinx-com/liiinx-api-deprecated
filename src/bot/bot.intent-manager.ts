@@ -3,7 +3,7 @@ import messageHandler from "./message-handler";
 
 const NEW_LINE = "\n";
 const STEP_ID_DELIMITER = "*";
-const DEFAULT_STEP_ID = "hi*1";
+const DEFAULT_STEP_ID = "getStarted*1";
 
 const ERRORS = {
   INVALID_INPUT: "E00-INVALID_INPUT",
@@ -59,34 +59,33 @@ export class IntentManager {
     return [step.text, await this.getOptionsForStep(step, messageParams)];
   }
 
-  async validateInputForStep(stepId: string, value: string) {
-    const [intent, step] = this.getIntentAndStepByStepId(stepId);
+  async validateInputForStep(options: any, value: string, optionKey: string) {
     if (!value || typeof value !== "string")
       return {
         ok: false,
         errorCode: ERRORS.INVALID_INPUT,
         response: null,
-        intent,
+        // intent,
       };
 
-    const validValues = step.options.map(({ numericValue }) => numericValue);
+    const validValues = options.map(({ numericValue }) => numericValue);
     if (!validValues.includes(value.toString()))
       return {
         ok: false,
         errorCode: ERRORS.INVALID_INPUT,
         response: null,
-        intent,
+        // intent,
       };
 
-    const selectedOption = step.options.find(
+    const selectedOption = options.find(
       ({ numericValue }) => numericValue === value.toString(),
     );
 
     return {
       ok: true,
-      intent,
+      // intent,
       response: {
-        [step.key]: selectedOption.value,
+        [optionKey]: selectedOption.value,
       },
       errorCode: undefined,
     };

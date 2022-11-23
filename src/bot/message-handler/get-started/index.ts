@@ -6,9 +6,39 @@ const greetingMessage = ({ name }, { randomFn = undefined }) => {
   return repo[messageIndex];
 };
 
-export default async function ({ name, userId }) {
+const intentSteps = {
+  "getStarted*1": {
+    previousStepId: null,
+    id: "getStarted*1",
+    nextStepId: null,
+    text: "this is the text",
+    key: "selectedMenuItem",
+    optionsFn: "mainMenuOptions",
+    options: [
+      {
+        id: "getStarted*1*1",
+        order: 1,
+        label: "New package return",
+        value: "new_return_order",
+        numericValue: "1",
+      },
+      {
+        id: "getStarted*1*2",
+        order: 2,
+        label: "Visit liiinx.com",
+        value: "visit-liiinx.com",
+        numericValue: "2",
+      },
+    ],
+  },
+};
+
+export default async function () {
   return {
-    getMenuForStepId: (stepId: string) => ["text", "stringifiedOptions"],
+    getMenuForStepId: (stepId: string) => {
+      const step = intentSteps[stepId];
+      return [step.text, step.options, step.key];
+    },
     getNextStepForStepId: (stepId: string) => {},
   };
 }

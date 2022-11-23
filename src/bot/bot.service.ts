@@ -40,18 +40,22 @@ export class BotService {
       : this.intentManager.fallbackStepId;
 
     // 1. get handler module for step
-    const l = this.intentManager.getIntentModuleByStepId(activeStepId);
-    console.log("active module=>", l);
+    const handlerModule =
+      this.intentManager.getIntentModuleByStepId(activeStepId);
+    const { getMenuForStepId } = await handlerModule();
+
+    const [text, options, stepKey] = await getMenuForStepId(activeStepId);
 
     // 1. validate input for step regardless of user
     const {
       ok: validationOk,
-      intent,
+      // intent,
       response: validatedResponse,
       errorCode,
     } = await this.intentManager.validateInputForStep(
-      activeStepId,
+      options,
       receivedInput,
+      stepKey,
     );
     console.log("[i] validation result", validationOk);
 
@@ -75,42 +79,42 @@ export class BotService {
 
     let responseText: string;
     let nextStepId: string;
-    const { isIntentComplete, nextStep } =
-      await this.intentManager.getNextStepFor(activeStepId);
+    // const { isIntentComplete, nextStep } =
+    //   await this.intentManager.getNextStepFor(activeStepId);
 
-    if (isIntentComplete) {
-      const { output } = await this.intentService.getUserActiveIntentInfo(
-        userId,
-      );
-      const additionalParams = null;
-      console.log("----------output", output);
-      const { stepId } = await this.intentManager.processCompletedIntent(
-        intent,
-        output,
-        additionalParams,
-      );
-      nextStepId = stepId;
-      await this.intentService.resetUserOutput(userId);
-      await this.intentService.updateActiveIntentFor(userId, {
-        stepId: nextStepId,
-      });
-      const [question, options] = await this.intentManager.getMenuItemFor(
-        nextStepId,
-        messageGeneratorParams,
-      );
-      responseText = question + "\n \n" + options;
-    } else {
-      console.log("------------next", nextStep.id);
-      nextStepId = nextStep.id;
-      const [question, options] = await this.intentManager.getMenuItemFor(
-        nextStep.id,
-        messageGeneratorParams,
-      );
-      responseText = question + "\n \n" + options;
-    }
-    await this.intentService.updateActiveIntentFor(userId, {
-      stepId: nextStepId,
-    });
+    // if (isIntentComplete) {
+    //   const { output } = await this.intentService.getUserActiveIntentInfo(
+    //     userId,
+    //   );
+    //   const additionalParams = null;
+    //   console.log("----------output", output);
+    //   const { stepId } = await this.intentManager.processCompletedIntent(
+    //     // intent,
+    //     output,
+    //     additionalParams,
+    //   );
+    //   nextStepId = stepId;
+    //   await this.intentService.resetUserOutput(userId);
+    //   await this.intentService.updateActiveIntentFor(userId, {
+    //     stepId: nextStepId,
+    //   });
+    //   const [question, options] = await this.intentManager.getMenuItemFor(
+    //     nextStepId,
+    //     messageGeneratorParams,
+    //   );
+    //   responseText = question + "\n \n" + options;
+    // } else {
+    //   console.log("------------next", nextStep.id);
+    //   nextStepId = nextStep.id;
+    //   const [question, options] = await this.intentManager.getMenuItemFor(
+    //     nextStep.id,
+    //     messageGeneratorParams,
+    //   );
+    //   responseText = question + "\n \n" + options;
+    // }
+    // await this.intentService.updateActiveIntentFor(userId, {
+    //   stepId: nextStepId,
+    // });
 
     const response = this.getTextMessageFrom({
       text: responseText,
