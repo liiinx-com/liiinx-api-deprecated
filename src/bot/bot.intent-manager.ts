@@ -55,14 +55,8 @@ export class IntentManager {
     const [, step] = this.getIntentAndStepByStepId(stepId);
     this.activeStepId = stepId; // TODO: candidate to remove
 
-    let message: string;
-    if (step.text) message = step.text;
-    else if (step.textFn) {
-      const [msg] = await messageHandler[step.textFn](messageParams);
-      message = msg;
-    }
-
-    return [message, await this.getOptionsForStep(step, messageParams)];
+    // return await messageHandler[step.textFn](messageParams);
+    return [step.text, await this.getOptionsForStep(step, messageParams)];
   }
 
   async validateInputForStep(stepId: string, value: string) {
