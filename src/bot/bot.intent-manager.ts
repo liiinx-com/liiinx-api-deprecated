@@ -35,6 +35,11 @@ export class IntentManager {
     console.log(`[i] ${this.intentsMap.size} intents loaded successfully `);
   }
 
+  getIntentModuleByStepId(stepId: string) {
+    const [intentId] = stepId.split(STEP_ID_DELIMITER);
+    return messageHandler[intentId];
+  }
+
   getIntentAndStepByStepId(stepId: string) {
     if (!stepId) return null;
     const [intentId] = stepId.split(STEP_ID_DELIMITER);

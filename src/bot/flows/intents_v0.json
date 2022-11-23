@@ -1,0 +1,110 @@
+{
+  "hi": {
+    "id": "hi",
+    "sampleMessages": ["hi"],
+    "firstStepId": "hi*1",
+    "steps": {
+      "hi*1": {
+        "previousStepId": null,
+        "id": "hi*1",
+        "nextStepId": null,
+        "textFn": "mainMenu",
+        "key": "selectedMenuItem",
+        "optionsFn": "mainMenuOptions",
+        "options": [
+          {
+            "id": "hi*1*1",
+            "order": 1,
+            "label": "New package return",
+            "value": "new_return_order",
+            "numericValue": "1"
+          },
+          {
+            "id": "hi*1*2",
+            "order": 2,
+            "label": "Visit liiinx.com",
+            "value": "visit-liiinx.com",
+            "numericValue": "2"
+          }
+        ]
+      }
+    }
+  },
+  "new_return_order": {
+    "id": "new_return_order",
+    "sampleMessages": ["order", "return"],
+    "messageTemplateId": "new_return_order",
+    "firstStepId": "new_return_order*1",
+    "steps": {
+      "new_return_order*1": {
+        "previousStepId": null,
+        "id": "new_return_order*1",
+        "nextStepId": "new_return_order*2",
+        "text": "What retailer are you returning this package to?",
+        "key": "retailer",
+        "options": [
+          {
+            "id": "new_return_order*1*1",
+            "order": 1,
+            "label": "Amazon",
+            "value": "AMAZON",
+            "numericValue": "1"
+          },
+          {
+            "id": "new_return_order*1*2",
+            "order": 2,
+            "label": "Walmart",
+            "value": "WALMART",
+            "numericValue": "2"
+          }
+        ]
+      },
+      "new_return_order*2": {
+        "previousStepId": "new_return_order*1",
+        "id": "new_return_order*2",
+        "nextStepId": "new_return_order*3",
+        "text": "What size is the package?",
+        "key": "size",
+        "options": [
+          {
+            "id": "new_return_order*2*1",
+            "order": 1,
+            "label": "Small",
+            "value": "SMALL",
+            "numericValue": "1"
+          },
+          {
+            "id": "new_return_order*2*2",
+            "order": 2,
+            "label": "Medium",
+            "value": "MEDIUM",
+            "numericValue": "2"
+          }
+        ]
+      },
+      "new_return_order*3": {
+        "previousStepId": "new_return_order*2",
+        "id": "new_return_order*3",
+        "nextStepId": null,
+        "text": "Does it need a shipping box?",
+        "key": "shippingBox",
+        "options": [
+          {
+            "id": "new_return_order*3*1",
+            "order": 1,
+            "label": "Yes",
+            "value": true,
+            "numericValue": "1"
+          },
+          {
+            "id": "new_return_order*3*2",
+            "order": 2,
+            "label": "No",
+            "value": false,
+            "numericValue": "2"
+          }
+        ]
+      }
+    }
+  }
+}

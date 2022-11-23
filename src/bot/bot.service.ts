@@ -39,6 +39,10 @@ export class BotService {
       ? userStepId
       : this.intentManager.fallbackStepId;
 
+    // 1. get handler module for step
+    const l = this.intentManager.getIntentModuleByStepId(activeStepId);
+    console.log("active module=>", l);
+
     // 1. validate input for step regardless of user
     const {
       ok: validationOk,
