@@ -2,12 +2,11 @@ import { firstValueFrom } from "rxjs";
 import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { IncomingMessage } from "./bot.type";
-import intents from "./flows/intents.json";
-import { IntentManager } from "./bot.intent-manager";
+import assets from "./assets";
 import { IntentService } from "./bot-intent.service";
+import { IntentManager } from "./intent-manager";
 
-const TOKEN =
-  "EAAPYZCJH2zBwBAGY7Epq2WFgZAuNuULi68LB2j5FrMK4BXULWJxfgmGiaxym7uNQSKqaoDtNgQr8R3lrFubl0Mx1drqGrlWyuPPCHRj5x1NCk3xQligrb6IhXpQhW8ZCmJU6du1jIDEifiJtZCM6ZCtDjOPOqqypUygwCfeYcov4WZBA6u06BkpjAe3v3o8ZCEEW9exvBhQf3wVN1IWHZB6K";
+const TOKEN = "";
 
 @Injectable()
 export class BotService {
@@ -18,11 +17,12 @@ export class BotService {
     private readonly intentService: IntentService,
     private readonly http: HttpService,
   ) {
-    this.intentManager.loadAssets({ intentsObject: intents });
+    this.intentManager.loadAssets({ intentsObject: assets.intents });
   }
 
   async textMessageHandler(userId: number, receivedMessage: IncomingMessage) {
     const {
+      customer: { profile },
       message: {
         text: { body: receivedInput },
       },
@@ -31,91 +31,105 @@ export class BotService {
       },
     } = receivedMessage;
 
-    const { stepId: userStepId } =
-      await this.intentService.getUserActiveIntentInfo(userId);
-
-    // 0. user active stepId
-    const activeStepId = userStepId
-      ? userStepId
-      : this.intentManager.fallbackStepId;
-
-    // 1. validate input for step regardless of user
-    const {
-      ok: validationOk,
-      intent,
-      response: validatedResponse,
-      errorCode,
-    } = await this.intentManager.validateInputForStep(
-      activeStepId,
-      receivedInput,
+    const { response } = await this.intentManager.processTextMessageForUser(
+      userId,
+      {
+        user: { id: userId, name: profile.name },
+        text: receivedInput,
+      },
     );
-    console.log("[i] validation result", validationOk);
 
-    const messageGeneratorParams = { name, userId };
-
-    if (!validationOk) {
-      const [text, options] = await this.intentManager.getMenuItemFor(
-        activeStepId,
-        messageGeneratorParams,
-      );
-      return this.getTextMessageFrom({
-        text: text + "\n \n" + options,
-        to: receivedMessage.customer.phoneNumber,
-        replyingMessageId: receivedMessage.message.id,
-      });
-    }
-
-    await this.intentService.updateActiveIntentFor(userId, {
-      changes: validatedResponse,
-    });
-
-    let responseText: string;
-    let nextStepId: string;
-    const { isIntentComplete, nextStep } =
-      await this.intentManager.getNextStepFor(activeStepId);
-
-    if (isIntentComplete) {
-      const { output } = await this.intentService.getUserActiveIntentInfo(
-        userId,
-      );
-      const additionalParams = null;
-      console.log("----------output", output);
-      const { stepId } = await this.intentManager.processCompletedIntent(
-        intent,
-        output,
-        additionalParams,
-      );
-      nextStepId = stepId;
-      await this.intentService.resetUserOutput(userId);
-      await this.intentService.updateActiveIntentFor(userId, {
-        stepId: nextStepId,
-      });
-      const [question, options] = await this.intentManager.getMenuItemFor(
-        nextStepId,
-        messageGeneratorParams,
-      );
-      responseText = question + "\n \n" + options;
-    } else {
-      console.log("------------next", nextStep.id);
-      nextStepId = nextStep.id;
-      const [question, options] = await this.intentManager.getMenuItemFor(
-        nextStep.id,
-        messageGeneratorParams,
-      );
-      responseText = question + "\n \n" + options;
-    }
-    await this.intentService.updateActiveIntentFor(userId, {
-      stepId: nextStepId,
-    });
-
-    const response = this.getTextMessageFrom({
-      text: responseText,
+    return this.getTextMessageFrom({
+      text: response,
       to: receivedMessage.customer.phoneNumber,
       replyingMessageId: receivedMessage.message.id,
     });
-
-    return response;
   }
+
+  // async textMessageHandler22(userId: number, receivedMessage: IncomingMessage) {
+  //   const {
+  //     message: {
+  //       text: { body: receivedInput },
+  //     },
+  //   } = receivedMessage;
+
+  //   const { stepId: userStepId } =
+  //     await this.intentService.getUserActiveIntentInfo(userId);
+
+  //   // 0. user active stepId
+  //   const activeStepId = userStepId
+  //     ? userStepId
+  //     : this.intentManager.fallbackStepId;
+
+  //   // 1. validate input for step regardless of user
+  //   const {
+  //     ok: validationOk,
+  //     intent,
+  //     response: validatedResponse,
+  //     errorCode,
+  //   } = await this.intentManager.validateInputForStep(
+  //     activeStepId,
+  //     receivedInput,
+  //   );
+  //   console.log("[i] validation result", validationOk);
+
+  //   if (!validationOk) {
+  //     const [question, options] =
+  //       this.intentManager.getMenuItemFor(activeStepId);
+  //     return this.getTextMessageFrom({
+  //       text: question + "\n \n" + options,
+  //       to: receivedMessage.customer.phoneNumber,
+  //       replyingMessageId: receivedMessage.message.id,
+  //     });
+  //   }
+
+  //   await this.intentService.updateActiveIntentFor(userId, {
+  //     changes: validatedResponse,
+  //   });
+
+  //   let responseText: string;
+  //   let nextStepId: string;
+  //   const { isIntentComplete, nextStep } =
+  //     await this.intentManager.getNextStepFor(activeStepId);
+
+  //   if (isIntentComplete) {
+  //     const { output } = await this.intentService.getUserActiveIntentInfo(
+  //       userId,
+  //     );
+  //     const additionalParams = null;
+  //     console.log("----------output", output);
+  //     const { stepId } = await this.intentManager.processCompletedIntent(
+  //       intent,
+  //       output,
+  //       additionalParams,
+  //     );
+  //     nextStepId = stepId;
+  //     await this.intentService.resetUserOutput(userId);
+  //     await this.intentService.updateActiveIntentFor(userId, {
+  //       stepId: nextStepId,
+  //     });
+  //     const [question, options] = this.intentManager.getMenuItemFor(nextStepId);
+  //     responseText = question + "\n \n" + options;
+  //   } else {
+  //     console.log("------------next", nextStep.id);
+  //     nextStepId = nextStep.id;
+  //     const [question, options] = this.intentManager.getMenuItemFor(
+  //       nextStep.id,
+  //     );
+  //     responseText = question + "\n \n" + options;
+  //   }
+  //   await this.intentService.updateActiveIntentFor(userId, {
+  //     stepId: nextStepId,
+  //   });
+
+  //   const response = this.getTextMessageFrom({
+  //     text: responseText,
+  //     to: receivedMessage.customer.phoneNumber,
+  //     replyingMessageId: receivedMessage.message.id,
+  //   });
+
+  //   return response;
+  // }
 
   getTextMessageFrom({
     to,

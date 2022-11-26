@@ -8,7 +8,7 @@ import { ConfigurationModule } from "src/configuration/configuration.module";
 import { BotController } from "./bot.controller";
 import { BotUtils } from "./bot.utils";
 import { IntentService } from "./bot-intent.service";
-import { IntentManager } from "./bot.intent-manager";
+import { IntentManager } from "./intent-manager";
 
 @Module({
   imports: [
