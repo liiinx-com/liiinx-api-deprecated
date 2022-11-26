@@ -5,6 +5,6 @@ const intents = {
   },
 };
 
-module.exports = {
+export default {
   intents,
 };

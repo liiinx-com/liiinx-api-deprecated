@@ -1,13 +1,13 @@
 const stepsObject = {
-  "getStarted*1": {
+  "getStarted.1": {
     previousStepId: null,
-    id: "hi*1",
+    id: "getStarted.1",
     nextStepId: null,
     text: "Hello!\nThis is liiinx, How can I help you?",
     key: "selectedMenuItem",
     options: [
       {
-        id: "hi*1*1",
+        id: "getStarted*1*1",
         order: 1,
         label: "New package return",
         value: "new_return_order",
@@ -29,17 +29,32 @@ const getOptionsForStep = async (stepId: string) => {
   return [];
 };
 
-const getStepTextAndOptionsByStepId = async (
-  stepId: string,
-  options: object | undefined,
-) => {
+const getNextStepFor = async (stepId: string) => {
+  const result = { isIntentComplete: false, nextStep: null };
   const step = await getStep(stepId);
-  const stepOptions = await getOptionsForStep(stepId);
-  return [step.text, stepOptions];
+  if (step.nextStepId) {
+    const nextStep = await getStep(step.nextStepId);
+    return { ...result, nextStep };
+  }
+  return { ...result, isIntentComplete: true };
 };
 
-export default function () {
-  return {
-    getStepTextAndOptionsByStepId,
-  };
-}
+const getStepTextAndOptionsByStepId = async (
+  stepId: string,
+  options: any | undefined,
+) => {
+  const {
+    message: {
+      user: { id, name },
+      text,
+    },
+  } = options;
+  const step = await getStep(stepId);
+  const stepOptions = await getOptionsForStep(stepId);
+  return [step.text, stepOptions, step.key];
+};
+
+export default {
+  getStepTextAndOptionsByStepId,
+  getNextStepFor,
+};
