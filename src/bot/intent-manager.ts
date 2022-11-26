@@ -111,7 +111,7 @@ export class IntentManager {
     // 2. Input Validation
     const { response: validatedResponse, ok: validationOk } =
       await this.validateInputForStep(stepOptions, stepKey, userInput);
-    console.log(validationOk, stepText);
+
     if (!validationOk) {
       return {
         ...result,
@@ -133,14 +133,25 @@ export class IntentManager {
     );
     console.log("=..", isIntentComplete, nextStep);
 
-    // if (!text || typeof text !== "string")
-    //   return {
-    //     ok: false,
-    //     errorCode: ERRORS.INVALID_INPUT,
-    //     response: null,
-    //     intent,
-    //   };
-
+    if (isIntentComplete) {
+      //  return {
+      //   ...result,
+      //   response:
+      //     stepText +
+      //     this.NEW_LINE +
+      //     this.NEW_LINE +
+      //     this.getOptionsTextFromOptions(stepOptions),
+      // };
+    } else {
+      //   return {
+      //   ...result,
+      //   response:
+      //     stepText +
+      //     this.NEW_LINE +
+      //     this.NEW_LINE +
+      //     this.getOptionsTextFromOptions(stepOptions),
+      // };
+    }
     return result;
   }
 
