@@ -7,7 +7,7 @@ import { IntentService } from "./bot-intent.service";
 import { IntentManager } from "./intent-manager";
 
 const TOKEN =
-  "EAAPYZCJH2zBwBANIksA9cnjiptMhxbyaVGIODJSCqRx0zODc0XxucnuqEobtqM5tODJP657IB7nisAi4ah6tB93fMJ7atTr5r9VWSTj45utskcZBbc0pcACYkyil4kZA7NH08UV8OQBFZCgsA3y3ZCi8wHdhnn6glVysdoN5PoarPUOgaHVFVJkVzDgUYw5vCyZB1nCdHnL0iiFRTxtysY";
+  "EAAPYZCJH2zBwBAOg8ory6Wkgslg26zWZAwStwpI1YHCyz9LcvjsyPL7vLUk5by5qC8VA39kpLRyZBAcavPXJ3gbBPIyiK8mzwlc0X2c4iWLAxXOkRHRvhDMur4EGBbluDsvY3ZBj1UCcYG6nHBuii84ZA7TB0DmXz2efZBWQ3ddFCEysR2pZBnPjiL8mcujQoIxTS3RfNvB5Dmf96M8Drqb";
 
 const getOptions = (buttons) => {
   return [{ id: "someGivenId", key: "back", value: "Back" }];
@@ -30,6 +30,9 @@ export class BotService {
       customer: { profile },
       message: {
         text: { body: receivedInput },
+      },
+      customer: {
+        profile: { name },
       },
     } = receivedMessage;
 
