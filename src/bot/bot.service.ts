@@ -5,6 +5,7 @@ import { IncomingMessage } from "./bot.type";
 import intents from "./flows/intents.json";
 import { IntentManager } from "./bot.intent-manager";
 import { IntentService } from "./bot-intent.service";
+import { IntentManager2 } from "./lambda/intent-manager";
 
 const TOKEN =
   "EAAPYZCJH2zBwBAOceEbzjmXBZBMMNlC5pkDCojfQKZCHcjdKXhZAZCUAPphf2xCmzVR98qKY4YjMB4gzIllWimGlGioxXWVqKGn9B7lDW0zYHeP3ZChMKcX4xeknkoXdVYcbJgFcnE0USet4qfeOZBCBr7gRanvf21ckdZBQazqSemSqZCa87nyeUfiJCl7ur0nvZC1g09ZAxmueFtZA3GFhvIul";
@@ -19,10 +20,22 @@ export class BotService {
 
   constructor(
     private readonly intentManager: IntentManager,
+    private readonly manager: IntentManager2,
     private readonly intentService: IntentService,
     private readonly http: HttpService,
   ) {
     this.intentManager.loadAssets({ intentsObject: intents });
+  }
+
+  async textMessageHandler22(userId: number, receivedMessage: IncomingMessage) {
+    const {
+      message: {
+        text: { body: receivedInput },
+      },
+    } = receivedMessage;
+
+    // 1. get user's active step
+    const activeStepId = await  this.manager.
   }
 
   async textMessageHandler(userId: number, receivedMessage: IncomingMessage) {
