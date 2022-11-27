@@ -54,7 +54,16 @@ const getStepTextAndOptionsByStepId = async (
   return [step.text, stepOptions, step.key];
 };
 
+const handleIntentComplete = async (userId: number, payload: any) => {
+  const result = { gotoStepId: null };
+
+  console.log(userId, "completed intent with", payload);
+
+  return { ...result, gotoStepId: "newReturnOrder.1" };
+};
+
 export default {
   getStepTextAndOptionsByStepId,
   getNextStepFor,
+  handleIntentComplete,
 };
