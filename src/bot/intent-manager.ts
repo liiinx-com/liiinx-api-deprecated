@@ -132,16 +132,21 @@ export class IntentManager {
     // 4. Check if intent is complete
     const { isIntentComplete, nextStep } = await getNextStepFor(
       userActiveStepId,
+      { message },
     );
 
     // 5. Get nextStep
     let gotoNextStepId: string;
     if (isIntentComplete) {
       const userCurrentOutput = await this.getUserCurrentOutput(userId);
-      const { gotoStepId } = await handleIntentComplete(userId, {
-        ...userCurrentOutput,
-        ...validatedResponse,
-      });
+      const { gotoStepId } = await handleIntentComplete(
+        userId,
+        {
+          ...userCurrentOutput,
+          ...validatedResponse,
+        },
+        { message },
+      );
 
       gotoNextStepId = gotoStepId
         ? gotoStepId
@@ -152,7 +157,7 @@ export class IntentManager {
     } else gotoNextStepId = nextStep.id;
 
     // 7. Update User Active StepId
-    const update = await this.updateUserActiveStepId(userId, {
+    await this.updateUserActiveStepId(userId, {
       stepId: gotoNextStepId,
     });
 
