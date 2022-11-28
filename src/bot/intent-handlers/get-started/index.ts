@@ -29,7 +29,7 @@ const getOptionsForStep = async (stepId: string) => {
   return [];
 };
 
-const getNextStepFor = async (stepId: string) => {
+const getNextStepFor = async (stepId: string, options: any | undefined) => {
   const result = { isIntentComplete: false, nextStep: null };
   const step = await getStep(stepId);
   if (step.nextStepId) {
@@ -54,7 +54,10 @@ const getStepTextAndOptionsByStepId = async (
   return [step.text, stepOptions, step.key];
 };
 
-const handleIntentComplete = async (userId: number, payload: any) => {
+const handleIntentComplete = async (
+  userId: number,
+  payload: any | undefined,
+) => {
   const result = { gotoStepId: null };
 
   console.log(userId, "completed intent with", payload);

@@ -82,12 +82,11 @@ const getOptionsForStep = async (stepId: string) => {
   return [];
 };
 
-const getNextStepFor = async (stepId: string) => {
+const getNextStepFor = async (stepId: string, options: any | undefined) => {
   const result = { isIntentComplete: false, nextStep: null };
   const step = await getStep(stepId);
   if (step.nextStepId) {
     const nextStep = await getStep(step.nextStepId);
-    console.log("000000", nextStep);
     return { ...result, nextStep };
   }
   return { ...result, isIntentComplete: true };
