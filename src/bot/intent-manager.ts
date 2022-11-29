@@ -114,14 +114,16 @@ export class IntentManager {
       await this.validateInputForStep(currentStepOptions, stepKey, userInput);
 
     if (!validationOk) {
-      return {
-        ...result,
-        response:
-          currentStepText +
-          this.NEW_LINE +
-          this.NEW_LINE +
-          this.getOptionsTextFromOptions(currentStepOptions),
-      };
+      return [
+        {
+          ...result,
+          response:
+            currentStepText +
+            this.NEW_LINE +
+            this.NEW_LINE +
+            this.getOptionsTextFromOptions(currentStepOptions),
+        },
+      ];
     }
 
     // 3. Update user current active step
@@ -173,14 +175,16 @@ export class IntentManager {
       await getStepTextAndOptionsByStepIdForNextModule(gotoNextStepId, {
         message,
       });
-    return {
-      ...result,
-      response:
-        nextStepText +
-        this.NEW_LINE +
-        this.NEW_LINE +
-        this.getOptionsTextFromOptions(nextStepOptions),
-    };
+    return [
+      {
+        ...result,
+        response:
+          nextStepText +
+          this.NEW_LINE +
+          this.NEW_LINE +
+          this.getOptionsTextFromOptions(nextStepOptions),
+      },
+    ];
   }
 
   private getOptionsTextFromOptions(options: any) {
