@@ -9,13 +9,13 @@ const stepsObject = {
       "Hi Amir " +
       emoji.get("wave") +
       "\n\n" +
-      "Welcome to Liiinx's WhatsApp self-service experience." +
-      "\n\n" +
-      "How can we help you?" +
-      "\n\n" +
-      "Type *1 or 2* based on how you'd like to proceed." +
-      "\n\n" +
-      "At any point, if you want to come to this menu, type *9*.",
+      "Welcome to Liiinx's WhatsApp self-service experience.",
+    // +"\n\n" +
+    // "How can we help you?" +
+    // "\n\n" +
+    // "Type *1 or 2* based on how you'd like to proceed." +
+    // "\n\n" +
+    // "At any point, if you want to come to this menu, type *9*.",
     key: "selectedMenuItem",
     options: [
       {

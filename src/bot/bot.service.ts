@@ -7,7 +7,7 @@ import { IntentService } from "./bot-intent.service";
 import { IntentManager } from "./intent-manager";
 
 const TOKEN =
-  "EAAPYZCJH2zBwBAOaujMrrdSBLhyfGklxqQklktZCWhKqkm4zaRZCdJ53BBUdvaI4ZCiB5sVDl6UIKZAr4mLNYdLlS6ww9ZBxV0aVa2O3jVUQZBtZCDKokPeptBbj9ufIJLTXCUBikweuDkl19UInNIUZBA7Hwt2irphDsUGqBBSPVNmPC7iqQ6xHroAZBeqnmdcvARZB4ZBs29JBkWphe0NiUIjc";
+  "EAAPYZCJH2zBwBAIpoFi6ffjxSL4NvbcZBQQUgiTfGZCJhVR86WFBZCmfp7cNlpkKiH8gyeQVdLIRo8aamy4yECn7kWeLvuLy0EyOEyZAe3PiMjzuWPbstdWZBWUxnZADSCtNpkM00rJTxgULKqg2Cj8AW1zzZAETZBp7DyU5sMlv1x8wzsQ6FHCJSZBHwLnZBkfZCnCp1ZB1IjRLqTEt6Tqm2zdEi";
 
 @Injectable()
 export class BotService {
@@ -35,7 +35,7 @@ export class BotService {
       },
     } = receivedMessage;
 
-    const responses = await this.intentManager.processTextMessageForUser(
+    const textResponses = await this.intentManager.processTextMessageForUser(
       userId,
       {
         user: { id: userId, name: profile.name },
@@ -43,9 +43,9 @@ export class BotService {
       },
     );
 
-    return responses.map((response) =>
+    return textResponses.map((text) =>
       this.getTextMessageFrom({
-        text: response,
+        text: text.response,
         to: receivedMessage.customer.phoneNumber,
         replyingMessageId: receivedMessage.message.id,
       }),

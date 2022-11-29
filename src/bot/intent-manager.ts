@@ -91,7 +91,10 @@ export class IntentManager {
     throw new Error(ERRORS.STEP_NOT_FOUND);
   }
 
-  async processTextMessageForUser(userId: number, message: IncomingMessage) {
+  async processTextMessageForUser(
+    userId: number,
+    message: IncomingMessage,
+  ): any[] {
     const result = { response: "sample text" };
     const { text: userInput } = message;
     const userActiveStepId = await this.getUserActiveStepId(userId);
