@@ -1,9 +1,21 @@
+import emoji from "node-emoji";
+
 const stepsObject = {
   "getStarted.1": {
     previousStepId: null,
     id: "getStarted.1",
     nextStepId: null,
-    text: "Hello!\nThis is liiinx, How can I help you?",
+    text:
+      "Hi Amir " +
+      emoji.get("wave") +
+      "\n\n" +
+      "Welcome to Liiinx's WhatsApp self-service experience." +
+      "\n\n" +
+      "How can we help you?" +
+      "\n\n" +
+      "Type *1 or 2* based on how you'd like to proceed." +
+      "\n\n" +
+      "At any point, if you want to come to this menu, type *9*.",
     key: "selectedMenuItem",
     options: [
       {
@@ -16,15 +28,15 @@ const stepsObject = {
       {
         id: "getStarted*1*2",
         order: 1,
-        label: "Schedule a Package Return (Amazon or Walmart for now)",
+        label: "New Amazon/Walmart Return Pickup",
         value: "new_return_order",
         numericValue: "2",
       },
       {
         id: "getStarted*1*3",
         order: 3,
-        label: "My Schedules",
-        value: "my_schedules",
+        label: "My incoming pickups",
+        value: "my_pickups",
         numericValue: "3",
       },
       {
