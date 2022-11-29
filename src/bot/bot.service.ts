@@ -7,7 +7,7 @@ import { IntentService } from "./bot-intent.service";
 import { IntentManager } from "./intent-manager";
 
 const TOKEN =
-  "EAAPYZCJH2zBwBAOaujMrrdSBLhyfGklxqQklktZCWhKqkm4zaRZCdJ53BBUdvaI4ZCiB5sVDl6UIKZAr4mLNYdLlS6ww9ZBxV0aVa2O3jVUQZBtZCDKokPeptBbj9ufIJLTXCUBikweuDkl19UInNIUZBA7Hwt2irphDsUGqBBSPVNmPC7iqQ6xHroAZBeqnmdcvARZB4ZBs29JBkWphe0NiUIjc";
+  "EAAPYZCJH2zBwBAIpoFi6ffjxSL4NvbcZBQQUgiTfGZCJhVR86WFBZCmfp7cNlpkKiH8gyeQVdLIRo8aamy4yECn7kWeLvuLy0EyOEyZAe3PiMjzuWPbstdWZBWUxnZADSCtNpkM00rJTxgULKqg2Cj8AW1zzZAETZBp7DyU5sMlv1x8wzsQ6FHCJSZBHwLnZBkfZCnCp1ZB1IjRLqTEt6Tqm2zdEi";
 
 @Injectable()
 export class BotService {
@@ -24,7 +24,7 @@ export class BotService {
   async textMessageHandler(
     userId: number,
     receivedMessage: IncomingMessage,
-  ): Promise<any[]> {
+  ): Promise<any> {
     const {
       customer: { profile },
       message: {
@@ -35,7 +35,7 @@ export class BotService {
       },
     } = receivedMessage;
 
-    const responses = await this.intentManager.processTextMessageForUser(
+    const { response } = await this.intentManager.processTextMessageForUser(
       userId,
       {
         user: { id: userId, name: profile.name },
@@ -43,13 +43,11 @@ export class BotService {
       },
     );
 
-    return responses.map((response) =>
-      this.getTextMessageFrom({
-        text: response,
-        to: receivedMessage.customer.phoneNumber,
-        replyingMessageId: receivedMessage.message.id,
-      }),
-    );
+    return this.getTextMessageFrom({
+      text: response,
+      to: receivedMessage.customer.phoneNumber,
+      replyingMessageId: receivedMessage.message.id,
+    });
   }
 
   getTextMessageFrom({
@@ -76,19 +74,16 @@ export class BotService {
 
     const { id: userId } = await this.intentService.getUserByPhone(phoneNumber);
 
-    let responses: any[];
+    let response: any;
     if (type === "text")
-      responses = await this.textMessageHandler(userId, receivedMessage);
-    if (responses)
-      return this.send(
-        responses.map(
-          (r) =>
-            ({
-              data: r,
-              phoneNumberId,
-            } as WhatsappResponse),
-        ),
-      );
+      response = await this.textMessageHandler(userId, receivedMessage);
+    if (response)
+      return this.send([
+        {
+          data: response,
+          phoneNumberId,
+        } as WhatsappResponse,
+      ]);
 
     return Promise.resolve("NOT_SUPPORTED_MESSAGE_TYPE");
   }
@@ -125,22 +120,6 @@ export class BotService {
       );
     }
     return result;
-  }
-
-  async send2(data: object, { phoneNumberId, recipient_type = "individual" }) {
-    const updatedPayload = {
-      ...data,
-      recipient_type,
-      messaging_product: "whatsapp",
-    };
-
-    console.log("sending => ", JSON.stringify(updatedPayload, null, 2));
-    const headers = this.getHeaders();
-    return firstValueFrom(
-      this.http.post(this.getUrl({ phoneNumberId }), updatedPayload, {
-        headers,
-      }),
-    );
   }
 }
 
