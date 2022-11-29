@@ -185,7 +185,7 @@ export class IntentManager {
 
   private getOptionsTextFromOptions(options: any) {
     return options
-      .map(({ numericValue, label }) => `${numericValue}. ${label}`)
+      .map(({ numericValue, label }) => `${numericValue}. *${label}*`)
       .join(this.NEW_LINE);
   }
 
