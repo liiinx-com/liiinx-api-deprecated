@@ -6,8 +6,7 @@ import assets from "./assets";
 import { IntentService } from "./bot-intent.service";
 import { IntentManager } from "./intent-manager";
 
-const TOKEN =
-  "EAAPYZCJH2zBwBAIpoFi6ffjxSL4NvbcZBQQUgiTfGZCJhVR86WFBZCmfp7cNlpkKiH8gyeQVdLIRo8aamy4yECn7kWeLvuLy0EyOEyZAe3PiMjzuWPbstdWZBWUxnZADSCtNpkM00rJTxgULKqg2Cj8AW1zzZAETZBp7DyU5sMlv1x8wzsQ6FHCJSZBHwLnZBkfZCnCp1ZB1IjRLqTEt6Tqm2zdEi";
+const TOKEN = "";
 
 @Injectable()
 export class BotService {
@@ -77,6 +76,7 @@ export class BotService {
     let response: any;
     if (type === "text")
       response = await this.textMessageHandler(userId, receivedMessage);
+
     if (response)
       return this.send([
         {

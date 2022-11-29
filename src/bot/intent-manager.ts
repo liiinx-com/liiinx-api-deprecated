@@ -31,12 +31,15 @@ export class IntentManager {
   private NEW_LINE = "\n";
   private intentsMap = new Map();
 
-  private async getUserActiveStepId(userId: number) {
+  private async getUserActiveStepInfo(userId: number) {
     // TODO: get from db and if not existed in db then return fallback";
     const user = await this.getUserById(userId);
     return user?.activeStepId
-      ? user.activeStepId
-      : await this.getFallbackIntentForUser(userId);
+      ? { activeStepId: user.activeStepId, isNewUser: false }
+      : {
+          activeStepId: await this.getFallbackIntentForUser(userId),
+          isNewUser: true,
+        };
   }
 
   private async getUserCurrentOutput(userId: number) {
@@ -97,7 +100,10 @@ export class IntentManager {
   ): Promise<any> {
     const result = { response: "sample text" };
     const { text: userInput } = message;
-    const userActiveStepId = await this.getUserActiveStepId(userId);
+    const userActiveStepInfo = await this.getUserActiveStepInfo(userId);
+    const { activeStepId: userActiveStepId } = userActiveStepInfo;
+
+    console.log("xxxis New User", userActiveStepInfo.isNewUser);
 
     // 1. Get Handler Module
     const [, handlerModule] = await this.getIntentAndHandlerByStepId(
@@ -117,16 +123,14 @@ export class IntentManager {
       await this.validateInputForStep(currentStepOptions, stepKey, userInput);
 
     if (!validationOk) {
-      return [
-        {
-          ...result,
-          response:
-            currentStepText +
-            this.NEW_LINE +
-            this.NEW_LINE +
-            this.getOptionsTextFromOptions(currentStepOptions),
-        },
-      ];
+      return {
+        ...result,
+        response:
+          currentStepText +
+          this.NEW_LINE +
+          this.NEW_LINE +
+          this.getOptionsTextFromOptions(currentStepOptions),
+      };
     }
 
     // 3. Update user current active step
