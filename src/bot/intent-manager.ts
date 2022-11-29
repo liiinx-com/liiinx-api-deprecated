@@ -94,7 +94,7 @@ export class IntentManager {
   async processTextMessageForUser(
     userId: number,
     message: IncomingMessage,
-  ): any[] {
+  ): Promise<any> {
     const result = { response: "sample text" };
     const { text: userInput } = message;
     const userActiveStepId = await this.getUserActiveStepId(userId);
@@ -178,16 +178,14 @@ export class IntentManager {
       await getStepTextAndOptionsByStepIdForNextModule(gotoNextStepId, {
         message,
       });
-    return [
-      {
-        ...result,
-        response:
-          nextStepText +
-          this.NEW_LINE +
-          this.NEW_LINE +
-          this.getOptionsTextFromOptions(nextStepOptions),
-      },
-    ];
+    return {
+      ...result,
+      response:
+        nextStepText +
+        this.NEW_LINE +
+        this.NEW_LINE +
+        this.getOptionsTextFromOptions(nextStepOptions),
+    };
   }
 
   private getOptionsTextFromOptions(options: any) {
