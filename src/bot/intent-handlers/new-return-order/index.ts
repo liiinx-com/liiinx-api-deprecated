@@ -1,3 +1,5 @@
+import { getOptionsForStepFn, getStepFn } from "../utils";
+
 const stepsObject = {
   "newReturnOrder.1": {
     previousStepId: null,
@@ -70,19 +72,21 @@ const stepsObject = {
   },
 };
 
-const getStep = async (stepId: string) => {
-  return stepsObject[stepId];
-};
+// const getStep = async (stepId: string) => {
+//   return stepsObject[stepId];
+// };
 
-const getOptionsForStep = async (stepId: string) => {
-  const targetStep = stepsObject[stepId];
-  if (targetStep) {
-    return targetStep.options;
-  }
-  return [];
-};
+// const getOptionsForStep = async (stepId: string) => {
+//   const targetStep = stepsObject[stepId];
+//   if (targetStep) {
+//     return targetStep.options;
+//   }
+//   return [];
+// };
 
 const getNextStepFor = async (stepId: string, options: any | undefined) => {
+  const getStep = await getStepFn(stepsObject);
+
   const result = { isIntentComplete: false, nextStep: null };
   const step = await getStep(stepId);
   if (step.nextStepId) {
@@ -102,6 +106,9 @@ const getStepTextAndOptionsByStepId = async (
       text,
     },
   } = options;
+  const getStep = await getStepFn(stepsObject);
+  const getOptionsForStep = await getOptionsForStepFn(stepsObject);
+
   const step = await getStep(stepId);
   const stepOptions = await getOptionsForStep(stepId);
   return [step.text, stepOptions, step.key];
