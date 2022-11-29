@@ -116,7 +116,10 @@ export class IntentManager {
     } = handlerModule;
 
     const [currentStepText, currentStepOptions, stepKey] =
-      await getStepTextAndOptionsByStepId(userActiveStepId, { message });
+      await getStepTextAndOptionsByStepId(userActiveStepId, {
+        message,
+        isNewUser: userActiveStepInfo.isNewUser,
+      });
 
     // 2. Input Validation
     const { response: validatedResponse, ok: validationOk } =
