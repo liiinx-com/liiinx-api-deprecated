@@ -126,14 +126,16 @@ export class IntentManager {
       await this.validateInputForStep(currentStepOptions, stepKey, userInput);
 
     if (!validationOk) {
-      return {
-        ...result,
-        response:
-          currentStepText +
+      const invalidResponseResult = { ...result, response: currentStepText };
+      const optionsText = this.getOptionsTextFromOptions(currentStepOptions);
+      if (optionsText) {
+        invalidResponseResult.response =
+          invalidResponseResult.response +
           this.NEW_LINE +
           this.NEW_LINE +
-          this.getOptionsTextFromOptions(currentStepOptions),
-      };
+          optionsText;
+      }
+      return invalidResponseResult;
     }
 
     // 3. Update user current active step

@@ -60,7 +60,7 @@ const stepsObject = {
   "getStarted.2": getStartedStep2,
 };
 
-const getStep = async (stepId: string) => {
+const getStepFn = async (stepId: string) => {
   return stepsObject[stepId];
 };
 
@@ -74,10 +74,10 @@ const getOptionsForStep = async (stepId: string, options) => {
 
 const getNextStepFor = async (stepId: string, options: any | undefined) => {
   const result = { isIntentComplete: false, nextStep: null };
-  const stepFn = await getStep(stepId);
+  const stepFn = await getStepFn(stepId);
   const step = stepFn(options);
   if (step.nextStepId) {
-    const nextStepFn = await getStep(step.nextStepId);
+    const nextStepFn = await getStepFn(step.nextStepId);
     const nextStep = nextStepFn(options);
     return { ...result, nextStep };
   }
@@ -97,7 +97,7 @@ const getStepTextAndOptionsByStepId = async (
 
   const params = { name };
 
-  const stepFn = await getStep(stepId);
+  const stepFn = await getStepFn(stepId);
   const step = stepFn(params);
   const stepOptions = await getOptionsForStep(stepId, params);
   return [step.text, stepOptions, step.key];
