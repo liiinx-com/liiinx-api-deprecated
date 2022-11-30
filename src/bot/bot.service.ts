@@ -6,7 +6,8 @@ import assets from "./assets";
 import { IntentService } from "./bot-intent.service";
 import { IntentManager } from "./intent-manager";
 
-const TOKEN = "";
+const TOKEN =
+  "EAAPYZCJH2zBwBAJICFD53pPjNQyUlkRR8anYguS3ZBfjZCnWoMQZCJF4IULgfCrlsB5CW64TU643i5YZCoBBmzXDftxn3SZBaG8eSvUlGQNHpsNctfC03AIhOOzPrYjvnlyQxUISQ25jj6Fm6lsiD5x899wgieNNEZCWkbr8jHrTeZCpxDbKVWVfSGxZBt8fLMwwtM4jCiQK8Rarwy1fXY29u";
 
 @Injectable()
 export class BotService {
