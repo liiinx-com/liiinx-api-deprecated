@@ -210,16 +210,23 @@ export class IntentManager {
         response: null,
       };
 
+    const result = {
+      ok: true,
+      response: {},
+      errorCode: undefined,
+    };
+
+    if (!stepOptions) return result;
+
     const selectedOption = stepOptions.find(
       ({ numericValue }) => numericValue === value.toString(),
     );
 
     return {
-      ok: true,
+      ...result,
       response: {
         [stepKey]: selectedOption.value,
       },
-      errorCode: undefined,
     };
   }
 }
