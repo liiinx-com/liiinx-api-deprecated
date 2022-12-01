@@ -1,52 +1,35 @@
 import emoji from "node-emoji";
 
-const getStartedStep1 = ({ name }) => ({
+const getStep1 = ({ name }) => ({
   previousStepId: null,
-  id: "getStarted.1",
-  nextStepId: null,
-  text:
-    `Hi ${name} ` +
-    emoji.get("wave") +
-    "\n\n" +
-    "Welcome to Liiinx's WhatsApp self-service experience." +
-    "\n\n" +
-    "If you have received an invitation, please provide the code now." +
-    "\n" +
-    "Or you can request one through our website.",
-  key: "invitationCode",
-  options: [],
-});
-
-const getStartedStep2 = ({ name }) => ({
-  previousStepId: "getStarted.1",
-  id: "getStarted.2",
+  id: "mainMenu.1",
   nextStepId: null,
   text: `How can I help you today, ${name}?`,
   key: "selectedOption",
   options: [
     {
-      id: "getStarted*2*1",
+      id: "mainMenu*1*1",
       order: 1,
       label: "How it works",
       value: "how_it_works",
       numericValue: "1",
     },
     {
-      id: "getStarted*2*2",
+      id: "mainMenu*1*2",
       order: 1,
       label: "New Amazon/Walmart Return Pickup",
       value: "new_return_order",
       numericValue: "2",
     },
     {
-      id: "getStarted*2*3",
+      id: "mainMenu*1*3",
       order: 3,
       label: "My incoming pickups",
       value: "my_pickups",
       numericValue: "3",
     },
     {
-      id: "getStarted*2*4",
+      id: "mainMenu*1*4",
       order: 4,
       label: "Pricing",
       value: "pricing",
@@ -56,8 +39,7 @@ const getStartedStep2 = ({ name }) => ({
 });
 
 const stepsObject = {
-  "getStarted.1": getStartedStep1,
-  "getStarted.2": getStartedStep2,
+  "mainMenu.1": getStep1,
 };
 
 const getStepFn = async (stepId: string) => {

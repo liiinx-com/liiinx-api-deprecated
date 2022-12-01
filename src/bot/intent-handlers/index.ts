@@ -1,7 +1,9 @@
-import getStarted from "./get-started/index";
+import invitationCheck from "./invitation-check/index";
+import mainMenu from "./mainMenu/index";
 import newReturnOrder from "./new-return-order/index";
 
 export default {
-  getStarted,
+  invitationCheck,
+  mainMenu,
   newReturnOrder,
 };

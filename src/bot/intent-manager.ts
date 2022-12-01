@@ -78,7 +78,7 @@ export class IntentManager {
   }
 
   private async getFallbackIntentForUser(userId: number) {
-    return "getStarted.1";
+    return "mainMenu.1";
   }
 
   async getIntentAndHandlerByStepId(stepId: string) {
