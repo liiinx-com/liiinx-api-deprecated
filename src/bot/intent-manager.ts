@@ -98,7 +98,8 @@ export class IntentManager {
     userId: number,
     message: IncomingMessage,
   ): Promise<any> {
-    const result = { response: "sample text" };
+    const result = [];
+    // const result = { response: "sample text" };
     const { text: userInput } = message;
     const userActiveStepInfo = await this.getUserActiveStepInfo(userId);
     const { activeStepId: userActiveStepId } = userActiveStepInfo;
@@ -122,6 +123,7 @@ export class IntentManager {
         isNewUser: userActiveStepInfo.isNewUser,
       });
 
+    //-------if options.length > 0 ----------------
     // 2. Input Validation
     const { response: validatedResponse, ok: validationOk } =
       await this.validateInputForStep(
@@ -133,7 +135,7 @@ export class IntentManager {
       );
 
     if (!validationOk) {
-      const invalidResponseResult = { ...result, response: currentStepText };
+      const invalidResponseResult = { response: currentStepText };
       const optionsText = this.getOptionsTextFromOptions(currentStepOptions);
       if (optionsText) {
         invalidResponseResult.response =
@@ -142,13 +144,14 @@ export class IntentManager {
           this.NEW_LINE +
           optionsText;
       }
-      return invalidResponseResult;
+      return [invalidResponseResult];
     }
 
-    // 3. Update user current active step
+    // 3. Update user output of the current active step
     await this.updateUserActiveStepId(userId, {
       changes: validatedResponse,
     });
+    //-------if options.length > 0 ----------------
 
     // 4. Check if intent is complete
     const { isIntentComplete, nextStep } = await getNextStepFor(
@@ -194,14 +197,16 @@ export class IntentManager {
       await getStepTextAndOptionsByStepIdForNextModule(gotoNextStepId, {
         message,
       });
-    return {
-      ...result,
+
+    result.push({
       response:
         nextStepText +
         this.NEW_LINE +
         this.NEW_LINE +
         this.getOptionsTextFromOptions(nextStepOptions),
-    };
+    });
+
+    return result;
   }
 
   private getOptionsTextFromOptions(options: any) {

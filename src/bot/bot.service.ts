@@ -34,7 +34,7 @@ export class BotService {
       },
     } = receivedMessage;
 
-    const { response } = await this.intentManager.processTextMessageForUser(
+    const responses = await this.intentManager.processTextMessageForUser(
       userId,
       {
         user: { id: userId, name: profile.name },
@@ -42,11 +42,15 @@ export class BotService {
       },
     );
 
-    return this.getTextMessageFrom({
-      text: response,
-      to: receivedMessage.customer.phoneNumber,
-      replyingMessageId: receivedMessage.message.id,
-    });
+    console.log("--responses");
+
+    return responses.map((r: any) =>
+      this.getTextMessageFrom({
+        text: r.response,
+        to: receivedMessage.customer.phoneNumber,
+        replyingMessageId: receivedMessage.message.id,
+      }),
+    );
   }
 
   getTextMessageFrom({
@@ -73,17 +77,20 @@ export class BotService {
 
     const { id: userId } = await this.intentService.getUserByPhone(phoneNumber);
 
-    let response: any;
+    let responses: any[];
     if (type === "text")
-      response = await this.textMessageHandler(userId, receivedMessage);
-
-    if (response)
-      return this.send([
-        {
-          data: response,
-          phoneNumberId,
-        } as WhatsappResponse,
-      ]);
+      responses = await this.textMessageHandler(userId, receivedMessage);
+    if (responses) {
+      return this.send(
+        responses.map(
+          (r: any) =>
+            ({
+              data: r.response,
+              phoneNumberId,
+            } as WhatsappResponse),
+        ),
+      );
+    }
 
     return Promise.resolve("NOT_SUPPORTED_MESSAGE_TYPE");
   }
