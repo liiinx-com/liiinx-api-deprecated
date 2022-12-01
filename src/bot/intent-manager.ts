@@ -31,12 +31,15 @@ export class IntentManager {
   private NEW_LINE = "\n";
   private intentsMap = new Map();
 
-  private async getUserActiveStepId(userId: number) {
+  private async getUserActiveStepInfo(userId: number) {
     // TODO: get from db and if not existed in db then return fallback";
     const user = await this.getUserById(userId);
     return user?.activeStepId
-      ? user.activeStepId
-      : await this.getFallbackIntentForUser(userId);
+      ? { activeStepId: user.activeStepId, isNewUser: false }
+      : {
+          activeStepId: await this.getFallbackIntentForUser(userId),
+          isNewUser: true,
+        };
   }
 
   private async getUserCurrentOutput(userId: number) {
@@ -75,7 +78,7 @@ export class IntentManager {
   }
 
   private async getFallbackIntentForUser(userId: number) {
-    return "getStarted.1";
+    return "invitationCheck.1";
   }
 
   async getIntentAndHandlerByStepId(stepId: string) {
@@ -97,7 +100,10 @@ export class IntentManager {
   ): Promise<any> {
     const result = { response: "sample text" };
     const { text: userInput } = message;
-    const userActiveStepId = await this.getUserActiveStepId(userId);
+    const userActiveStepInfo = await this.getUserActiveStepInfo(userId);
+    const { activeStepId: userActiveStepId } = userActiveStepInfo;
+
+    console.log("xxxis New User", userActiveStepInfo.isNewUser);
 
     // 1. Get Handler Module
     const [, handlerModule] = await this.getIntentAndHandlerByStepId(
@@ -107,26 +113,36 @@ export class IntentManager {
       getStepTextAndOptionsByStepId,
       getNextStepFor,
       handleIntentComplete,
+      validate: validateFn,
     } = handlerModule;
 
     const [currentStepText, currentStepOptions, stepKey] =
-      await getStepTextAndOptionsByStepId(userActiveStepId, { message });
+      await getStepTextAndOptionsByStepId(userActiveStepId, {
+        message,
+        isNewUser: userActiveStepInfo.isNewUser,
+      });
 
     // 2. Input Validation
     const { response: validatedResponse, ok: validationOk } =
-      await this.validateInputForStep(currentStepOptions, stepKey, userInput);
+      await this.validateInputForStep(
+        currentStepOptions,
+        stepKey,
+        userActiveStepId,
+        userInput,
+        validateFn,
+      );
 
     if (!validationOk) {
-      return [
-        {
-          ...result,
-          response:
-            currentStepText +
-            this.NEW_LINE +
-            this.NEW_LINE +
-            this.getOptionsTextFromOptions(currentStepOptions),
-        },
-      ];
+      const invalidResponseResult = { ...result, response: currentStepText };
+      const optionsText = this.getOptionsTextFromOptions(currentStepOptions);
+      if (optionsText) {
+        invalidResponseResult.response =
+          invalidResponseResult.response +
+          this.NEW_LINE +
+          this.NEW_LINE +
+          optionsText;
+      }
+      return invalidResponseResult;
     }
 
     // 3. Update user current active step
@@ -194,7 +210,32 @@ export class IntentManager {
       .join(this.NEW_LINE);
   }
 
-  async validateInputForStep(stepOptions: any, stepKey: string, value: string) {
+  async validateInputForStep(
+    stepOptions: any,
+    stepKey: string,
+    stepId: string,
+    value: string,
+    validateFn: any,
+  ) {
+    const result = {
+      ok: true,
+      response: {},
+      errorCode: undefined,
+    };
+    if (stepOptions.length === 0) {
+      const stepValidationResult = await validateFn(stepId, value, {
+        stepKey,
+        stepOptions,
+      });
+      if (stepValidationResult.ok)
+        return {
+          ...result,
+          response: {
+            [stepKey]: value,
+          },
+        };
+    }
+
     const validValues = stepOptions.map(({ numericValue }) => numericValue);
     if (!validValues.includes(value.toString()))
       return {
@@ -208,17 +249,10 @@ export class IntentManager {
     );
 
     return {
-      ok: true,
+      ...result,
       response: {
         [stepKey]: selectedOption.value,
       },
-      errorCode: undefined,
     };
   }
 }
-
-// const getUserByPhone = async (phone: string): Promise<User> => {
-//   return { id: "11557", name: "Amir Zad" };
-// };
-
-// const manager = new IntentManager();

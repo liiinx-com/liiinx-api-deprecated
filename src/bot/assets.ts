@@ -1,7 +1,11 @@
 const intents = {
-  getStarted: {
-    firstStepId: "getStarted.1",
-    handlerModule: "getStarted",
+  invitationCheck: {
+    firstStepId: "invitationCheck.1",
+    handlerModule: "invitationCheck",
+  },
+  mainMenu: {
+    firstStepId: "mainMenu.1",
+    handlerModule: "mainMenu",
   },
   newReturnOrder: {
     firstStepId: "newReturnOrder.1",
