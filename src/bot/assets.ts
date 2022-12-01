@@ -3,6 +3,10 @@ const intents = {
     firstStepId: "invitationCheck.1",
     handlerModule: "invitationCheck",
   },
+  welcome: {
+    firstStepId: "welcome.1",
+    handlerModule: "welcome",
+  },
   mainMenu: {
     firstStepId: "mainMenu.1",
     handlerModule: "mainMenu",

@@ -115,7 +115,7 @@ const getStepTextAndOptionsByStepId = async (
 };
 
 const handleIntentComplete = async (userId: number, payload: any) => {
-  const result = { gotoStepId: null };
+  const result = { gotoStepId: "mainMenu.1" };
 
   console.log(userId, "completed intent with", payload);
 

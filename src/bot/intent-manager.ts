@@ -78,7 +78,7 @@ export class IntentManager {
   }
 
   private async getFallbackIntentForUser(userId: number) {
-    return "mainMenu.1";
+    return "invitationCheck.1";
   }
 
   async getIntentAndHandlerByStepId(stepId: string) {

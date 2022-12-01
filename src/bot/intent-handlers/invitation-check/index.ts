@@ -84,7 +84,7 @@ const handleIntentComplete = async (
 
   console.log(userId, "completed intent with", payload);
 
-  return { ...result, gotoStepId: "newReturnOrder.1" };
+  return { ...result, gotoStepId: "welcome.1" };
 };
 
 export default {
