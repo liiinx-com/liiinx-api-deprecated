@@ -3,7 +3,7 @@ import emoji from "node-emoji";
 const getStartedStep1 = ({ name }) => ({
   previousStepId: null,
   id: "getStarted.1",
-  nextStepId: "getStarted.2",
+  nextStepId: null,
   text:
     `Hi ${name} ` +
     emoji.get("wave") +
@@ -72,6 +72,18 @@ const getOptionsForStep = async (stepId: string, options) => {
   return [];
 };
 
+const validate = async (
+  stepId: string,
+  value: string,
+  { stepKey, stepOptions },
+) => {
+  const result = { ok: false };
+
+  if (value === "3302code") return { ...result, ok: true };
+
+  return result;
+};
+
 const getNextStepFor = async (stepId: string, options: any | undefined) => {
   const result = { isIntentComplete: false, nextStep: null };
   const stepFn = await getStepFn(stepId);
@@ -118,4 +130,5 @@ export default {
   getStepTextAndOptionsByStepId,
   getNextStepFor,
   handleIntentComplete,
+  validate,
 };

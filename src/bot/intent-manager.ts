@@ -113,6 +113,7 @@ export class IntentManager {
       getStepTextAndOptionsByStepId,
       getNextStepFor,
       handleIntentComplete,
+      validate: validateFn,
     } = handlerModule;
 
     const [currentStepText, currentStepOptions, stepKey] =
@@ -123,7 +124,13 @@ export class IntentManager {
 
     // 2. Input Validation
     const { response: validatedResponse, ok: validationOk } =
-      await this.validateInputForStep(currentStepOptions, stepKey, userInput);
+      await this.validateInputForStep(
+        currentStepOptions,
+        stepKey,
+        userActiveStepId,
+        userInput,
+        validateFn,
+      );
 
     if (!validationOk) {
       const invalidResponseResult = { ...result, response: currentStepText };
@@ -203,7 +210,32 @@ export class IntentManager {
       .join(this.NEW_LINE);
   }
 
-  async validateInputForStep(stepOptions: any, stepKey: string, value: string) {
+  async validateInputForStep(
+    stepOptions: any,
+    stepKey: string,
+    stepId: string,
+    value: string,
+    validateFn: any,
+  ) {
+    const result = {
+      ok: true,
+      response: {},
+      errorCode: undefined,
+    };
+    if (stepOptions.length === 0) {
+      const stepValidationResult = await validateFn(stepId, value, {
+        stepKey,
+        stepOptions,
+      });
+      if (stepValidationResult.ok)
+        return {
+          ...result,
+          response: {
+            [stepKey]: value,
+          },
+        };
+    }
+
     const validValues = stepOptions.map(({ numericValue }) => numericValue);
     if (!validValues.includes(value.toString()))
       return {
@@ -211,14 +243,6 @@ export class IntentManager {
         errorCode: ERRORS.INVALID_INPUT,
         response: null,
       };
-
-    const result = {
-      ok: true,
-      response: {},
-      errorCode: undefined,
-    };
-
-    if (!stepOptions) return result;
 
     const selectedOption = stepOptions.find(
       ({ numericValue }) => numericValue === value.toString(),
@@ -232,9 +256,3 @@ export class IntentManager {
     };
   }
 }
-
-// const getUserByPhone = async (phone: string): Promise<User> => {
-//   return { id: "11557", name: "Amir Zad" };
-// };
-
-// const manager = new IntentManager();
