@@ -79,7 +79,8 @@ export class IntentManager {
   }
 
   private async getFallbackIntentForUser(userId: number) {
-    return "hi.1";
+    // return "hi.1";
+    return "newReturnOrder.1";
   }
 
   async getIntentAndHandlerByStepId(stepId: string) {
@@ -109,7 +110,7 @@ export class IntentManager {
       const userActiveStepInfo = await this.getUserActiveStepInfo(userId);
       const { activeStepId: userActiveStepId, isNewUser } = userActiveStepInfo;
       if (isNewUser) inputConsumed = true;
-      console.log("--", userActiveStepId);
+      console.log("---", userActiveStepId);
 
       // 2. Get Handler Module
       const [, handlerModule] = await this.getIntentAndHandlerByStepId(
