@@ -1,4 +1,4 @@
-import emoji from "node-emoji";
+// import emoji from "node-emoji";
 
 const getStep1 = ({ name }) => ({
   previousStepId: null,

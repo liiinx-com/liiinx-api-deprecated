@@ -1,10 +1,11 @@
-import emoji from "node-emoji";
+// import emoji from "node-emoji";
 
 const getStep1 = ({ name }) => ({
   previousStepId: null,
   id: "welcome.1",
   nextStepId: null,
-  text: `It is so nice to have you here ${name} ${emoji.get("sparkle")}`,
+  // text: `It is so nice to have you here ${name} ${emoji.get("sparkle")}`,
+  text: `It is so nice to have you here ${name}`,
   key: "selectedOption",
   options: [],
 });

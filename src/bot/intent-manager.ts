@@ -1,4 +1,5 @@
 import intentHandlers from "./intent-handlers/index";
+// import assets from "./assets";
 
 const db = [
   {
@@ -106,7 +107,8 @@ export class IntentManager {
     do {
       // 1. get user active stepId
       const userActiveStepInfo = await this.getUserActiveStepInfo(userId);
-      const { activeStepId: userActiveStepId } = userActiveStepInfo;
+      const { activeStepId: userActiveStepId, isNewUser } = userActiveStepInfo;
+      if (isNewUser) inputConsumed = true;
       console.log("--", userActiveStepId);
 
       // 2. Get Handler Module
@@ -121,7 +123,7 @@ export class IntentManager {
         requiresUserResponse,
       } = handlerModule;
 
-      // 3. Get Step Text and Options
+      // 3. Get Step Text and Options for the Current Step
       const [currentStepText, currentStepOptions, stepKey] =
         await getStepTextAndOptionsByStepId(userActiveStepId, {
           message,
@@ -129,29 +131,39 @@ export class IntentManager {
         });
       const currentStepResponse = {
         response:
-          currentStepText + requiresUserResponse
+          currentStepText +
+          (requiresUserResponse
             ? "\n\n" + this.getOptionsTextFromOptions(currentStepOptions)
-            : "",
+            : ""),
       };
 
-      if (requiresUserResponse && !inputConsumed) {
-        const { response: validatedResponse, ok: validationOk } =
-          await this.validateInputForStep(
-            currentStepOptions,
-            stepKey,
-            userActiveStepId,
-            userInput,
-            validateFn,
-          );
+      if (requiresUserResponse) {
+        if (inputConsumed) {
+          result.push(currentStepResponse);
+          console.log("1", result);
+          return result;
 
-        if (!validationOk) return [...result, currentStepResponse];
+          // return [...result, currentStepResponse];
+        } else {
+          const { response: validatedResponse, ok: validationOk } =
+            await this.validateInputForStep(
+              currentStepOptions,
+              stepKey,
+              userActiveStepId,
+              userInput,
+              validateFn,
+            );
 
-        // 3. Update user output for the current active step
-        await this.updateUserActiveStepId(userId, {
-          changes: validatedResponse,
-        });
+          console.log("2");
+          if (!validationOk) return [...result, currentStepResponse];
+          // 3. Update user output for the current active step
+          await this.updateUserActiveStepId(userId, {
+            changes: validatedResponse,
+          });
+        }
       } else {
         result.push(currentStepResponse);
+        console.log("3");
       }
 
       // 4. Check if intent is complete
@@ -181,7 +193,6 @@ export class IntentManager {
         stepId: gotoNextStepId,
       });
       inputConsumed = true;
-      console.log("--", result);
     } while (true);
   }
 
@@ -373,3 +384,17 @@ export class IntentManager {
     };
   }
 }
+
+// const main = async () => {
+//   const manager = new IntentManager();
+//   manager.loadAssets({ intentsObject: assets.intents });
+//   const responses = await manager.processTextMessageForUserV2(11557, {
+//     user: { id: 11557, name: "Amir Mohsen" },
+//     text: "hi",
+//   });
+// };
+
+// main().then((res) => {
+//   console.log("***DONE***");
+//   console.log(res);
+// });

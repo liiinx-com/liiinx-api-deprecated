@@ -1,4 +1,4 @@
-import emoji from "node-emoji";
+// import emoji from "node-emoji";
 
 const getStep1 = ({ name }) => ({
   previousStepId: null,
@@ -6,7 +6,7 @@ const getStep1 = ({ name }) => ({
   nextStepId: null,
   text:
     `Hi ${name} ` +
-    emoji.get("wave") +
+    // emoji.get("wave") +
     "\n\n" +
     "Welcome to Liiinx's WhatsApp self-service experience." +
     "\n\n" +
