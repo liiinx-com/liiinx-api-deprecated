@@ -1,4 +1,8 @@
 const intents = {
+  hi: {
+    firstStepId: "hi.1",
+    handlerModule: "hi",
+  },
   invitationCheck: {
     firstStepId: "invitationCheck.1",
     handlerModule: "invitationCheck",

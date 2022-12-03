@@ -113,4 +113,5 @@ export default {
   getNextStepFor,
   handleIntentComplete,
   validate,
+  requiresUserResponse: true,
 };

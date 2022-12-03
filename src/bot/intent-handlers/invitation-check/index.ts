@@ -88,6 +88,7 @@ const handleIntentComplete = async (
 };
 
 export default {
+  requiresUserResponse: true,
   getStepTextAndOptionsByStepId,
   getNextStepFor,
   handleIntentComplete,

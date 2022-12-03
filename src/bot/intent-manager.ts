@@ -85,6 +85,7 @@ export class IntentManager {
     if (!stepId) throw new Error(ERRORS.STEP_NOT_FOUND);
 
     const [intentKey] = stepId.split(this.STEP_ID_DELIMITER);
+
     if (this.intentsMap.has(intentKey)) {
       const intent = this.intentsMap.get(intentKey);
 
@@ -106,6 +107,7 @@ export class IntentManager {
       // 1. get user active stepId
       const userActiveStepInfo = await this.getUserActiveStepInfo(userId);
       const { activeStepId: userActiveStepId } = userActiveStepInfo;
+      console.log("--", userActiveStepId);
 
       // 2. Get Handler Module
       const [, handlerModule] = await this.getIntentAndHandlerByStepId(
@@ -179,6 +181,7 @@ export class IntentManager {
         stepId: gotoNextStepId,
       });
       inputConsumed = true;
+      console.log("--", result);
     } while (true);
   }
 
