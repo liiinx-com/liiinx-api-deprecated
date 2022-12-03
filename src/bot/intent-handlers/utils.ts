@@ -1,7 +1,5 @@
-export const getStepFn = async (stepsObject: any) => {
-  return async function (stepId: string) {
-    return stepsObject[stepId];
-  };
+export const getStepFn = async (stepsObject: any, stepId: string) => {
+  return stepsObject[stepId];
 };
 
 export const getOptionsForStepFn = async (stepsObject: any) => {
