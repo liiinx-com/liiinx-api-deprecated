@@ -1,4 +1,5 @@
 // import emoji from "node-emoji";
+import { getStepFn, getOptionsForStep } from "../utils";
 
 const getStep1 = ({ name }) => ({
   previousStepId: null,
@@ -21,18 +22,6 @@ const stepsObject = {
   "invitationCheck.1": getStep1,
 };
 
-const getStepFn = async (stepId: string) => {
-  return stepsObject[stepId];
-};
-
-const getOptionsForStep = async (stepId: string, options: any | undefined) => {
-  const targetStep = stepsObject[stepId](options);
-  if (targetStep) {
-    return targetStep.options;
-  }
-  return [];
-};
-
 const validate = async (
   stepId: string,
   value: string,
@@ -47,10 +36,10 @@ const validate = async (
 
 const getNextStepFor = async (stepId: string, options: any | undefined) => {
   const result = { isIntentComplete: false, nextStep: null };
-  const stepFn = await getStepFn(stepId);
+  const stepFn = await getStepFn(stepsObject, stepId);
   const step = stepFn(options);
   if (step.nextStepId) {
-    const nextStepFn = await getStepFn(step.nextStepId);
+    const nextStepFn = await getStepFn(stepsObject, step.nextStepId);
     const nextStep = nextStepFn(options);
     return { ...result, nextStep };
   }
@@ -70,9 +59,9 @@ const getStepTextAndOptionsByStepId = async (
 
   const params = { name };
 
-  const stepFn = await getStepFn(stepId);
+  const stepFn = await getStepFn(stepsObject, stepId);
   const step = stepFn(params);
-  const stepOptions = await getOptionsForStep(stepId, params);
+  const stepOptions = await getOptionsForStep(stepsObject, stepId, params);
   return [step.text, stepOptions, step.key];
 };
 

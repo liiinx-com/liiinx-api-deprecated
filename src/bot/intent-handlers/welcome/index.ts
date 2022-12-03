@@ -15,18 +15,6 @@ const stepsObject = {
   "welcome.1": getStep1,
 };
 
-// const getStepFn = async (stepId: string) => {
-//   return stepsObject[stepId];
-// };
-
-// const getOptionsForStep = async (stepId: string, options) => {
-//   const targetStep = stepsObject[stepId](options);
-//   if (targetStep) {
-//     return targetStep.options;
-//   }
-//   return [];
-// };
-
 const validate = async (
   stepId: string,
   value: string,
