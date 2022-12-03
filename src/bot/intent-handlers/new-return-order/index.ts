@@ -172,7 +172,6 @@ const getStepTextAndOptionsByStepId = async (
   const params = { name };
 
   const stepFn = await getStepFn(stepId);
-  console.log("0000", stepFn);
   const step = stepFn(params);
   const stepOptions = await getOptionsForStep(stepId, params);
   return [step.text, stepOptions, step.key];
@@ -184,7 +183,7 @@ const handleIntentComplete = async (
 ) => {
   const result = { gotoStepId: null };
   console.log(userId, "completed intent with", payload);
-  return { ...result, gotoStepId: "welcome.1" };
+  return { ...result, gotoStepId: "mainMenu.1" };
 };
 
 export default {
@@ -192,5 +191,5 @@ export default {
   getNextStepFor,
   handleIntentComplete,
   validate,
-  requiresUserResponse: false,
+  requiresUserResponse: true,
 };

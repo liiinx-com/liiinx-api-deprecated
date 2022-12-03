@@ -1,5 +1,5 @@
 import intentHandlers from "./intent-handlers/index";
-// import assets from "./assets";
+import assets from "./assets";
 
 const db = [
   {
@@ -386,16 +386,16 @@ export class IntentManager {
   }
 }
 
-// const main = async () => {
-//   const manager = new IntentManager();
-//   manager.loadAssets({ intentsObject: assets.intents });
-//   const responses = await manager.processTextMessageForUserV2(11557, {
-//     user: { id: 11557, name: "Amir Mohsen" },
-//     text: "hi",
-//   });
-// };
+const main = async () => {
+  const manager = new IntentManager();
+  manager.loadAssets({ intentsObject: assets.intents });
+  const responses = await manager.processTextMessageForUserV2(11557, {
+    user: { id: 11557, name: "Amir Mohsen" },
+    text: "hi",
+  });
+};
 
-// main().then((res) => {
-//   console.log("***DONE***");
-//   console.log(res);
-// });
+main().then((res) => {
+  console.log("***DONE***");
+  console.log(res);
+});
