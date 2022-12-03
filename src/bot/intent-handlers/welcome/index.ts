@@ -1,5 +1,5 @@
 // import emoji from "node-emoji";
-import { getStepFn } from "../utils";
+import { getStepFn, getOptionsForStep } from "../utils";
 
 const getStep1 = ({ name }) => ({
   previousStepId: null,
@@ -19,13 +19,13 @@ const stepsObject = {
 //   return stepsObject[stepId];
 // };
 
-const getOptionsForStep = async (stepId: string, options) => {
-  const targetStep = stepsObject[stepId](options);
-  if (targetStep) {
-    return targetStep.options;
-  }
-  return [];
-};
+// const getOptionsForStep = async (stepId: string, options) => {
+//   const targetStep = stepsObject[stepId](options);
+//   if (targetStep) {
+//     return targetStep.options;
+//   }
+//   return [];
+// };
 
 const validate = async (
   stepId: string,
@@ -62,7 +62,7 @@ const getStepTextAndOptionsByStepId = async (
 
   const stepFn = await getStepFn(stepsObject, stepId);
   const step = stepFn(params);
-  const stepOptions = await getOptionsForStep(stepId, params);
+  const stepOptions = await getOptionsForStep(stepsObject, stepId, params);
   return [step.text, stepOptions, step.key];
 };
 
