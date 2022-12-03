@@ -30,11 +30,7 @@ const validate = async (
   value: string,
   { stepKey, stepOptions },
 ) => {
-  const result = { ok: false };
-
-  if (value === "3302code") return { ...result, ok: true };
-
-  return result;
+  return { ok: true };
 };
 
 const getNextStepFor = async (stepId: string, options: any | undefined) => {
@@ -84,4 +80,5 @@ export default {
   getNextStepFor,
   handleIntentComplete,
   validate,
+  requiresUserResponse: false,
 };

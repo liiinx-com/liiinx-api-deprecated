@@ -78,7 +78,7 @@ export class IntentManager {
   }
 
   private async getFallbackIntentForUser(userId: number) {
-    return "invitationCheck.1";
+    return "hi.1";
   }
 
   async getIntentAndHandlerByStepId(stepId: string) {
@@ -94,119 +94,228 @@ export class IntentManager {
     throw new Error(ERRORS.STEP_NOT_FOUND);
   }
 
-  async processTextMessageForUser(
+  async processTextMessageForUserV2(
     userId: number,
     message: IncomingMessage,
   ): Promise<any> {
     const result = [];
-    // const result = { response: "sample text" };
+    let inputConsumed = false;
     const { text: userInput } = message;
-    const userActiveStepInfo = await this.getUserActiveStepInfo(userId);
-    const { activeStepId: userActiveStepId } = userActiveStepInfo;
 
-    console.log("xxxis New User", userActiveStepInfo.isNewUser);
+    do {
+      // 1. get user active stepId
+      const userActiveStepInfo = await this.getUserActiveStepInfo(userId);
+      const { activeStepId: userActiveStepId } = userActiveStepInfo;
 
-    // 1. Get Handler Module
-    const [, handlerModule] = await this.getIntentAndHandlerByStepId(
-      userActiveStepId,
-    );
-    const {
-      getStepTextAndOptionsByStepId,
-      getNextStepFor,
-      handleIntentComplete,
-      validate: validateFn,
-    } = handlerModule;
-
-    const [currentStepText, currentStepOptions, stepKey] =
-      await getStepTextAndOptionsByStepId(userActiveStepId, {
-        message,
-        isNewUser: userActiveStepInfo.isNewUser,
-      });
-
-    //-------if options.length > 0 ----------------
-    // 2. Input Validation
-    const { response: validatedResponse, ok: validationOk } =
-      await this.validateInputForStep(
-        currentStepOptions,
-        stepKey,
+      // 2. Get Handler Module
+      const [, handlerModule] = await this.getIntentAndHandlerByStepId(
         userActiveStepId,
-        userInput,
-        validateFn,
       );
+      const {
+        getStepTextAndOptionsByStepId,
+        validate: validateFn,
+        getNextStepFor,
+        handleIntentComplete,
+        requiresUserResponse,
+      } = handlerModule;
 
-    if (!validationOk) {
-      const invalidResponseResult = { response: currentStepText };
-      const optionsText = this.getOptionsTextFromOptions(currentStepOptions);
-      if (optionsText) {
-        invalidResponseResult.response =
-          invalidResponseResult.response +
-          this.NEW_LINE +
-          this.NEW_LINE +
-          optionsText;
+      // 3. Get Step Text and Options
+      const [currentStepText, currentStepOptions, stepKey] =
+        await getStepTextAndOptionsByStepId(userActiveStepId, {
+          message,
+          isNewUser: userActiveStepInfo.isNewUser,
+        });
+      const currentStepResponse = {
+        response:
+          currentStepText + requiresUserResponse
+            ? "\n\n" + this.getOptionsTextFromOptions(currentStepOptions)
+            : "",
+      };
+
+      if (requiresUserResponse && !inputConsumed) {
+        const { response: validatedResponse, ok: validationOk } =
+          await this.validateInputForStep(
+            currentStepOptions,
+            stepKey,
+            userActiveStepId,
+            userInput,
+            validateFn,
+          );
+
+        if (!validationOk) return [...result, currentStepResponse];
+
+        // 3. Update user output for the current active step
+        await this.updateUserActiveStepId(userId, {
+          changes: validatedResponse,
+        });
+      } else {
+        result.push(currentStepResponse);
       }
-      return [invalidResponseResult];
-    }
 
-    // 3. Update user output of the current active step
-    await this.updateUserActiveStepId(userId, {
-      changes: validatedResponse,
-    });
-    //-------if options.length > 0 ----------------
-
-    // 4. Check if intent is complete
-    const { isIntentComplete, nextStep } = await getNextStepFor(
-      userActiveStepId,
-      { message },
-    );
-
-    // 5. Get nextStep
-    let gotoNextStepId: string;
-    if (isIntentComplete) {
-      const userCurrentOutput = await this.getUserCurrentOutput(userId);
-      const { gotoStepId } = await handleIntentComplete(
-        userId,
-        {
-          ...userCurrentOutput,
-          ...validatedResponse,
-        },
+      // 4. Check if intent is complete
+      const { isIntentComplete, nextStep } = await getNextStepFor(
+        userActiveStepId,
         { message },
       );
 
-      gotoNextStepId = gotoStepId
-        ? gotoStepId
-        : await this.getFallbackIntentForUser(userId);
+      // 5. Handle Intent Complete and set nextStep if completed
+      let gotoNextStepId: string;
+      if (isIntentComplete) {
+        const userCurrentOutput = await this.getUserCurrentOutput(userId);
+        const { gotoStepId } = await handleIntentComplete(
+          userId,
+          userCurrentOutput,
+          { message },
+        );
+        gotoNextStepId = gotoStepId
+          ? gotoStepId
+          : await this.getFallbackIntentForUser(userId);
+        await this.resetUserOutput(userId);
+      } else {
+        gotoNextStepId = nextStep.id;
+      }
 
-      // 6. Reset User output
-      await this.resetUserOutput(userId);
-    } else gotoNextStepId = nextStep.id;
-
-    // 7. Update User Active StepId
-    await this.updateUserActiveStepId(userId, {
-      stepId: gotoNextStepId,
-    });
-
-    // 8. get next Module Handler
-    const [, nextHandlerModule] = await this.getIntentAndHandlerByStepId(
-      gotoNextStepId,
-    );
-    const {
-      getStepTextAndOptionsByStepId: getStepTextAndOptionsByStepIdForNextModule,
-    } = nextHandlerModule;
-
-    const [nextStepText, nextStepOptions] =
-      await getStepTextAndOptionsByStepIdForNextModule(gotoNextStepId, {
-        message,
+      await this.updateUserActiveStepId(userId, {
+        stepId: gotoNextStepId,
       });
+      inputConsumed = true;
+    } while (true);
+  }
 
-    result.push({
-      response:
-        nextStepText +
-        this.NEW_LINE +
-        this.NEW_LINE +
-        this.getOptionsTextFromOptions(nextStepOptions),
-    });
+  // async processTextMessageForUser(
+  //   userId: number,
+  //   message: IncomingMessage,
+  // ): Promise<any> {
+  //   const result = [];
+  //   // const result = { response: "sample text" };
+  //   const { text: userInput } = message;
+  //   const userActiveStepInfo = await this.getUserActiveStepInfo(userId);
+  //   const { activeStepId: userActiveStepId } = userActiveStepInfo;
 
-    return result;
+  //   console.log("xxxis New User", userActiveStepInfo.isNewUser);
+
+  //   // 1. Get Handler Module
+  //   const [, handlerModule] = await this.getIntentAndHandlerByStepId(
+  //     userActiveStepId,
+  //   );
+  //   const {
+  //     getStepTextAndOptionsByStepId,
+  //     getNextStepFor,
+  //     handleIntentComplete,
+  //     validate: validateFn,
+  //   } = handlerModule;
+
+  //   const [currentStepText, currentStepOptions, stepKey] =
+  //     await getStepTextAndOptionsByStepId(userActiveStepId, {
+  //       message,
+  //       isNewUser: userActiveStepInfo.isNewUser,
+  //     });
+
+  //   //-------if options.length > 0 ----------------
+  //   // 2. Input Validation
+  //   const { response: validatedResponse, ok: validationOk } =
+  //     await this.validateInputForStep(
+  //       currentStepOptions,
+  //       stepKey,
+  //       userActiveStepId,
+  //       userInput,
+  //       validateFn,
+  //     );
+
+  //   if (!validationOk) {
+  //     const invalidResponseResult = { response: currentStepText };
+  //     const optionsText = this.getOptionsTextFromOptions(currentStepOptions);
+  //     if (optionsText) {
+  //       invalidResponseResult.response =
+  //         invalidResponseResult.response +
+  //         this.NEW_LINE +
+  //         this.NEW_LINE +
+  //         optionsText;
+  //     }
+  //     return [invalidResponseResult];
+  //   }
+
+  //   // 3. Update user output of the current active step
+  //   await this.updateUserActiveStepId(userId, {
+  //     changes: validatedResponse,
+  //   });
+  //   //-------if options.length > 0 ----------------
+
+  //   // 4. Check if intent is complete
+  //   const { isIntentComplete, nextStep } = await getNextStepFor(
+  //     userActiveStepId,
+  //     { message },
+  //   );
+
+  //   // 5. Get nextStep
+  //   let gotoNextStepId: string;
+  //   if (isIntentComplete) {
+  //     const userCurrentOutput = await this.getUserCurrentOutput(userId);
+  //     const { gotoStepId } = await handleIntentComplete(
+  //       userId,
+  //       {
+  //         ...userCurrentOutput,
+  //         ...validatedResponse,
+  //       },
+  //       { message },
+  //     );
+
+  //     gotoNextStepId = gotoStepId
+  //       ? gotoStepId
+  //       : await this.getFallbackIntentForUser(userId);
+
+  //     // 6. Reset User output
+  //     await this.resetUserOutput(userId);
+  //   } else gotoNextStepId = nextStep.id;
+
+  //   // 7. Update User Active StepId
+  //   await this.updateUserActiveStepId(userId, {
+  //     stepId: gotoNextStepId,
+  //   });
+
+  //   // 8. get next Module Handler
+  //   const [, nextHandlerModule] = await this.getIntentAndHandlerByStepId(
+  //     gotoNextStepId,
+  //   );
+  //   const {
+  //     getStepTextAndOptionsByStepId: getStepTextAndOptionsByStepIdForNextModule,
+  //   } = nextHandlerModule;
+
+  //   const [nextStepText, nextStepOptions] =
+  //     await getStepTextAndOptionsByStepIdForNextModule(gotoNextStepId, {
+  //       message,
+  //     });
+
+  //   result.push({
+  //     response:
+  //       nextStepText +
+  //       this.NEW_LINE +
+  //       this.NEW_LINE +
+  //       this.getOptionsTextFromOptions(nextStepOptions),
+  //   });
+
+  //   return result;
+  // }
+
+  private async handleCompleteAndGetNextStepId({
+    handleIntentCompleteFn,
+    userId,
+    validatedResponse,
+    message,
+  }) {
+    const userCurrentOutput = await this.getUserCurrentOutput(userId);
+    const { gotoStepId } = await handleIntentCompleteFn(
+      userId,
+      {
+        ...userCurrentOutput,
+        ...validatedResponse,
+      },
+      { message },
+    );
+
+    return gotoStepId
+      ? gotoStepId
+      : await this.getFallbackIntentForUser(userId);
   }
 
   private getOptionsTextFromOptions(options: any) {

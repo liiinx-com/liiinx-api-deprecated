@@ -34,7 +34,7 @@ export class BotService {
       },
     } = receivedMessage;
 
-    const responses = await this.intentManager.processTextMessageForUser(
+    const responses = await this.intentManager.processTextMessageForUserV2(
       userId,
       {
         user: { id: userId, name: profile.name },
