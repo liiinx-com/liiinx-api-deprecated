@@ -60,7 +60,7 @@ export class BotService {
     const result: any = {
       type: "text",
       to,
-      text: { body: text, preview_url: previewUrl },
+      text: { body: text, footer: "test footer", preview_url: previewUrl },
     };
     if (replyingMessageId) result.context = { message_id: replyingMessageId };
     return result;
