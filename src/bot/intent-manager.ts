@@ -79,8 +79,8 @@ export class IntentManager {
   }
 
   private async getFallbackIntentForUser(userId: number) {
-    // return "hi.1";
-    return "newReturnOrder.1";
+    return "hi.1";
+    // return "newReturnOrder.1";
   }
 
   async getIntentAndHandlerByStepId(stepId: string) {
