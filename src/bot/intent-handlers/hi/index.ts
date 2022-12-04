@@ -1,25 +1,28 @@
-// import emoji from "node-emoji";
-import { getStepFn, getOptionsForStep } from "../utils";
+import emoji from "node-emoji";
 
 const getStep1 = ({ name }) => ({
   previousStepId: null,
-  id: "invitationCheck.1",
+  id: "hi.1",
   nextStepId: null,
-  text:
-    `Hi ${name} ` +
-    // emoji.get("wave") +
-    "\n\n" +
-    "Welcome to Liiinx's WhatsApp self-service experience." +
-    "\n\n" +
-    "If you have received an invitation, please provide the code now." +
-    "\n" +
-    "Or you can request one through our website.",
-  key: "invitationCode",
+  text: `Hi ${name}!`,
+  key: "selectedOption",
   options: [],
 });
 
 const stepsObject = {
-  "invitationCheck.1": getStep1,
+  "hi.1": getStep1,
+};
+
+const getStepFn = async (stepId: string) => {
+  return stepsObject[stepId];
+};
+
+const getOptionsForStep = async (stepId: string, options) => {
+  const targetStep = stepsObject[stepId](options);
+  if (targetStep) {
+    return targetStep.options;
+  }
+  return [];
 };
 
 const validate = async (
@@ -27,19 +30,15 @@ const validate = async (
   value: string,
   { stepKey, stepOptions },
 ) => {
-  const result = { ok: false };
-
-  if (value === "3302code") return { ...result, ok: true };
-
-  return result;
+  return { ok: true };
 };
 
 const getNextStepFor = async (stepId: string, options: any | undefined) => {
   const result = { isIntentComplete: false, nextStep: null };
-  const stepFn = await getStepFn(stepsObject, stepId);
+  const stepFn = await getStepFn(stepId);
   const step = stepFn(options);
   if (step.nextStepId) {
-    const nextStepFn = await getStepFn(stepsObject, step.nextStepId);
+    const nextStepFn = await getStepFn(step.nextStepId);
     const nextStep = nextStepFn(options);
     return { ...result, nextStep };
   }
@@ -59,9 +58,9 @@ const getStepTextAndOptionsByStepId = async (
 
   const params = { name };
 
-  const stepFn = await getStepFn(stepsObject, stepId);
+  const stepFn = await getStepFn(stepId);
   const step = stepFn(params);
-  const stepOptions = await getOptionsForStep(stepsObject, stepId, params);
+  const stepOptions = await getOptionsForStep(stepId, params);
   return [step.text, stepOptions, step.key];
 };
 
@@ -70,16 +69,14 @@ const handleIntentComplete = async (
   payload: any | undefined,
 ) => {
   const result = { gotoStepId: null };
-
   console.log(userId, "completed intent with", payload);
-
   return { ...result, gotoStepId: "welcome.1" };
 };
 
 export default {
-  requiresUserResponse: true,
   getStepTextAndOptionsByStepId,
   getNextStepFor,
   handleIntentComplete,
   validate,
+  requiresUserResponse: false,
 };

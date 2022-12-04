@@ -1,7 +1,7 @@
-import { getOptionsForStepFn, getStepFn } from "../utils";
+import { getStepFn, getOptionsForStep } from "../utils";
 
 const stepsObject = {
-  "newReturnOrder.1": {
+  "newReturnOrder.1": () => ({
     previousStepId: null,
     id: "newReturnOrder.1",
     nextStepId: "newReturnOrder.2",
@@ -23,8 +23,8 @@ const stepsObject = {
         numericValue: "2",
       },
     ],
-  },
-  "newReturnOrder.2": {
+  }),
+  "newReturnOrder.2": () => ({
     previousStepId: "newReturnOrder.1",
     id: "newReturnOrder.2",
     nextStepId: "newReturnOrder.3",
@@ -46,8 +46,8 @@ const stepsObject = {
         numericValue: "2",
       },
     ],
-  },
-  "newReturnOrder.3": {
+  }),
+  "newReturnOrder.3": () => ({
     previousStepId: "newReturnOrder.2",
     id: "newReturnOrder.3",
     nextStepId: null,
@@ -69,28 +69,78 @@ const stepsObject = {
         numericValue: "2",
       },
     ],
-  },
+  }),
 };
 
-// const getStep = async (stepId: string) => {
-//   return stepsObject[stepId];
+// const getNextStepFor = async (stepId: string, options: any | undefined) => {
+//   const getStep = await getStepFn(stepsObject);
+
+//   const result = { isIntentComplete: false, nextStep: null };
+//   const step = await getStep(stepId);
+//   if (step.nextStepId) {
+//     const nextStep = await getStep(step.nextStepId);
+//     return { ...result, nextStep };
+//   }
+//   return { ...result, isIntentComplete: true };
 // };
 
-// const getOptionsForStep = async (stepId: string) => {
-//   const targetStep = stepsObject[stepId];
-//   if (targetStep) {
-//     return targetStep.options;
-//   }
-//   return [];
+// const getStepTextAndOptionsByStepId = async (
+//   stepId: string,
+//   options: any | undefined,
+// ) => {
+//   const {
+//     message: {
+//       user: { id, name },
+//       text,
+//     },
+//   } = options;
+//   const getStep = await getStepFn(stepsObject);
+//   const getOptionsForStep = await getOptionsForStepFn(stepsObject);
+
+//   const step = await getStep(stepId);
+//   const stepOptions = await getOptionsForStep(stepId);
+//   return [step.text, stepOptions, step.key];
 // };
+
+// const handleIntentComplete = async (userId: number, payload: any) => {
+//   const result = { gotoStepId: "mainMenu.1" };
+
+//   console.log(userId, "completed intent with", payload);
+
+//   return result;
+// };
+
+// const validate = async (
+//   stepId: string,
+//   value: string,
+//   { stepKey, stepOptions },
+// ) => {
+//   return { ok: true };
+// };
+
+// export default {
+//   getStepTextAndOptionsByStepId,
+//   getNextStepFor,
+//   handleIntentComplete,
+//   validate,
+//   requiresUserResponse: true,
+// };
+
+const validate = async (
+  stepId: string,
+  value: string,
+  { stepKey, stepOptions },
+) => {
+  return { ok: false };
+};
 
 const getNextStepFor = async (stepId: string, options: any | undefined) => {
-  const getStep = await getStepFn(stepsObject);
-
   const result = { isIntentComplete: false, nextStep: null };
-  const step = await getStep(stepId);
+  const stepFn = await getStepFn(stepsObject, stepId);
+  const step = stepFn(options);
   if (step.nextStepId) {
-    const nextStep = await getStep(step.nextStepId);
+    const nextStepFn = await getStepFn(stepsObject, step.nextStepId);
+    const nextStep = nextStepFn(options);
     return { ...result, nextStep };
   }
   return { ...result, isIntentComplete: true };
@@ -106,24 +156,28 @@ const getStepTextAndOptionsByStepId = async (
       text,
     },
   } = options;
-  const getStep = await getStepFn(stepsObject);
-  const getOptionsForStep = await getOptionsForStepFn(stepsObject);
 
-  const step = await getStep(stepId);
-  const stepOptions = await getOptionsForStep(stepId);
+  const params = { name };
+
+  const stepFn = await getStepFn(stepsObject, stepId);
+  const step = stepFn(params);
+  const stepOptions = await getOptionsForStep(stepsObject, stepId, params);
   return [step.text, stepOptions, step.key];
 };
 
-const handleIntentComplete = async (userId: number, payload: any) => {
-  const result = { gotoStepId: "mainMenu.1" };
-
+const handleIntentComplete = async (
+  userId: number,
+  payload: any | undefined,
+) => {
+  const result = { gotoStepId: null };
   console.log(userId, "completed intent with", payload);
-
-  return result;
+  return { ...result, gotoStepId: "mainMenu.1" };
 };
 
 export default {
   getStepTextAndOptionsByStepId,
   getNextStepFor,
   handleIntentComplete,
+  validate,
+  requiresUserResponse: true,
 };

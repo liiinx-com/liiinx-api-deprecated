@@ -34,7 +34,7 @@ export class BotService {
       },
     } = receivedMessage;
 
-    const responses = await this.intentManager.processTextMessageForUser(
+    const responses = await this.intentManager.processTextMessageForUserV2(
       userId,
       {
         user: { id: userId, name: profile.name },
@@ -80,12 +80,13 @@ export class BotService {
     let responses: any[];
     if (type === "text")
       responses = await this.textMessageHandler(userId, receivedMessage);
+    // console.log("via", responses);
     if (responses) {
       return this.send(
         responses.map(
           (r: any) =>
             ({
-              data: r.response,
+              data: r,
               phoneNumberId,
             } as WhatsappResponse),
         ),
