@@ -42,13 +42,11 @@ export class BotService {
       },
     );
 
-    console.log("--responses");
-
     return responses.map((r: any) =>
       this.getTextMessageFrom({
         text: r.response,
         to: receivedMessage.customer.phoneNumber,
-        replyingMessageId: receivedMessage.message.id,
+        // replyingMessageId: receivedMessage.message.id, //TODO: replying to message
       }),
     );
   }

@@ -4,7 +4,10 @@ const getStep1 = ({ name }) => ({
   previousStepId: null,
   id: "hi.1",
   nextStepId: null,
-  text: `Hi ${name}!`,
+  text:
+    `Hi ${name}! ${emoji.get("wave")}` +
+    "\n" +
+    "Welcome to Liiinx's WhatsApp self-service experience.",
   key: "selectedOption",
   options: [],
 });
@@ -70,7 +73,7 @@ const handleIntentComplete = async (
 ) => {
   const result = { gotoStepId: null };
   console.log(userId, "completed intent with", payload);
-  return { ...result, gotoStepId: "welcome.1" };
+  return { ...result, gotoStepId: "invitationCheck.1" };
 };
 
 export default {

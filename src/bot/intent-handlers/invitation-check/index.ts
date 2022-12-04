@@ -1,4 +1,4 @@
-// import emoji from "node-emoji";
+import emoji from "node-emoji";
 import { getStepFn, getOptionsForStep } from "../utils";
 
 const getStep1 = ({ name }) => ({
@@ -6,13 +6,7 @@ const getStep1 = ({ name }) => ({
   id: "invitationCheck.1",
   nextStepId: null,
   text:
-    `Hi ${name} ` +
-    // emoji.get("wave") +
-    "\n\n" +
-    "Welcome to Liiinx's WhatsApp self-service experience." +
-    "\n\n" +
     "If you have received an invitation, please provide the code now." +
-    "\n" +
     "Or you can request one through our website.",
   key: "invitationCode",
   options: [],
@@ -73,7 +67,7 @@ const handleIntentComplete = async (
 
   console.log(userId, "completed intent with", payload);
 
-  return { ...result, gotoStepId: "welcome.1" };
+  return { ...result, gotoStepId: "mainMenu.1" };
 };
 
 export default {
