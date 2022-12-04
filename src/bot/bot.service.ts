@@ -42,13 +42,11 @@ export class BotService {
       },
     );
 
-    console.log("--responses");
-
     return responses.map((r: any) =>
       this.getTextMessageFrom({
         text: r.response,
         to: receivedMessage.customer.phoneNumber,
-        replyingMessageId: receivedMessage.message.id,
+        // replyingMessageId: receivedMessage.message.id, //TODO: replying to message
       }),
     );
   }
@@ -62,7 +60,15 @@ export class BotService {
     const result: any = {
       type: "text",
       to,
-      text: { body: text, preview_url: previewUrl },
+      text: {
+        body: text,
+        footer: "test footer",
+        header: {
+          type: "text",
+          text: "header-content",
+        },
+        preview_url: previewUrl,
+      },
     };
     if (replyingMessageId) result.context = { message_id: replyingMessageId };
     return result;
