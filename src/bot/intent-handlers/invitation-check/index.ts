@@ -6,8 +6,8 @@ const getStep1 = ({ name }) => ({
   id: "invitationCheck.1",
   nextStepId: null,
   text:
-    "If you have received an invitation, please provide the code now." +
-    "Or you can request one through our website.",
+    "If you have received an invitation, please provide the code now " +
+    "or, you can request one through our website.",
   key: "invitationCode",
   options: [],
 });
