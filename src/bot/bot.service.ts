@@ -8,94 +8,6 @@ import { IntentManager } from "./intent-manager";
 
 const TOKEN = "";
 
-const listInteractiveObject = {
-  type: "list",
-  header: {
-    type: "text",
-    text: "Select the food item you would like",
-  },
-  body: {
-    text: "You will be presented with a list of options to choose from",
-  },
-  footer: {
-    text: "All of them are freshly packed",
-  },
-  action: {
-    button: "Order",
-    sections: [
-      {
-        title: "Section 1 - Fruit",
-        rows: [
-          {
-            id: "1",
-            title: "Apple",
-            description: "Dozen",
-          },
-          {
-            id: "2",
-            title: "Orange",
-            description: "Dozen",
-          },
-        ],
-      },
-      {
-        title: "Section 2 - Vegetables",
-        rows: [
-          {
-            id: "3",
-            title: "Spinach",
-            description: "1kg ",
-          },
-          {
-            id: "2",
-            title: "Broccoli",
-            description: "1kg",
-          },
-        ],
-      },
-    ],
-  },
-};
-
-const sampleInteractiveMsg = ({ to }) => ({
-  to,
-  type: "interactive",
-  interactive: {
-    type: "button",
-    body: {
-      text: "optional body text",
-    },
-    footer: {
-      text: "optional footer text",
-    },
-    action: {
-      buttons: [
-        {
-          type: "reply",
-          reply: {
-            id: "BUTTON_ID_1",
-            title: "TITLE_1",
-          },
-        },
-        {
-          type: "reply",
-          reply: {
-            id: "BUTTON_ID_3",
-            title: "TITLE_3",
-          },
-        },
-        {
-          type: "reply",
-          reply: {
-            id: "BUTTON_ID_2",
-            title: "TITLE_2",
-          },
-        },
-      ],
-    },
-  },
-});
-
 @Injectable()
 export class BotService {
   private static baseUrl = "https://graph.facebook.com/v15.0/";
@@ -145,14 +57,14 @@ export class BotService {
     text,
     replyingMessageId = null,
     previewUrl = false,
-    interactiveMessage = true,
+    // interactiveMessage = true,
   }): any {
-    if (interactiveMessage)
-      return {
-        to,
-        type: "interactive",
-        interactive: listInteractiveObject,
-      };
+    // if (interactiveMessage)
+    //   return {
+    //     to,
+    //     type: "interactive",
+    //     interactive: listInteractiveObject,
+    //   };
 
     const result: any = {
       type: "text",
