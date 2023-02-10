@@ -9,13 +9,32 @@ export interface SectionInfo {
   sectionProps?: any;
 }
 
+export enum BoxSize {
+  FULL = "w-full",
+  CONTAINER = "container",
+  MEDIUM = "max-w-7xl",
+}
+
 export interface Theme {
   bodyClassName: string;
-  mainContainerClassName: string;
-  // contentClassName: string;
-  // primaryColorClassName: string;
-  // secondaryColorClassName: string;
-  mainContainerBoxed: boolean;
+  primaryText: string;
+  normalText: string;
+
+  headerBoxSize: BoxSize;
+  headerWrapperClassName: string;
+  navbarClassName: string;
+  navbarLinkClassName: string;
+
+  heroBoxSize: BoxSize;
+  heroWrapperClassName: string;
+
+  mainBoxSize: BoxSize;
+  mainWrapperClassName: string;
+
+  footerBoxSize: BoxSize;
+  footerWrapperClassName: string;
+  footerClassName: string;
+  footerTextClassName: string;
 }
 
 interface Badge {
@@ -42,6 +61,7 @@ export interface LayoutConfig {
   theme: Theme;
   navbar: SectionInfo;
   footer: SectionInfo;
+  hero?: SectionInfo;
   // footer: {
   //   logoPosition: "left" | "right";
   //   displayLogo: boolean;

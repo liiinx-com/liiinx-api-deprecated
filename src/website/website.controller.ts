@@ -42,7 +42,7 @@ export class WebsiteController {
     @Param("handle") handle: string,
     @Query("lang") lang = "EN",
   ): Promise<any> {
-    console.log("layout------", handle, lang);
+    // console.log("layout------", handle, lang);
     return salamatWebsite;
   }
 
@@ -51,7 +51,7 @@ export class WebsiteController {
   //   @Header("Content-Disposition", "attachment; filename=styles.css")
   async getStyles(@Param("handle") handle: string): Promise<string> {
     console.log("dddd", handle);
-    return ".testika {background-color:#4DD0E1;color:red;}";
+    return ".testika {background-color:#FFA726;color:red;}";
   }
 
   @Get(":handle/pages/:pageName")

@@ -1,21 +1,59 @@
-import { LayoutConfig } from "./types";
+import { BoxSize, LayoutConfig } from "./types";
 // import { theme1 } from "./themes/theme1";
 
+const themeV1 = {
+  bodyClassName: "bg-gray-200", //bg-green-500
+  mainContainerClassName: "",
+  mainContainerBoxed: true,
+};
+const themeV2 = {
+  bodyClassName: "bg-gray-100",
+  primaryText: "",
+  normalText: "",
+
+  headerBoxSize: BoxSize.MEDIUM,
+  headerWrapperClassName: "",
+  navbarClassName: "bg-white",
+  navbarLinkClassName: "text-pink-400 hover:bg-amber-200",
+
+  heroBoxSize: BoxSize.MEDIUM,
+  heroWrapperClassName: "",
+
+  mainBoxSize: BoxSize.MEDIUM,
+  mainWrapperClassName: "",
+
+  footerBoxSize: BoxSize.MEDIUM,
+  footerWrapperClassName: "",
+  footerClassName: "bg-sky-300",
+  footerTextClassName: "text-gray-700",
+};
+
 export const salamatWebsite: LayoutConfig = {
-  theme: {
-    bodyClassName: "bg-gray-200", //bg-green-500
-    mainContainerClassName: "",
-    mainContainerBoxed: true,
-  },
+  theme: themeV2,
   navbar: {
     sectionType: "NAVBAR",
     sectionVariant: "NAVBAR1",
-    sectionProps: { ok: true },
+    sectionProps: {
+      rtl: false,
+      linkClassName: themeV2.navbarLinkClassName,
+      navbarClassName: themeV2.navbarClassName,
+    },
   },
+  // hero: {
+  //   sectionType: "HERO",
+  //   sectionVariant: "HERO1",
+  //   sectionProps: {
+  //     footerClassName: themeV2.footerClassName,
+  //     footerTextClassName: themeV2.footerTextClassName,
+  //   },
+  // },
   footer: {
     sectionType: "FOOTER",
     sectionVariant: "FOOTER1",
-    sectionProps: { somePropForFooter: true },
+    sectionProps: {
+      footerClassName: themeV2.footerClassName,
+      footerTextClassName: themeV2.footerTextClassName,
+    },
   },
 
   // body: {
