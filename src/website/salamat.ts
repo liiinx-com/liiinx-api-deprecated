@@ -1,31 +1,48 @@
-import { BoxSize, LayoutConfig } from "./types";
+import { BoxSize, LayoutConfig, Theme } from "./types";
 // import { theme1 } from "./themes/theme1";
 
-const themeV1 = {
-  bodyClassName: "bg-gray-200", //bg-green-500
-  mainContainerClassName: "",
-  mainContainerBoxed: true,
-};
-const themeV2 = {
-  bodyClassName: "bg-gray-100",
-  primaryText: "",
-  normalText: "",
+const themeV2: Theme = {
+  bodyStyle: {
+    style: { backgroundColor: "#fff" },
+  },
+  primaryTextStyle: {},
+  paragraphStyle: {},
+  headerBoxSize: BoxSize.CONTAINER,
+  headerWrapperStyle: {},
 
-  headerBoxSize: BoxSize.MEDIUM,
-  headerWrapperClassName: "",
-  navbarClassName: "bg-white",
-  navbarLinkClassName: "text-pink-400 hover:bg-amber-200",
+  heroBoxSize: BoxSize.FULL,
 
-  heroBoxSize: BoxSize.MEDIUM,
-  heroWrapperClassName: "",
+  mainBoxSize: BoxSize.CONTAINER,
+  mainWrapperStyle: {
+    style: { backgroundColor: "#eee" },
+  },
 
-  mainBoxSize: BoxSize.MEDIUM,
-  mainWrapperClassName: "",
+  navbarStyle: {
+    style: {
+      backgroundColor: "#fff",
+    },
+  },
 
-  footerBoxSize: BoxSize.MEDIUM,
-  footerWrapperClassName: "",
-  footerClassName: "bg-sky-300",
-  footerTextClassName: "text-gray-700",
+  navbarLinkStyle: {
+    style: {
+      color: "#283593",
+      //"&:hover": { color: "blue" }, // ! TODO: NOT WORKING
+    },
+  },
+
+  heroWrapperStyle: {
+    className: "",
+    style: {},
+  },
+
+  footerBoxSize: BoxSize.CONTAINER,
+  footerWrapperStyle: {},
+  footerStyle: {},
+  footerTextStyle: {
+    style: {
+      color: "#283593",
+    },
+  },
 };
 
 export const salamatWebsite: LayoutConfig = {
@@ -35,24 +52,26 @@ export const salamatWebsite: LayoutConfig = {
     sectionVariant: "NAVBAR1",
     sectionProps: {
       rtl: false,
-      linkClassName: themeV2.navbarLinkClassName,
-      navbarClassName: themeV2.navbarClassName,
+      navbarStyle: themeV2.navbarStyle,
+      linkStyle: themeV2.navbarLinkStyle,
     },
   },
-  // hero: {
-  //   sectionType: "HERO",
-  //   sectionVariant: "HERO1",
-  //   sectionProps: {
-  //     footerClassName: themeV2.footerClassName,
-  //     footerTextClassName: themeV2.footerTextClassName,
-  //   },
-  // },
+  hero: {
+    sectionType: "HERO",
+    sectionVariant: "HERO1",
+    sectionProps: {
+      primaryText: "Salamat Trading, your trustworthy broker!",
+      primaryTextStyle: { style: { color: "#7E57C2" } },
+      secondaryText: "With over 10 years of experience in Crypto markets",
+      secondaryTextStyle: { style: { color: "#5C6BC0" } },
+    },
+  },
   footer: {
     sectionType: "FOOTER",
     sectionVariant: "FOOTER1",
     sectionProps: {
-      footerClassName: themeV2.footerClassName,
-      footerTextClassName: themeV2.footerTextClassName,
+      footerStyle: themeV2.footerStyle,
+      footerTextStyle: themeV2.footerTextStyle,
     },
   },
 

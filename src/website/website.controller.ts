@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query, Header } from "@nestjs/common";
-import { HeadMetaData, PageData } from "./types";
+import { HeadMetaData2, PageData } from "./types";
 import { salamatWebsite } from "./salamat";
 import { testData } from "./entities";
 import { WebsiteService } from "./website.service";
@@ -13,11 +13,11 @@ export class WebsiteController {
     @Param("handle") handle: string,
     @Query("lang") lang = "EN",
     @Query("page") page = "HOME",
-  ): Promise<HeadMetaData[]> {
+  ): Promise<HeadMetaData2[]> {
     console.log("head------", handle, page, lang);
     console.log("testData :>> ", JSON.stringify(testData(), null, 2));
 
-    const data: HeadMetaData =
+    const data: HeadMetaData2 =
       page.toUpperCase() === "HOME"
         ? {
             tagName: "meta",
@@ -46,12 +46,18 @@ export class WebsiteController {
     return salamatWebsite;
   }
 
-  @Get(":handle/styles.css")
+  @Get(":handle/:pageName/styles.css")
   @Header("content-type", "text/css")
+  @Header("Cross-Origin-Resource-Policy", "cross-origin")
   //   @Header("Content-Disposition", "attachment; filename=styles.css")
-  async getStyles(@Param("handle") handle: string): Promise<string> {
-    console.log("dddd", handle);
-    return ".testika {background-color:#FFA726;color:red;}";
+  getStyles(
+    @Param("handle") handle: string,
+    @Param("pageName") pageName: string,
+  ) {
+    console.log("dddd", handle, pageName);
+    // TODO: if page or handle not found
+
+    return "";
   }
 
   @Get(":handle/pages/:pageName")

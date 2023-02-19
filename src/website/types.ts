@@ -3,8 +3,13 @@ export interface HeadMetaData {
   attributes: object;
 }
 
+export class HeadMetaData2 implements HeadMetaData {
+  tagName: "meta";
+  attributes: object;
+}
+
 export interface SectionInfo {
-  sectionType: "NAVBAR" | "FOOTER" | "HERO";
+  sectionType: "NAVBAR" | "FOOTER" | "HERO" | "TITLE_BAR";
   sectionVariant: string;
   sectionProps?: any;
 }
@@ -15,26 +20,31 @@ export enum BoxSize {
   MEDIUM = "max-w-7xl",
 }
 
+export interface ComponentStyle {
+  className?: string;
+  style?: object;
+}
+
 export interface Theme {
-  bodyClassName: string;
-  primaryText: string;
-  normalText: string;
+  bodyStyle: ComponentStyle;
+  primaryTextStyle: ComponentStyle;
+  paragraphStyle: ComponentStyle;
 
   headerBoxSize: BoxSize;
-  headerWrapperClassName: string;
-  navbarClassName: string;
-  navbarLinkClassName: string;
+  headerWrapperStyle: ComponentStyle;
+  navbarStyle: ComponentStyle;
+  navbarLinkStyle: ComponentStyle;
 
   heroBoxSize: BoxSize;
-  heroWrapperClassName: string;
+  heroWrapperStyle: ComponentStyle;
 
   mainBoxSize: BoxSize;
-  mainWrapperClassName: string;
+  mainWrapperStyle: ComponentStyle;
 
   footerBoxSize: BoxSize;
-  footerWrapperClassName: string;
-  footerClassName: string;
-  footerTextClassName: string;
+  footerWrapperStyle: ComponentStyle;
+  footerStyle: ComponentStyle;
+  footerTextStyle: ComponentStyle;
 }
 
 interface Badge {
@@ -135,3 +145,5 @@ export interface PageData {
 //     imageUrl: "",
 //   },
 // };
+
+// ======================================

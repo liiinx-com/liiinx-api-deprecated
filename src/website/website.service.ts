@@ -1,101 +1,89 @@
 import { Injectable } from "@nestjs/common";
-import { getAboutPage } from "./entities";
+import {
+  PageColumn,
+  getAboutPage,
+  getHomeGenericPage,
+  getHomePage,
+} from "./entities";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 import { lodash } from "../utils";
+
+import { Content } from "./entities";
 
 const { sortBy } = lodash;
 
 @Injectable()
 export class WebsiteService {
-  getPage(handle: string, name: string) {
-    const { variant, type, config, columns } = getAboutPage();
+  // constructor(
+  //   @InjectRepository(Content)
+  //   private contentRepository: Repository<Content>,
+  // ) {}
 
-    return {
-      type,
-      variant,
-      pageConfig: config,
-      content: sortBy(columns, ["order"]).map(
-        ({ config, sections, sizeConfig, id }) => {
-          return {
-            id,
-            columnConfig: {
-              ...sizeConfig,
-              ...config,
-            },
-            sections: sortBy(sections, ["order"]).map(
-              ({
+  async getPage(handle: string, name: string) {
+    if (name.toUpperCase() === "ABOUT") {
+      return getAboutPage();
+    }
+
+    if (name.toUpperCase() === "HOME") {
+      return getHomePage();
+    }
+
+    if (name.toUpperCase() === "GENERIC") {
+      const { variant, type, config, columns } = await getHomeGenericPage();
+
+      const leftCol = columns.find((i) => i.location === "LEFT");
+      const centerCol = columns.find((i) => i.location === "CENTER");
+      const rightCol = columns.find((i) => i.location === "RIGHT");
+
+      console.log("leftCol, centerCol, rightCol", leftCol, centerCol, rightCol);
+
+      const getColumnConfig = ({
+        config,
+        sections,
+        sizeConfig,
+        id,
+        location,
+      }: PageColumn) => {
+        return {
+          id,
+          location,
+          columnConfig: {
+            ...sizeConfig,
+            ...config,
+          },
+          sections: sortBy(sections, ["order"]).map(
+            ({
+              id,
+              config,
+              section: { type, defaultConfig, readonlyConfig },
+              variant,
+            }) => {
+              return {
                 id,
-                config,
-                section: { type, defaultConfig, readonlyConfig },
+                type,
                 variant,
-              }) => {
-                return {
-                  id,
-                  type,
-                  variant,
-                  sectionConfig: {
-                    ...defaultConfig,
-                    ...config,
-                    ...readonlyConfig,
-                  },
-                };
-              },
-            ),
-          };
+                sectionConfig: {
+                  ...defaultConfig,
+                  ...config,
+                  ...readonlyConfig,
+                },
+              };
+            },
+          ),
+        };
+      };
+
+      return {
+        type,
+        variant,
+        pageConfig: config,
+        content: {
+          leftColumn: leftCol ? getColumnConfig(leftCol) : null,
+          centerColumn: centerCol ? getColumnConfig(centerCol) : null,
+          rightColumn: rightCol ? getColumnConfig(rightCol) : null,
         },
-      ),
-    };
+      };
+    }
   }
 }
-
-// const sampleHero1DefaultProps = {
-//   primaryText: "Primary text goes here",
-//   secondaryText:
-//     "Secondary text also goes here which may be more about description",
-//   button: { enabled: true, text: "Click Me Now" },
-// };
-
-// const sampleHero1RequiredProps = {
-//   primaryText: "Primary text goes here",
-// };
-
-// const homeEmpty: PageData = {
-//   type: "GENERIC",
-//   variant: "",
-//   props: { worx: true },
-//   content: {
-//     left: [],
-//     right: [],
-//     center: [
-//       {
-//         sectionType: "HERO",
-//         sectionVariant: "HERO1",
-//         sectionProps: {
-//           ...sampleHero1RequiredProps,
-//           ...sampleHero1DefaultProps,
-//           button: { enabled: true, text: "See More!" },
-//         },
-//       },
-//     ],
-//   },
-// };
-
-// const aboutEmpty: PageData = {
-//   type: "ABOUT",
-//   variant: "ABOUT1",
-//   props: { about1Worx: true },
-//   content: {
-//     left: [],
-//     right: [],
-//     center: [
-//       // {
-//       //   sectionType: "HERO",
-//       //   sectionVariant: "HERO1",
-//       //   sectionProps: { randomProp: "some value opacity-80" },
-//       // },
-//     ],
-//   },
-// };
-
-// if (pageName.toUpperCase() === "HOME") return homeEmpty;
-// if (pageName.toUpperCase() === "ABOUT") return aboutEmpty;
-// return homeEmpty;
