@@ -12,7 +12,12 @@ export class AddOkToResponseInterceptor implements NestInterceptor {
         const isGetRequest = request.method === "GET";
         const [requestUrl] = request.url.split("?");
         const excludeUrls = ["/bot/webhook"];
-        if (isGetRequest && excludeUrls.includes(requestUrl)) return response;
+        const stylesUrl = "/styles.css";
+        if (
+          isGetRequest &&
+          (excludeUrls.includes(requestUrl) || requestUrl.includes(stylesUrl))
+        )
+          return response;
 
         return { ok: true, result: response };
       }),
