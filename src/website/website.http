@@ -1,0 +1,11 @@
+POST http://localhost:3003/website/salamattrading/data
+Content-Type: application/json
+
+{
+  "parts": [
+    {
+        "part":"profile",
+        "params": {}
+    }
+  ]
+}

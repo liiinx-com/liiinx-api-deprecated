@@ -14,7 +14,7 @@ const themeV2: Theme = {
 
   mainBoxSize: BoxSize.CONTAINER,
   mainWrapperStyle: {
-    style: { backgroundColor: "#eee" },
+    style: { backgroundColor: "#F3F2F8" },
   },
 
   navbarStyle: {

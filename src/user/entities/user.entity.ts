@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from "typeorm";
+import { BaseEntity } from "src/shared/base.entity";
+import { Website } from "src/website/entities";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 
 export enum UserStatus {
   ACTIVE = "ACTIVE",
@@ -12,25 +14,19 @@ export enum UserRole {
   ADMIN = "ADMIN",
 }
 
-@Entity()
+@Entity({ name: "users" })
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
+  @Column({ name: "first_name" })
   firstName: string;
 
-  @Column()
+  @Column({ name: "last_name" })
   lastName: string;
 
   @Column()
   email: string;
 
-  @Column()
-  serviceDeskUserId: string;
-
-  @Column("simple-json")
-  metaData: { facebookAccountInfo: object };
+  @Column({ type: "json", default: {} })
+  metadata: {};
 
   //TODO: credit or subscription will need to be in its own module
 
@@ -41,6 +37,12 @@ export class User extends BaseEntity {
   })
   roles: string[];
 
+  @Column({ length: 100 })
+  timezone: string;
+
+  @OneToMany(() => Website, (website) => website.owner)
+  websites: Website[];
+
   @Column({
     type: "enum",
     enum: UserStatus,
@@ -48,3 +50,8 @@ export class User extends BaseEntity {
   })
   status: UserStatus;
 }
+
+// @Entity()
+// export class Profile extends BaseEntity {
+
+// }

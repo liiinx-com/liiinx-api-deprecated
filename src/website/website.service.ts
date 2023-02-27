@@ -1,89 +1,200 @@
 import { Injectable } from "@nestjs/common";
+import { BoxSize } from "./types";
 import {
-  PageColumn,
-  getAboutPage,
-  getHomeGenericPage,
-  getHomePage,
-} from "./entities";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+  Page,
+  PageTypes,
+  Theme,
+  Website,
+  WebsitePage,
+} from "./entities/structure.entity";
 import { lodash } from "../utils";
+import { User, UserRole, UserStatus } from "src/user/entities/user.entity";
+import { WebsiteLayoutResponse } from "./dto";
 
-import { Content } from "./entities";
+const theme1: Theme = {
+  created_at: new Date(),
+  updated_at: new Date(),
+  id: "theme-id-1",
+  title: "Elegant Light Theme",
+  description: "some desc",
+  status: "ACTIVE",
+  config: {
+    bodyStyle: {
+      style: { backgroundColor: "#fff" },
+    },
+    primaryTextStyle: { color: "#eee" },
+    paragraphStyle: { color: "#eee" },
+    headerBoxSize: BoxSize.CONTAINER,
+    headerWrapperStyle: {},
 
-const { sortBy } = lodash;
+    heroBoxSize: BoxSize.FULL,
+
+    mainBoxSize: BoxSize.CONTAINER,
+    mainWrapperStyle: {
+      style: { backgroundColor: "#F3F2F8" },
+    },
+
+    navbarStyle: {
+      style: {
+        backgroundColor: "#fff",
+      },
+    },
+
+    navbarLinkStyle: {
+      style: {
+        color: "#283593",
+        //"&:hover": { color: "blue" }, // ! TODO: NOT WORKING
+      },
+    },
+  },
+};
+
+const mehdiSalamat: User = {
+  created_at: new Date(),
+  updated_at: new Date(),
+  id: "user-1",
+  email: "mahdi.salamat@gmail.com",
+  firstName: "Mahdi",
+  lastName: "Salamat",
+  roles: [UserRole.USER],
+  metadata: {},
+  status: UserStatus.ACTIVE,
+  timezone: "EST",
+  websites: [],
+};
+
+const elasticLayout: Page = {
+  created_at: new Date(),
+  updated_at: new Date(),
+  id: "layout-id-1",
+  type: PageTypes.LAYOUT,
+  title: "Simple Responsive Layout",
+  description: "Amazing simple responsive layout",
+  structure: {
+    navbarConfig: {
+      sectionType: "NAVBAR",
+      sectionVariant: "NAVBAR1",
+    },
+    footerConfig: {
+      sectionType: "FOOTER",
+      sectionVariant: "FOOTER1",
+    },
+  },
+  metaTags: [],
+  websitePages: [],
+  frontendModuleKey: "ElasticLayout",
+};
+
+const salamatWebsite: Website = {
+  id: "website-id-1",
+  created_at: new Date(),
+  updated_at: new Date(),
+  handle: "salamat-trading",
+  owner: mehdiSalamat,
+  pages: [],
+  themeId: "theme-id-1",
+  themeOverrides: { primaryTextStyle: { color: "pink" } },
+};
+
+const salamatLayout: WebsitePage = {
+  id: "website-page-id-1",
+  created_at: new Date(),
+  updated_at: new Date(),
+  website: salamatWebsite,
+  page: elasticLayout,
+  deletable: false,
+  editable: true,
+  themeOverrides: {},
+  structureOverrides: {
+    navbarConfig: {
+      sectionType: "NAVBAR",
+      sectionVariant: "NAVBAR1",
+      sectionProps: {
+        rtl: true,
+      },
+    },
+  },
+
+  config: {},
+  metaTags: {},
+};
 
 @Injectable()
 export class WebsiteService {
-  // constructor(
-  //   @InjectRepository(Content)
-  //   private contentRepository: Repository<Content>,
-  // ) {}
+  async getWebsite(handle: string) {
+    return salamatWebsite;
+  }
 
   async getPage(handle: string, name: string) {
-    if (name.toUpperCase() === "ABOUT") {
-      return getAboutPage();
-    }
+    return {};
+  }
 
-    if (name.toUpperCase() === "HOME") {
-      return getHomePage();
-    }
+  async getTheme(themeId: string) {
+    return theme1;
+  }
 
-    if (name.toUpperCase() === "GENERIC") {
-      const { variant, type, config, columns } = await getHomeGenericPage();
+  async getWebsiteTheme(handle: string) {
+    const website = await this.getWebsite(handle);
+    const theme = await this.getTheme(website.themeId);
+    return {
+      ...theme.config,
+      ...website.themeOverrides,
+    };
+  }
 
-      const leftCol = columns.find((i) => i.location === "LEFT");
-      const centerCol = columns.find((i) => i.location === "CENTER");
-      const rightCol = columns.find((i) => i.location === "RIGHT");
+  async getLayoutConfig(
+    handle: string,
+    lang: string,
+  ): Promise<WebsiteLayoutResponse> {
+    const parentLayout = salamatLayout.page;
+    const websiteLayout = salamatLayout;
 
-      console.log("leftCol, centerCol, rightCol", leftCol, centerCol, rightCol);
+    const result: WebsiteLayoutResponse = {};
 
-      const getColumnConfig = ({
-        config,
-        sections,
-        sizeConfig,
-        id,
-        location,
-      }: PageColumn) => {
-        return {
-          id,
-          location,
-          columnConfig: {
-            ...sizeConfig,
-            ...config,
-          },
-          sections: sortBy(sections, ["order"]).map(
-            ({
-              id,
-              config,
-              section: { type, defaultConfig, readonlyConfig },
-              variant,
-            }) => {
-              return {
-                id,
-                type,
-                variant,
-                sectionConfig: {
-                  ...defaultConfig,
-                  ...config,
-                  ...readonlyConfig,
-                },
-              };
-            },
-          ),
-        };
-      };
-
-      return {
-        type,
-        variant,
-        pageConfig: config,
-        content: {
-          leftColumn: leftCol ? getColumnConfig(leftCol) : null,
-          centerColumn: centerCol ? getColumnConfig(centerCol) : null,
-          rightColumn: rightCol ? getColumnConfig(rightCol) : null,
-        },
+    // navbar
+    if (
+      parentLayout.structure.navbarConfig ||
+      websiteLayout.structureOverrides.navbarConfig
+    ) {
+      result.navbar = {
+        ...parentLayout.structure.navbarConfig,
+        ...websiteLayout.structureOverrides.navbarConfig,
       };
     }
+
+    // hero
+    if (
+      parentLayout.structure.heroConfig ||
+      websiteLayout.structureOverrides.heroConfig
+    ) {
+      result.hero = {
+        ...parentLayout.structure.heroConfig,
+        ...websiteLayout.structureOverrides.heroConfig,
+      };
+    }
+
+    // content
+    if (
+      parentLayout.structure.contentConfig ||
+      websiteLayout.structureOverrides.contentConfig
+    ) {
+      result.content = {
+        ...parentLayout.structure.contentConfig,
+        ...websiteLayout.structureOverrides.contentConfig,
+      };
+    }
+
+    // footer
+    if (
+      parentLayout.structure.footerConfig ||
+      websiteLayout.structureOverrides.footerConfig
+    ) {
+      result.footer = {
+        ...parentLayout.structure.footerConfig,
+        ...websiteLayout.structureOverrides.footerConfig,
+      };
+    }
+
+    return result;
   }
 }

@@ -1,2 +1,1 @@
-export * from "./structure";
-export * from "./content.entity";
+export * from "./structure.entity";

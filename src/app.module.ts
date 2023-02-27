@@ -21,16 +21,16 @@ import { WebsiteModule } from "./website/website.module";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    // TypeOrmModule.forRootAsync({
-    //   imports: [ConfigurationModule],
-    //   inject: [ConfigurationService],
-    //   useFactory: async (configurationService: ConfigurationService) => ({
-    //     type: "postgres",
-    //     entities: ["dist/**/*.entity{.ts,.js}"],
-    //     url: configurationService.getPostgresConfig().url,
-    //     synchronize: true,
-    //   }),
-    // }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigurationModule],
+      inject: [ConfigurationService],
+      useFactory: async (configurationService: ConfigurationService) => ({
+        type: "postgres",
+        entities: ["dist/**/*.entity{.ts,.js}"],
+        url: configurationService.getPostgresConfig().url,
+        synchronize: true,
+      }),
+    }),
     I18nModule.forRoot({
       fallbackLanguage: "en",
       loaderOptions: {
@@ -48,12 +48,12 @@ import { WebsiteModule } from "./website/website.module";
     //   inject: [ConfigurationService],
     // }),
     ConfigurationModule,
-    BotModule,
+    // BotModule,
     UserModule,
-    ServiceDeskModule,
+    // ServiceDeskModule,
     AuthModule,
     NotificationModule,
-    WooCommerceModule,
+    // WooCommerceModule,
     WebsiteModule,
   ],
   controllers: [AppController],
