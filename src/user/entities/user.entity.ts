@@ -1,6 +1,5 @@
-import { BaseEntity } from "src/shared/base.entity";
-import { Website } from "src/website/entities";
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { BaseEntity } from "../../shared/base.entity";
+import { Entity, Column } from "typeorm";
 
 export enum UserStatus {
   ACTIVE = "ACTIVE",
@@ -26,7 +25,7 @@ export class User extends BaseEntity {
   email: string;
 
   @Column({ type: "json", default: {} })
-  metadata: {};
+  metadata: object;
 
   //TODO: credit or subscription will need to be in its own module
 
@@ -39,9 +38,6 @@ export class User extends BaseEntity {
 
   @Column({ length: 100 })
   timezone: string;
-
-  @OneToMany(() => Website, (website) => website.owner)
-  websites: Website[];
 
   @Column({
     type: "enum",

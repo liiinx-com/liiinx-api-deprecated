@@ -63,7 +63,6 @@ const mehdiSalamat: User = {
   metadata: {},
   status: UserStatus.ACTIVE,
   timezone: "EST",
-  websites: [],
 };
 
 const salamatWebsite: Website = {
@@ -71,7 +70,7 @@ const salamatWebsite: Website = {
   createdAt: new Date(),
   updatedAt: new Date(),
   handle: "salamat-trading",
-  owner: mehdiSalamat,
+  ownerId: "mehdiSalamat",
   pages: [],
   themeId: "theme-id-1",
   themeOverrides: { primaryTextStyle: { color: "pink" } },

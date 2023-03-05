@@ -1,5 +1,4 @@
-import { BaseEntity } from "src/shared/base.entity";
-import { User } from "src/user/entities/user.entity";
+import { BaseEntity } from "../../shared/base.entity";
 import { Entity, Column, ManyToOne, OneToMany } from "typeorm";
 import { ContentSectionInfo, SectionInfo } from "../types";
 
@@ -30,7 +29,7 @@ export class Theme extends BaseEntity {
   description: string;
 
   @Column({ type: "json", default: {} })
-  config: {};
+  config: object;
 
   @Column({ length: 50, default: "ACTIVE" })
   status: string;
@@ -50,18 +49,18 @@ export class Website extends BaseEntity {
   // @Column({ type: "json", default: {} })
   // config: {};
 
-  @ManyToOne(() => User, (user) => user.websites)
-  owner: User;
+  @Column()
+  ownerId: string;
 
   @OneToMany(() => WebsitePage, (page) => page.website)
   pages: WebsitePage[];
 
   @Column({ type: "json", default: {}, name: "theme_overrides" })
-  themeOverrides: Object;
+  themeOverrides: object;
 }
 
 export class PageStructure {
-  @Column({ type: "json", name: "navbar_config" })
+  @Column({ type: "json", name: "navbar_config", nullable: true, default: {} })
   navbarConfig?: SectionInfo;
 
   @Column({ type: "json", name: "hero_config" })
@@ -88,7 +87,7 @@ export class Page extends BaseEntity {
   @Column({ length: 500 })
   description: string;
 
-  @Column(() => PageStructure)
+  @Column(() => PageStructure, { prefix: "structure_" })
   structure: PageStructure;
 
   // @Column({ type: "json", name: "readonly_config", default: {} })
@@ -113,7 +112,7 @@ export class WebsitePage extends BaseEntity {
   website: Website;
 
   @Column({ type: "json", default: {} })
-  config: {};
+  config: object;
 
   @Column(() => PageStructure)
   structureOverrides: PageStructure;
@@ -122,7 +121,7 @@ export class WebsitePage extends BaseEntity {
   slug?: string; //custom url for page
 
   @Column({ type: "json", default: {}, name: "theme_overrides" })
-  themeOverrides: Object;
+  themeOverrides: object;
 
   @Column()
   deletable: boolean;

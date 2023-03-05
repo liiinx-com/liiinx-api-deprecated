@@ -1,7 +1,7 @@
 export interface SectionInfo {
   sectionType: "NAVBAR" | "FOOTER" | "HERO" | "TITLE_BAR";
   sectionVariant: string;
-  sectionProps?: any;
+  sectionProps?: object;
   order?: number;
 }
 

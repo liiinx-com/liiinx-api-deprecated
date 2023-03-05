@@ -6,6 +6,7 @@ import {
   JiraConfig,
   JwtConfig,
   MailConfig,
+  PostgresConfig,
   RedisConfig,
   WooCommerceConfig,
 } from "./configuration.interface";
@@ -51,8 +52,10 @@ export class ConfigurationService {
     return { url: this.configService.get<string>(REDIS_URL) };
   }
 
-  getPostgresConfig(): RedisConfig {
-    return { url: this.configService.get<string>(POSTGRES_URL) };
+  getPostgresConfig(): PostgresConfig {
+    const result = { url: this.configService.get<string>(POSTGRES_URL) };
+    console.log("result", result);
+    return result;
   }
 
   getJiraConfig(): JiraConfig {

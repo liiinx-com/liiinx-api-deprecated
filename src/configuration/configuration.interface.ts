@@ -12,6 +12,10 @@ export interface RedisConfig {
   url: string;
 }
 
+export interface PostgresConfig {
+  url: string;
+}
+
 export interface JwtConfig {
   secret: string;
   expiresIn: string;
