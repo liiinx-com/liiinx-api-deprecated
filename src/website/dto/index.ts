@@ -1,23 +1,48 @@
-import {
-  IsObject,
-  IsNotEmpty,
-  IsOptional,
-  ValidateNested,
-  IsArray,
-} from "class-validator";
-import { SectionInfo } from "../types";
-import { Transform, Type } from "class-transformer";
+import { IsObject, IsNotEmpty, ValidateNested, IsArray } from "class-validator";
 
-export class ThemeResponse {}
+import { Type } from "class-transformer";
 
-export class WebsiteLayoutResponse {
-  navbar?: SectionInfo;
-  hero?: SectionInfo;
-  content?: SectionInfo;
-  footer?: SectionInfo;
+export interface ContentSectionInfo {
+  leftSections?: SectionInfo[];
+  centerSections?: SectionInfo[];
+  rightSections?: SectionInfo[];
 }
 
-export class DataPartFilter {
+export interface SectionInfo {
+  sectionType: "NAVBAR" | "FOOTER" | "HERO" | "TITLE_BAR";
+  sectionVariant: string;
+  sectionProps?: any;
+  order?: number;
+}
+
+export interface HeadMetaData {
+  tagName: "meta";
+  attributes: object;
+}
+
+export class GetHeadParamsResponse {
+  metaTags: HeadMetaData[];
+}
+
+export class GetWebsiteThemeResponse {}
+export class WebsitePageBaseResponse {
+  metaTags?: []; //HeadMetaData[];
+  type: string;
+  variant: string;
+  config?: object;
+  structure: {
+    navbar?: SectionInfo;
+    hero?: SectionInfo;
+    content?: ContentSectionInfo;
+    footer?: SectionInfo;
+  };
+}
+export class GetWebsitePageResponse extends WebsitePageBaseResponse {
+  slug: string;
+}
+export class GetWebsiteLayoutResponse extends WebsitePageBaseResponse {}
+
+export class DataPartFilterRequest {
   @Type(() => String)
   @IsNotEmpty()
   // @IsEnum(entity: object)
@@ -27,8 +52,8 @@ export class DataPartFilter {
   params: object;
 }
 
-export class WebsiteDataPartsFilter {
+export class GetWebsiteDataRequest {
   @ValidateNested({ each: true })
   @IsArray()
-  parts: DataPartFilter[];
+  parts: DataPartFilterRequest[];
 }

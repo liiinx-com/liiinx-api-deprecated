@@ -7,10 +7,13 @@ import {
   Query,
   Header,
 } from "@nestjs/common";
-import { HeadMetaData2, PageData } from "./types";
 import { salamatWebsite } from "./salamat";
 import { WebsiteService } from "./website.service";
-import { WebsiteDataPartsFilter } from "./dto";
+import {
+  GetWebsiteDataRequest,
+  GetHeadParamsResponse,
+  HeadMetaData,
+} from "./dto";
 
 @Controller("website")
 export class WebsiteController {
@@ -21,10 +24,8 @@ export class WebsiteController {
     @Param("handle") handle: string,
     @Query("lang") lang = "EN",
     @Query("page") page = "HOME",
-  ): Promise<HeadMetaData2[]> {
-    console.log("head------", handle, page, lang);
-
-    const data: HeadMetaData2 =
+  ): Promise<GetHeadParamsResponse> {
+    const sampleTag: HeadMetaData =
       page.toUpperCase() === "HOME"
         ? {
             tagName: "meta",
@@ -41,7 +42,10 @@ export class WebsiteController {
             },
           };
 
-    return [data];
+    const result: GetHeadParamsResponse = {
+      metaTags: [sampleTag],
+    };
+    return result;
   }
 
   @Get(":handle/theme")
@@ -62,7 +66,7 @@ export class WebsiteController {
   async getData(
     @Param("handle") handle: string,
     @Query("lang") lang = "EN",
-    @Body() partsFilters: WebsiteDataPartsFilter,
+    @Body() pageDataReq: GetWebsiteDataRequest,
   ): Promise<any> {
     const result = {
       profile: {},
@@ -70,7 +74,7 @@ export class WebsiteController {
 
     console.log("lang", lang, handle);
 
-    const requestedPartsKeys = partsFilters.parts.map((p) => p.part);
+    const requestedPartsKeys = pageDataReq.parts.map((p) => p.part);
 
     if (requestedPartsKeys.includes("profile")) {
       result.profile = {

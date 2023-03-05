@@ -1,7 +1,7 @@
 import { BaseEntity } from "src/shared/base.entity";
 import { User } from "src/user/entities/user.entity";
 import { Entity, Column, ManyToOne, OneToMany } from "typeorm";
-import { SectionInfo } from "../types";
+import { ContentSectionInfo, SectionInfo } from "../types";
 
 export enum Status {
   DRAFT = "DRAFT",
@@ -68,7 +68,7 @@ export class PageStructure {
   heroConfig?: SectionInfo;
 
   @Column({ type: "json", name: "content_config" })
-  contentConfig?: SectionInfo;
+  contentConfig?: ContentSectionInfo;
 
   @Column({ type: "json", name: "footer_config" })
   footerConfig?: SectionInfo;
@@ -76,20 +76,17 @@ export class PageStructure {
 
 @Entity({ name: "def_pages" })
 export class Page extends BaseEntity {
-  @Column({ name: "page_type" })
-  type: PageTypes;
-
   @Column({ length: 100 })
   title: string;
 
-  @Column({ length: 100, name: "frontend_module_key" })
-  frontendModuleKey: string;
+  @Column({ name: "page_type" })
+  type: PageTypes;
+
+  @Column({ length: 100, name: "frontend_variant_key" })
+  frontendVariantKey: string;
 
   @Column({ length: 500 })
   description: string;
-
-  // @Column({ type: "json", name: "default_config", default: {} })
-  // defaultConfig: {};
 
   @Column(() => PageStructure)
   structure: PageStructure;
@@ -97,17 +94,20 @@ export class Page extends BaseEntity {
   // @Column({ type: "json", name: "readonly_config", default: {} })
   // readonlyConfig: {};
 
-  @Column({ type: "json", name: "meta_tags", default: {} })
-  metaTags: {};
+  @Column({ type: "json", name: "meta_tags", default: [] })
+  metaTags: [];
 
-  @OneToMany(() => WebsitePage, (wPage) => wPage.page)
+  @OneToMany(() => WebsitePage, (wPage) => wPage.parentPage)
   websitePages: WebsitePage[];
+
+  @Column()
+  editable: boolean;
 }
 
 @Entity({ name: "website_pages" })
 export class WebsitePage extends BaseEntity {
   @ManyToOne(() => Page, (page) => page.websitePages)
-  page: Page;
+  parentPage: Page;
 
   @ManyToOne(() => Website, (website) => website.pages)
   website: Website;
@@ -126,9 +126,7 @@ export class WebsitePage extends BaseEntity {
 
   @Column()
   deletable: boolean;
-  @Column()
-  editable: boolean;
 
-  @Column({ type: "json", name: "meta_tags", default: {} })
-  metaTags: {};
+  @Column({ type: "json", name: "meta_tags", default: [] })
+  metaTags: [];
 }
