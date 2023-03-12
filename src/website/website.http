@@ -4,8 +4,14 @@ Content-Type: application/json
 {
   "parts": [
     {
-        "part":"profile",
-        "params": {}
+        "part":"profile"
+    },
+    {
+        "part":"about",
+        "params": {"ok": true}
+    },
+    {
+        "part":"social-links"
     }
   ]
 }

@@ -1,59 +1,66 @@
-import { IsObject, IsNotEmpty, ValidateNested, IsArray } from "class-validator";
-
+import {
+  IsObject,
+  IsNotEmpty,
+  ArrayMinSize,
+  ArrayMaxSize,
+  IsArray,
+  ValidateNested,
+  IsOptional,
+} from "class-validator";
 import { Type } from "class-transformer";
+import { NavbarSectionInfo } from "../entities/section.types";
 
-export interface ContentSectionInfo {
+class ContentSectionInfo {
   leftSections?: SectionInfo[];
   centerSections?: SectionInfo[];
   rightSections?: SectionInfo[];
 }
 
-export interface SectionInfo {
+class SectionInfo {
   sectionType: "NAVBAR" | "FOOTER" | "HERO" | "TITLE_BAR";
   sectionVariant: string;
   sectionProps?: any;
   order?: number;
 }
 
-export interface HeadMetaData {
-  tagName: "meta";
-  attributes: object;
-}
-
-export class GetHeadParamsResponse {
-  metaTags: HeadMetaData[];
-}
-
 export class GetWebsiteThemeResponse {}
-export class WebsitePageBaseResponse {
-  metaTags?: []; //HeadMetaData[];
+
+export class WebsitePageDto {
+  slug?: string;
+  metaTags?: [];
   type: string;
   variant: string;
   config?: object;
-  structure: {
-    navbar?: SectionInfo;
+  structure?: {
+    navbar?: NavbarSectionInfo;
     hero?: SectionInfo;
     content?: ContentSectionInfo;
     footer?: SectionInfo;
   };
 }
-export class GetWebsitePageResponse extends WebsitePageBaseResponse {
-  slug: string;
-}
-export class GetWebsiteLayoutResponse extends WebsitePageBaseResponse {}
 
-export class DataPartFilterRequest {
-  @Type(() => String)
+export class GetWebsitePageResponse {
+  page: WebsitePageDto;
+  layout: WebsitePageDto;
+  theme: any;
+}
+
+export class DataPartRequest {
   @IsNotEmpty()
-  // @IsEnum(entity: object)
   part: string;
 
   @IsObject()
-  params: object;
+  @IsOptional()
+  params?: object;
 }
+
+export class GetWebsiteDataResponse {}
 
 export class GetWebsiteDataRequest {
   @ValidateNested({ each: true })
   @IsArray()
-  parts: DataPartFilterRequest[];
+  @ArrayMinSize(1)
+  @ArrayMaxSize(5)
+  @Type(() => DataPartRequest)
+  parts: DataPartRequest[];
 }

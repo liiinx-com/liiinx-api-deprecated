@@ -9,12 +9,12 @@ import { AppController } from "./app.controller";
 import { ConfigurationModule } from "./configuration/configuration.module";
 import { ConfigurationService } from "./configuration/configuration.service";
 import { UserModule } from "./user/user.module";
-// import { APP_INTERCEPTOR } from "@nestjs/core";
-// import { AddOkToResponseInterceptor } from "./shared/response.interceptor";
+import { APP_INTERCEPTOR } from "@nestjs/core";
+import { AddOkToResponseInterceptor } from "./shared/response.interceptor";
 // import { ServiceDeskModule } from "./service-desk/service-desk.module";
 // import { AuthModule } from "./auth/auth.module";
 // import { NotificationModule } from "./notification/notification.module";
-// import { UserInterceptor } from "./shared/user.interceptor";
+import { UserInterceptor } from "./shared/user.interceptor";
 // import { WooCommerceModule } from "./woo-commerce/woo-commerce.module";
 import { WebsiteModule } from "./website/website.module";
 
@@ -29,6 +29,7 @@ import { WebsiteModule } from "./website/website.module";
       useFactory: async (configurationService: ConfigurationService) => ({
         type: "postgres",
         entities: ["dist/**/*.entity{.ts,.js}"],
+        // entities: ["src/**/*.entity{.ts,.js}"],
         url: configurationService.getPostgresConfig().url,
         synchronize: true,
       }),
@@ -64,10 +65,10 @@ import { WebsiteModule } from "./website/website.module";
     //   provide: APP_INTERCEPTOR,
     //   useClass: AddOkToResponseInterceptor,
     // },
-    // {
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: UserInterceptor,
-    // },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: UserInterceptor,
+    },
   ],
 })
 export class AppModule {}

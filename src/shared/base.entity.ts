@@ -1,6 +1,7 @@
 import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  Column,
   UpdateDateColumn,
 } from "typeorm";
 
@@ -23,4 +24,7 @@ export abstract class BaseEntity {
     onUpdate: "CURRENT_TIMESTAMP(6)",
   })
   public updatedAt: Date;
+
+  @Column({ default: "INACTIVE", length: 35 })
+  status: string;
 }

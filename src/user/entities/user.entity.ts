@@ -1,6 +1,7 @@
 import { BaseEntity } from "../../shared/base.entity";
 import { Entity, Column } from "typeorm";
 
+// TODO: candidate to remove
 export enum UserStatus {
   ACTIVE = "ACTIVE",
   SUSPENDED = "SUSPENDED",
@@ -38,13 +39,6 @@ export class User extends BaseEntity {
 
   @Column({ length: 100 })
   timezone: string;
-
-  @Column({
-    type: "enum",
-    enum: UserStatus,
-    default: UserStatus.ACTIVE,
-  })
-  status: UserStatus;
 }
 
 // @Entity()

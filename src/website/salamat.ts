@@ -1,7 +1,7 @@
-import { BoxSize, LayoutConfig, Theme } from "./types";
+import { BoxSize, Theme } from "./entities/section.types";
 // import { theme1 } from "./themes/theme1";
 
-const themeV2: Theme = {
+const themeV2: any = {
   bodyStyle: {
     style: { backgroundColor: "#fff" },
   },
@@ -45,7 +45,7 @@ const themeV2: Theme = {
   },
 };
 
-export const salamatWebsite: LayoutConfig = {
+export const salamatWebsite: any = {
   theme: themeV2,
   navbar: {
     sectionType: "NAVBAR",

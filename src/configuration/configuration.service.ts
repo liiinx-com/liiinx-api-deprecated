@@ -53,9 +53,7 @@ export class ConfigurationService {
   }
 
   getPostgresConfig(): PostgresConfig {
-    const result = { url: this.configService.get<string>(POSTGRES_URL) };
-    console.log("result", result);
-    return result;
+    return { url: this.configService.get<string>(POSTGRES_URL) };
   }
 
   getJiraConfig(): JiraConfig {
