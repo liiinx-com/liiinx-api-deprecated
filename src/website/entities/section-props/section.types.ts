@@ -11,9 +11,11 @@ export interface ComponentStyle {
 
 export interface Theme {
   globals: {
-    primaryText: ComponentStyle;
-    secondaryText: ComponentStyle;
-    paragraph: ComponentStyle;
+    textColor: string;
+    primaryColor: string;
+    primaryTextColor: string;
+    secondaryColor: string;
+    secondaryTextColor: string;
   };
 
   body: ComponentStyle;
@@ -112,13 +114,10 @@ export class HeroSectionInfo extends SectionInfo {
   }
   sectionProps?: {
     primaryText: string;
-    // primaryTextStyle?: SectionStyle;
     secondaryText?: string;
-    // secondaryTextStyle?: SectionStyle;
     button?: {
       text: string;
       enabled: boolean;
-      // buttonStyle?: SectionStyle;
     };
     // imageUrl?: string;
     // videoUrl?: string;
@@ -131,6 +130,11 @@ export class FooterSectionInfo extends SectionInfo {
     this.sectionType = "FOOTER";
     this.sectionVariant = "FOOTER1";
   }
+
+  sectionProps: {
+    showLogo: boolean;
+    showSocialLinks: boolean;
+  };
 }
 
 export enum Status {

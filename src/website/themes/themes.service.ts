@@ -3,93 +3,86 @@ import { ThemesRepository } from "./theme.repository";
 // import { Theme } from "../entities/structure.entity";
 import { GetWebsiteThemeResponse } from "../dto";
 import { WebsitesService } from "../websites";
-import { BoxSize, Theme } from "../entities/section.types";
+import { BoxSize, Theme } from "../entities/section-props";
 
 const defaultTheme: Theme = {
   globals: {
-    paragraph: {
-      className: "default-global-paragraph-class",
-      style: { color: "red" },
-    },
-    primaryText: {
-      className: "default-global-primary-class",
-      style: { color: "green" },
-    },
-    secondaryText: {
-      className: "default-global-secondary-class",
-      style: { color: "blue" },
-    },
+    primaryColor: "#512DA8",
+    primaryTextColor: "#311B92",
+    textColor: "#212121",
+    secondaryColor: "#303F9F",
+    secondaryTextColor: "#0D47A1",
   },
 
   navbar: {
     boxSize: BoxSize.CONTAINER,
     navbar: {
-      style: { backgroundColor: "orange" },
-      className: "default-navbar-class",
+      style: { backgroundColor: "#FAFAFA" },
+      className: "",
     },
     wrapper: {
-      style: { backgroundColor: "red" },
-      className: "default-navbar-wrapper-class",
+      style: { backgroundColor: "#FAFAFA" },
+      className: "",
     },
     link: {
-      style: { color: "pink" },
-      className: "default-navbar-link-style-class",
+      style: { color: "#1f1f1f", fontWeight: "500" },
+      className: "",
     },
     text: {
       style: { color: "silver" },
-      className: "default-navbar-text-style-class",
+      className: "",
     },
   },
 
   body: {
-    style: { backgroundColor: "#FFA000" },
-    className: "default-body-class",
+    style: { backgroundColor: "#EEEEEE" },
+    className: "",
   },
 
   hero: {
-    boxSize: BoxSize.CONTAINER,
+    boxSize: BoxSize.FULL,
     wrapper: {
-      className: "default-hero-wrapper-class",
+      className: "",
       style: {
-        backgroundColor: "brown",
+        backgroundColor: "#EEEEEE",
       },
     },
   },
   main: {
     boxSize: BoxSize.CONTAINER,
     wrapper: {
-      className: "default-main-wrapper-class",
+      className: "",
       style: {
-        backgroundColor: "purple",
+        backgroundColor: "#E0E0E0",
       },
     },
     main: {
-      style: { backgroundColor: "#8BC34A" },
-      className: "default-main-class",
+      style: { backgroundColor: "purple" },
+      className: "",
     },
   },
   footer: {
     boxSize: BoxSize.CONTAINER,
     wrapper: {
-      className: "default-footer-wrapper-class",
+      className: "",
       style: {
-        backgroundColor: "#BCAAA4",
+        backgroundColor: "#EEEEEE",
       },
     },
     text: {
-      className: "default-footer-text-class",
+      className: "",
       style: {
         color: "orange",
       },
     },
     link: {
-      className: "default-footer-link-class",
+      className: "",
       style: {
         color: "#4CAF50",
       },
     },
     footer: {
-      className: "default-footer-class",
+      className: "",
       style: {
         backgroundColor: "navy",
       },

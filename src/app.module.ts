@@ -29,9 +29,10 @@ import { WebsiteModule } from "./website/website.module";
       useFactory: async (configurationService: ConfigurationService) => ({
         type: "postgres",
         entities: ["dist/**/*.entity{.ts,.js}"],
-        // entities: ["src/**/*.entity{.ts,.js}"],
+        // entities: ["src/**/*.entity{.ts,.js}"], // TODO: src or dist?
         url: configurationService.getPostgresConfig().url,
-        synchronize: true,
+        synchronize: true, // ! TODO: NO PROD,
+        // autoLoadEntities: true,
       }),
     }),
     // I18nModule.forRoot({

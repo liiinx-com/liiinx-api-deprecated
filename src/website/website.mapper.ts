@@ -6,15 +6,20 @@ export const mapToWebsitePageResponse = (
   page: WebsitePage,
   layout: WebsitePage,
   theme: any,
+  sharedData: any,
 ): GetWebsitePageResponse => {
   return {
-    page: mapToWebsitePageDto(page),
+    page: mapToWebsitePageDto(page), // TODO: sharedData?
     layout: mapToWebsitePageDto(layout),
     theme,
+    sharedData,
   };
 };
 
-export const mapToWebsitePageDto = (page: WebsitePage): WebsitePageDto => {
+export const mapToWebsitePageDto = (
+  page: WebsitePage,
+  sharedData?: any,
+): WebsitePageDto => {
   const {
     config,
     metaTags,
@@ -31,6 +36,7 @@ export const mapToWebsitePageDto = (page: WebsitePage): WebsitePageDto => {
 
   const result: WebsitePageDto = {
     slug,
+    handle: page.website.handle,
     config,
     metaTags,
     type: page.parentPage.type,
@@ -38,25 +44,38 @@ export const mapToWebsitePageDto = (page: WebsitePage): WebsitePageDto => {
   };
 
   // navbar
-  if (parentPage.navbarConfig || page.navbarConfig)
+  if (parentPage.navbarConfig || page.navbarConfig) {
     result.structure = {
       ...result.structure,
       navbar: { ...parentPage.navbarConfig, ...page.navbarConfig },
     };
+    // navbar data
+    // result.structure.navbar.sectionProps = {
+    //   ...result.structure.navbar.sectionProps,
+    //   ...sharedData.header.value,
+    // };
+  }
 
   // hero
-  if (parentPage.heroConfig || page.heroConfig)
+  if (parentPage.heroConfig || page.heroConfig) {
     result.structure = {
       ...result.structure,
       hero: { ...parentPage.heroConfig, ...page.heroConfig },
     };
+  }
 
   // footer
-  if (parentPage.footerConfig || page.footerConfig)
+  if (parentPage.footerConfig || page.footerConfig) {
     result.structure = {
       ...result.structure,
       footer: { ...parentPage.footerConfig, ...page.footerConfig },
     };
+    // footer data
+    // result.structure.footer.sectionProps = {
+    //   ...result.structure.footer.sectionProps,
+    //   ...sharedData.footer.value,
+    // };
+  }
 
   // content left sections
   if (parentPage.contentConfig?.leftSections)

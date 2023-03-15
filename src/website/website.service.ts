@@ -1,8 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import {
+  DataPartRequest,
   GetWebsiteDataResponse,
   GetWebsitePageResponse,
-  GetWebsiteThemeResponse,
 } from "./dto";
 import { ThemesService } from "./themes";
 import { WebsitesService } from "./websites";
@@ -12,8 +12,6 @@ import { WebsiteDataService } from "./websiteData";
 
 @Injectable()
 export class WebsiteService {
-  VALID_DATA_PARTS = ["SOCIAL_LINKS", "PROFILE", "ABOUT"];
-
   constructor(
     private readonly themesService: ThemesService,
     private readonly websitesService: WebsitesService,
@@ -22,13 +20,36 @@ export class WebsiteService {
   ) {}
 
   async getPage(handle: string, slug: string): Promise<GetWebsitePageResponse> {
+    const website = await this.websitesService.getWebsite(handle);
+    if (!website) throw new HttpException("NOT FOUND", HttpStatus.NOT_FOUND);
+
     const layout = await this.websitePagesService.getLayout(handle);
     const page = await this.websitePagesService.getPage(handle, slug);
     if (!page || !layout)
       throw new HttpException("NOT FOUND", HttpStatus.NOT_FOUND);
 
+    // Inject frontend shared data
+    const sharedData = await this.websiteDataService.getWebsiteSharedData(
+      website,
+    );
+
+    // Theme
     const theme = await this.getWebsiteTheme(handle);
-    // metaTags
+    let removeMe = {
+      // globals: {
+      //   primaryColor: "#673AB7",
+      //   primaryTextColor: "#673AB7",
+      //   textColor: "#1f1f1f",
+      //   secondaryColor: "#1565C0",
+      //   secondaryTextColor: "#424242",
+      // },
+    };
+    console.log("website.themeOverrides", website.themeOverrides);
+    // ! TODO: deep merge other instances as well.
+    // const updatedTheme = { ...theme, ...website.themeOverrides, ...removeMe };
+    const updatedTheme = theme;
+
+    // MetaTags
     if (layout.metaTags.length) {
       page.metaTags = [...layout.metaTags, ...page.metaTags];
     }
@@ -39,7 +60,7 @@ export class WebsiteService {
       page.heroConfig = null;
     }
 
-    return mapToWebsitePageResponse(page, layout, theme);
+    return mapToWebsitePageResponse(page, layout, updatedTheme, sharedData);
   }
 
   private async getWebsiteTheme(handle: string): Promise<any> {
@@ -55,8 +76,12 @@ export class WebsiteService {
 
   async getWebsiteData(
     handle: string,
-    parts: any,
+    parts: DataPartRequest[],
+    lang: string,
   ): Promise<GetWebsiteDataResponse> {
-    return this.websiteDataService.getWebsiteData(handle, parts);
+    const website = await this.websitesService.getWebsite(handle);
+    if (!website) throw new HttpException("NOT FOUND", HttpStatus.NOT_FOUND);
+
+    return this.websiteDataService.getWebsiteData(website, parts);
   }
 }

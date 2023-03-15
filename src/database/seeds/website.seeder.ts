@@ -1,16 +1,10 @@
 import { Website, WebsitePage, Page } from "../../website/entities";
 import { Seeder } from "typeorm-extension";
 import { DataSource } from "typeorm";
-import {
-  HeroSectionInfo,
-  NavbarSectionInfo,
-  PageTypes,
-} from "../../website/entities/section.types";
+import { PageTypes } from "../../website/entities/section-props";
+import { WebsiteSectionFactory } from "../../website/websitePages/website-sections.factory";
 
-const navbarConfig = new NavbarSectionInfo();
-navbarConfig.sectionProps = {
-  rtl: true,
-};
+const sectionFactory = new WebsiteSectionFactory();
 
 const salamatWebsite: any = {
   handle: "salamat-trading",
@@ -26,6 +20,7 @@ const getPage: any = ({
   parentPage,
   contentConfig,
   navbarConfig,
+  footerConfig,
   heroConfig,
 }) => ({
   parentPage,
@@ -35,6 +30,7 @@ const getPage: any = ({
   website,
   navbarConfig,
   heroConfig,
+  footerConfig,
   slug,
   status: "ACTIVE",
   contentConfig,
@@ -101,15 +97,11 @@ export default class PageSeeder implements Seeder {
     //----------------------------------------
 
     await websiteRepository.insert([salamatWebsite]);
-    const layoutNavbarConfig = new NavbarSectionInfo();
-    layoutNavbarConfig.sectionProps = {
-      rtl: true,
-    };
 
     const salamatLayoutPage = getPage({
       website: salamatWebsite,
       parentPage: elasticLayout,
-      navbarConfig: layoutNavbarConfig,
+      navbarConfig: sectionFactory.getNavbarDefaultConfig({ rtl: true }),
     });
     const salamatHomePage = getPage({
       website: salamatWebsite,
@@ -117,13 +109,10 @@ export default class PageSeeder implements Seeder {
       slug: "home",
     });
 
-    const aboutHeroConfig = new HeroSectionInfo();
-    aboutHeroConfig.sectionVariant = "HERO1";
-    aboutHeroConfig.enabled = false;
-    aboutHeroConfig.sectionProps = {
+    const aboutHeroConfig = sectionFactory.getHeroDefaultConfig({
       primaryText: "About Hero Text is from obj",
       secondaryText: "secondary about hero text yay!",
-    };
+    });
 
     const salamatAboutPage = getPage({
       website: salamatWebsite,
@@ -132,32 +121,9 @@ export default class PageSeeder implements Seeder {
       heroConfig: aboutHeroConfig,
     });
     await websitePageRepository.insert([
-      salamatLayoutPage,
+      // salamatLayoutPage,
       // salamatHomePage,
-      salamatAboutPage,
+      // salamatAboutPage,
     ]);
   }
 }
-
-// const salamatLayout: WebsitePage = {
-//   id: "website-page-id-1",
-//   createdAt: new Date(),
-//   updatedAt: new Date(),
-//   website: salamatWebsite,
-//   deletable: false,
-
-//   parentPage: elasticLayout,
-//   themeOverrides: {},
-//   structureOverrides: {
-//     navbarConfig: {
-//       sectionType: "NAVBAR",
-//       sectionVariant: "NAVBAR1",
-//       sectionProps: {
-//         rtl: false,
-//       },
-//     },
-//   },
-
-//   config: {},
-//   metaTags: [],
-// };

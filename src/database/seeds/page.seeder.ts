@@ -1,18 +1,7 @@
 import { Page } from "../../website/entities";
-import {
-  FooterSectionInfo,
-  NavbarSectionInfo,
-  PageTypes,
-} from "../../website/entities/section.types";
+import { PageTypes } from "../../website/entities/section-props";
 import { Seeder } from "typeorm-extension";
 import { DataSource } from "typeorm";
-
-const navbarConfig = new NavbarSectionInfo();
-navbarConfig.sectionProps = {
-  rtl: false,
-};
-
-const footerConfig = new FooterSectionInfo();
 
 const elasticLayout: any = {
   type: PageTypes.LAYOUT,
@@ -22,8 +11,8 @@ const elasticLayout: any = {
   frontendVariantKey: "ELASTIC_LAYOUT1",
   status: "ACTIVE",
   metaTags: [],
-  navbarConfig,
-  footerConfig,
+  navbarVariant: "NAVBAR1",
+  footerVariant: "FOOTER1",
 };
 
 const defHome1Page: any = {
@@ -65,7 +54,8 @@ const defAbout1Page: any = {
 
 export default class PageSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<any> {
+    console.log("dataSource", dataSource);
     const repository = dataSource.getRepository(Page);
-    // await repository.insert([elasticLayout, defHome1Page, defAbout1Page]);
+    await repository.insert([elasticLayout, defHome1Page, defAbout1Page]);
   }
 }

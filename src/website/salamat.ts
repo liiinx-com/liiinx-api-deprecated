@@ -1,4 +1,4 @@
-import { BoxSize, Theme } from "./entities/section.types";
+import { BoxSize, Theme } from "./entities/section-props";
 // import { theme1 } from "./themes/theme1";
 
 const themeV2: any = {

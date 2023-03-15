@@ -10,7 +10,7 @@ const options: DataSourceOptions & SeederOptions = {
   port: 5432,
   password: "root",
   username: "root",
-  entities: ["src/**/*.entity{.ts,.js}"],
+  entities: ["dist/**/*.entity.js"],
 };
 
 export const dataSource = new DataSource(options);

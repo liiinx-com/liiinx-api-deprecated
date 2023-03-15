@@ -6,7 +6,7 @@ import {
   NavbarSectionInfo,
   ContentSectionInfo,
   PageTypes,
-} from "./section.types";
+} from "./section-props";
 
 // @Entity({ name: "def_themes" })
 // export class Theme extends BaseEntity {
@@ -47,22 +47,8 @@ export class Website extends BaseEntity {
   themeOverrides: object;
 }
 
-export class PageStructure extends BaseEntity {
-  @Column({ type: "json", name: "navbar_config", nullable: true })
-  navbarConfig?: NavbarSectionInfo;
-
-  @Column({ type: "json", name: "hero_config", nullable: true })
-  heroConfig?: HeroSectionInfo;
-
-  @Column({ type: "json", name: "content_config", nullable: true })
-  contentConfig?: ContentSectionInfo;
-
-  @Column({ type: "json", name: "footer_config", nullable: true })
-  footerConfig?: FooterSectionInfo;
-}
-
 @Entity({ name: "def_pages" })
-export class Page extends PageStructure {
+export class Page extends BaseEntity {
   @Column({ length: 100 })
   title: string;
 
@@ -73,11 +59,33 @@ export class Page extends PageStructure {
   })
   type: PageTypes;
 
+  @Column({ length: 100, nullable: true })
+  navbarVariant?: string;
+  @Column({ length: 100, nullable: true })
+  heroVariant?: string;
+  @Column({ length: 100, nullable: true })
+  footerVariant?: string;
+
+  // from pageSectionFactory
+  navbarConfig?: NavbarSectionInfo;
+
+  // from pageSectionFactory
+  heroConfig?: HeroSectionInfo;
+
+  // from pageSectionFactory
+  contentConfig?: ContentSectionInfo;
+
+  // from pageSectionFactory
+  footerConfig?: FooterSectionInfo;
+
   @Column({ length: 100, name: "frontend_variant_key" })
   frontendVariantKey: string;
 
   @Column({ length: 500 })
   description: string;
+
+  @Column({ type: "json", name: "consumed_data_parts", default: [] })
+  consumedDataParts: []; // [{dataPart: "profile", version: 1, isRequired: true}]
 
   // @Column({ type: "json", name: "readonly_config", default: {} })
   // readonlyConfig: {}; // TODO: do not remove this until the time comes
@@ -93,10 +101,11 @@ export class Page extends PageStructure {
 }
 
 @Entity({ name: "website_pages" })
-export class WebsitePage extends PageStructure {
+export class WebsitePage extends BaseEntity {
   @ManyToOne(() => Page, (page) => page.websitePages)
   parentPage: Page;
 
+  // to override website layout
   @ManyToOne(() => Page, (page) => page.websitePages, { nullable: true })
   layout?: Page;
 
@@ -106,8 +115,17 @@ export class WebsitePage extends PageStructure {
   @Column({ type: "json", default: {} })
   config: object;
 
-  // @Column(() => PageStructure)
-  // structureOverrides: PageStructure;
+  @Column({ type: "json", name: "navbar_config", nullable: true })
+  navbarConfig?: NavbarSectionInfo;
+
+  @Column({ type: "json", name: "hero_config", nullable: true })
+  heroConfig?: HeroSectionInfo;
+
+  @Column({ type: "json", name: "content_config", nullable: true })
+  contentConfig?: ContentSectionInfo;
+
+  @Column({ type: "json", name: "footer_config", nullable: true })
+  footerConfig?: FooterSectionInfo;
 
   @Column({ nullable: true })
   slug: string; //custom url for page

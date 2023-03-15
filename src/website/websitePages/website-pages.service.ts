@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { WebsitePagesRepository } from "./website-pages.repository";
 import { WebsitePage } from "../entities";
+import { WebsiteSectionFactory } from "./website-sections.factory";
 
 interface HeadMetaData {
   tagName: "meta";
@@ -13,14 +14,30 @@ class GetHeadParamsResponse {
 
 @Injectable()
 export class WebsitePagesService {
-  constructor(private readonly wPagesRepository: WebsitePagesRepository) {}
+  constructor(
+    private readonly wPagesRepository: WebsitePagesRepository,
+    private readonly sectionFactory: WebsiteSectionFactory,
+  ) {}
 
   async getPage(handle: string, slug: string): Promise<WebsitePage> {
+    // Inject page and layout default settings and sectionProps
     return this.wPagesRepository.getPage(handle, slug);
   }
 
   async getLayout(handle: string): Promise<WebsitePage> {
-    return this.wPagesRepository.getLayout(handle);
+    const layout = await this.wPagesRepository.getLayout(handle);
+
+    // Injecting sections default config
+    layout.parentPage.navbarConfig = this.sectionFactory.getNavbarDefaultConfig(
+      {},
+      layout.parentPage.navbarVariant,
+    );
+    layout.parentPage.footerConfig = this.sectionFactory.getFooterDefaultConfig(
+      {},
+      layout.parentPage.footerVariant,
+    );
+
+    return layout;
   }
 
   async getPageData(handle: string, parts: any): Promise<any> {
