@@ -1,4 +1,3 @@
-import * as path from "path";
 import { Module } from "@nestjs/common";
 // import { I18nModule } from "nestjs-i18n";
 // import { BullModule } from "@nestjs/bull";
@@ -17,6 +16,8 @@ import { AddOkToResponseInterceptor } from "./shared/response.interceptor";
 import { UserInterceptor } from "./shared/user.interceptor";
 // import { WooCommerceModule } from "./woo-commerce/woo-commerce.module";
 import { WebsiteModule } from "./website/website.module";
+import { Page, Website, WebsitePage } from "./website/entities";
+import { User } from "./user/entities/user.entity";
 
 // import { User } from "./user/entities/user.entity";
 
@@ -28,7 +29,8 @@ import { WebsiteModule } from "./website/website.module";
       inject: [ConfigurationService],
       useFactory: async (configurationService: ConfigurationService) => ({
         type: "postgres",
-        entities: ["dist/**/*.entity{.ts,.js}"],
+        entities: [Website, WebsitePage, Page, User],
+        // entities: ["dist/**/*.entity{.ts,.js}"],
         // entities: ["src/**/*.entity{.ts,.js}"], // TODO: src or dist?
         url: configurationService.getPostgresConfig().url,
         synchronize: true, // ! TODO: NO PROD,

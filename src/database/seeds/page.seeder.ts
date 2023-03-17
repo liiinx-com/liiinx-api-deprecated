@@ -23,7 +23,7 @@ const defHome1Page: any = {
   frontendVariantKey: "HOME1",
   websitePages: [],
   status: "ACTIVE",
-  contentConfig: {
+  contentOverrides: {
     leftSections: [
       {
         sectionType: "TITLE_BAR",
@@ -54,8 +54,7 @@ const defAbout1Page: any = {
 
 export default class PageSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<any> {
-    console.log("dataSource", dataSource);
     const repository = dataSource.getRepository(Page);
-    await repository.insert([elasticLayout, defHome1Page, defAbout1Page]);
+    // await repository.insert([elasticLayout, defHome1Page, defAbout1Page]);
   }
 }

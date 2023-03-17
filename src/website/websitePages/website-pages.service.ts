@@ -14,30 +14,14 @@ class GetHeadParamsResponse {
 
 @Injectable()
 export class WebsitePagesService {
-  constructor(
-    private readonly wPagesRepository: WebsitePagesRepository,
-    private readonly sectionFactory: WebsiteSectionFactory,
-  ) {}
+  constructor(private readonly wPagesRepository: WebsitePagesRepository) {}
 
   async getPage(handle: string, slug: string): Promise<WebsitePage> {
-    // Inject page and layout default settings and sectionProps
     return this.wPagesRepository.getPage(handle, slug);
   }
 
   async getLayout(handle: string): Promise<WebsitePage> {
-    const layout = await this.wPagesRepository.getLayout(handle);
-
-    // Injecting sections default config
-    layout.parentPage.navbarConfig = this.sectionFactory.getNavbarDefaultConfig(
-      {},
-      layout.parentPage.navbarVariant,
-    );
-    layout.parentPage.footerConfig = this.sectionFactory.getFooterDefaultConfig(
-      {},
-      layout.parentPage.footerVariant,
-    );
-
-    return layout;
+    return this.wPagesRepository.getLayout(handle);
   }
 
   async getPageData(handle: string, parts: any): Promise<any> {

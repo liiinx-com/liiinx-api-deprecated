@@ -1,3 +1,5 @@
+import { SectionStyle } from "src/website/propTypes";
+
 export enum BoxSize {
   FULL = "w-full",
   CONTAINER = "container",
@@ -114,10 +116,13 @@ export class HeroSectionInfo extends SectionInfo {
   }
   sectionProps?: {
     primaryText: string;
+    primaryTextStyles?: SectionStyle;
     secondaryText?: string;
+    secondaryTextStyles?: SectionStyle;
     button?: {
       text: string;
       enabled: boolean;
+      buttonStyles?: SectionStyle;
     };
     // imageUrl?: string;
     // videoUrl?: string;

@@ -67,16 +67,19 @@ export class Page extends BaseEntity {
   footerVariant?: string;
 
   // from pageSectionFactory
-  navbarConfig?: NavbarSectionInfo;
+  navbarCustomProps?: NavbarSectionInfo;
 
   // from pageSectionFactory
-  heroConfig?: HeroSectionInfo;
+  heroCustomProps?: HeroSectionInfo;
 
   // from pageSectionFactory
-  contentConfig?: ContentSectionInfo;
+  contentOverrides?: ContentSectionInfo;
 
   // from pageSectionFactory
-  footerConfig?: FooterSectionInfo;
+  footerCustomProps?: FooterSectionInfo;
+
+  // from pageSectionFactory
+  themeOverrides?: object;
 
   @Column({ length: 100, name: "frontend_variant_key" })
   frontendVariantKey: string;
@@ -115,17 +118,17 @@ export class WebsitePage extends BaseEntity {
   @Column({ type: "json", default: {} })
   config: object;
 
-  @Column({ type: "json", name: "navbar_config", nullable: true })
-  navbarConfig?: NavbarSectionInfo;
+  @Column({ type: "json", name: "navbar_custom_props", nullable: true })
+  navbarCustomProps?: object;
 
-  @Column({ type: "json", name: "hero_config", nullable: true })
-  heroConfig?: HeroSectionInfo;
+  @Column({ type: "json", name: "hero_custom_props", nullable: true })
+  heroCustomProps?: object;
 
-  @Column({ type: "json", name: "content_config", nullable: true })
-  contentConfig?: ContentSectionInfo;
+  @Column({ type: "json", name: "content_custom_props", nullable: true })
+  contentOverrides?: ContentSectionInfo;
 
-  @Column({ type: "json", name: "footer_config", nullable: true })
-  footerConfig?: FooterSectionInfo;
+  @Column({ type: "json", name: "footer_custom_props", nullable: true })
+  footerCustomProps?: object;
 
   @Column({ nullable: true })
   slug: string; //custom url for page

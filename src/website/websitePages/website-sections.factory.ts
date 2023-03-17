@@ -3,35 +3,38 @@ import {
   FooterSectionInfo,
   HeroSectionInfo,
   NavbarSectionInfo,
+  Theme,
 } from "../entities/section-props";
 
 @Injectable()
 export class WebsiteSectionFactory {
   getNavbarDefaultConfig(
+    theme: Theme,
     sectionProps: any = null,
     sectionVariant: string = "NAVBAR1",
   ): NavbarSectionInfo {
     return {
       enabled: true,
       sectionType: "NAVBAR",
-      order: 1,
       sectionVariant,
       sectionProps: {
+        ...sectionProps,
         rtl: false,
       },
     };
   }
 
   getFooterDefaultConfig(
+    theme: Theme,
     sectionProps: any = null,
     sectionVariant: string = "FOOTER1",
   ): FooterSectionInfo {
     return {
       enabled: true,
       sectionType: "FOOTER",
-      order: 1,
       sectionVariant,
       sectionProps: {
+        ...sectionProps,
         showLogo: true,
         showSocialLinks: true,
       },
@@ -39,6 +42,7 @@ export class WebsiteSectionFactory {
   }
 
   getHeroDefaultConfig(
+    theme: Theme,
     sectionProps: any = null,
     sectionVariant: string = "HERO1",
   ): HeroSectionInfo {
@@ -46,8 +50,16 @@ export class WebsiteSectionFactory {
       enabled: true,
       sectionType: "HERO",
       sectionVariant,
-      sectionProps,
-      order: 1,
+      sectionProps: {
+        ...sectionProps,
+        primaryText: "",
+        primaryTextStyles: {
+          style: {
+            backgroundColor: "white",
+            color: theme.globals.primaryTextColor,
+          },
+        },
+      },
     };
   }
 }

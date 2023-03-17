@@ -1,8 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ThemesRepository } from "./theme.repository";
 // import { Theme } from "../entities/structure.entity";
-import { GetWebsiteThemeResponse } from "../dto";
-import { WebsitesService } from "../websites";
 import { BoxSize, Theme } from "../entities/section-props";
 
 const defaultTheme: Theme = {
@@ -184,8 +182,12 @@ const defaultTheme: Theme = {
 export class ThemesService {
   constructor(private readonly themesRepository: ThemesRepository) {}
 
-  async getTheme(themeId: string) {
-    return { config: defaultTheme };
+  async getDefaultTheme(): Promise<Theme> {
+    return defaultTheme;
+  }
+
+  async getTheme(themeId: string): Promise<Theme> {
+    return defaultTheme;
   }
 
   // async getWebsiteTheme(handle: string): Promise<GetWebsiteThemeResponse> {

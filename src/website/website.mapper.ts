@@ -1,6 +1,6 @@
 import { GetWebsitePageResponse, WebsitePageDto } from "./dto";
 import { WebsitePage } from "./entities";
-import { lodash } from "src/utils";
+import { common, lodash } from "src/utils";
 
 export const mapToWebsitePageResponse = (
   page: WebsitePage,
@@ -23,7 +23,7 @@ export const mapToWebsitePageDto = (
   const {
     config,
     metaTags,
-    contentConfig,
+    contentOverrides,
     // layout, // TODO: consider this--------------------------
     themeOverrides,
     parentPage,
@@ -44,45 +44,45 @@ export const mapToWebsitePageDto = (
   };
 
   // navbar
-  if (parentPage.navbarConfig || page.navbarConfig) {
+  if (parentPage.navbarCustomProps || page.navbarCustomProps) {
     result.structure = {
       ...result.structure,
-      navbar: { ...parentPage.navbarConfig, ...page.navbarConfig },
+      navbar: common.deepMergeAll([
+        parentPage.navbarCustomProps,
+        page.navbarCustomProps,
+      ]),
     };
-    // navbar data
-    // result.structure.navbar.sectionProps = {
-    //   ...result.structure.navbar.sectionProps,
-    //   ...sharedData.header.value,
-    // };
+    console.log("result.structure", result.structure);
   }
 
   // hero
-  if (parentPage.heroConfig || page.heroConfig) {
+  if (parentPage.heroCustomProps || page.heroCustomProps) {
     result.structure = {
       ...result.structure,
-      hero: { ...parentPage.heroConfig, ...page.heroConfig },
+      hero: common.deepMergeAll([
+        parentPage.heroCustomProps,
+        page.heroCustomProps,
+      ]),
     };
   }
 
   // footer
-  if (parentPage.footerConfig || page.footerConfig) {
+  if (parentPage.footerCustomProps || page.footerCustomProps) {
     result.structure = {
       ...result.structure,
-      footer: { ...parentPage.footerConfig, ...page.footerConfig },
+      footer: common.deepMergeAll([
+        parentPage.footerCustomProps,
+        page.footerCustomProps,
+      ]),
     };
-    // footer data
-    // result.structure.footer.sectionProps = {
-    //   ...result.structure.footer.sectionProps,
-    //   ...sharedData.footer.value,
-    // };
   }
 
   // content left sections
-  if (parentPage.contentConfig?.leftSections)
-    leftSections = [...parentPage.contentConfig.leftSections];
-  if (contentConfig?.leftSections)
+  if (parentPage.contentOverrides?.leftSections)
+    leftSections = [...parentPage.contentOverrides.leftSections];
+  if (contentOverrides?.leftSections)
     leftSections = lodash.sortBy(
-      [...leftSections, ...contentConfig.leftSections],
+      [...leftSections, ...contentOverrides.leftSections],
       ["order"],
     );
   if (leftSections.length > 0) {
@@ -96,11 +96,11 @@ export const mapToWebsitePageDto = (
   }
 
   // content center sections
-  if (parentPage.contentConfig?.centerSections)
-    centerSections = [...parentPage.contentConfig.centerSections];
-  if (contentConfig?.centerSections)
+  if (parentPage.contentOverrides?.centerSections)
+    centerSections = [...parentPage.contentOverrides.centerSections];
+  if (contentOverrides?.centerSections)
     centerSections = lodash.sortBy(
-      [...centerSections, ...contentConfig.centerSections],
+      [...centerSections, ...contentOverrides.centerSections],
       ["order"],
     );
   if (centerSections.length > 0) {
@@ -113,11 +113,11 @@ export const mapToWebsitePageDto = (
     };
   }
 
-  if (parentPage.contentConfig?.rightSections)
-    rightSections = [...parentPage.contentConfig.rightSections];
-  if (contentConfig?.rightSections)
+  if (parentPage.contentOverrides?.rightSections)
+    rightSections = [...parentPage.contentOverrides.rightSections];
+  if (contentOverrides?.rightSections)
     rightSections = lodash.sortBy(
-      [...rightSections, ...contentConfig.rightSections],
+      [...rightSections, ...contentOverrides.rightSections],
       ["order"],
     );
   if (rightSections.length > 0) {

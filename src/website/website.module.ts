@@ -15,7 +15,6 @@ import { PagesRepository } from "./pages/pages.repository";
   imports: [TypeOrmModule.forFeature([Website, Page, WebsitePage])],
   providers: [
     WebsitesService,
-    WebsitesRepository,
     WebsitesService,
     ThemesRepository,
     ThemesService,
@@ -26,6 +25,7 @@ import { PagesRepository } from "./pages/pages.repository";
     WebsiteSectionFactory,
     WebsiteService,
     WebsiteDataService,
+    WebsitesRepository,
   ],
   controllers: [WebsiteController],
 })

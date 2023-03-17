@@ -2,16 +2,21 @@ import { Website, WebsitePage, Page } from "../../website/entities";
 import { Seeder } from "typeorm-extension";
 import { DataSource } from "typeorm";
 import { PageTypes } from "../../website/entities/section-props";
-import { WebsiteSectionFactory } from "../../website/websitePages/website-sections.factory";
-
-const sectionFactory = new WebsiteSectionFactory();
 
 const salamatWebsite: any = {
   handle: "salamat-trading",
   ownerId: "mehdiSalamatId",
   pages: [],
   themeId: "theme-id-1",
-  themeOverrides: { primaryTextStyle: { color: "pink" } },
+  themeOverrides: {
+    globals: {
+      primaryColor: "#673AB7",
+      primaryTextColor: "#673AB7",
+      textColor: "#1f1f1f",
+      secondaryColor: "#1565C0",
+      secondaryTextColor: "#424242",
+    },
+  },
 };
 
 const getPage: any = ({
@@ -35,35 +40,6 @@ const getPage: any = ({
   status: "ACTIVE",
   contentConfig,
 });
-
-const salamatAboutPage: any = {
-  //   parentPage: defAboutPage,
-  metaTags: [],
-  config: {},
-  themeOverrides: {},
-  deletable: true,
-  //   website: salamatWebsite,
-  slug: "about",
-
-  heroConfig: {
-    sectionType: "HERO",
-    sectionVariant: "HERO1",
-    order: 1,
-    sectionProps: {
-      heroAttr1: "someValue",
-    },
-  },
-  contentConfig: {
-    centerSections: [
-      {
-        sectionType: "TITLE_BAR",
-        sectionVariant: "TITLE_BAR1",
-        sectionProps: { title: "from salamat about page" },
-        order: 1,
-      },
-    ],
-  },
-};
 
 export default class PageSeeder implements Seeder {
   public async run(dataSource: DataSource): Promise<any> {
@@ -96,12 +72,12 @@ export default class PageSeeder implements Seeder {
     });
     //----------------------------------------
 
-    await websiteRepository.insert([salamatWebsite]);
+    // await websiteRepository.insert([salamatWebsite]);
 
     const salamatLayoutPage = getPage({
       website: salamatWebsite,
       parentPage: elasticLayout,
-      navbarConfig: sectionFactory.getNavbarDefaultConfig({ rtl: true }),
+      navbarCustomProps: { rtl: true },
     });
     const salamatHomePage = getPage({
       website: salamatWebsite,
@@ -109,16 +85,14 @@ export default class PageSeeder implements Seeder {
       slug: "home",
     });
 
-    const aboutHeroConfig = sectionFactory.getHeroDefaultConfig({
-      primaryText: "About Hero Text is from obj",
-      secondaryText: "secondary about hero text yay!",
-    });
-
     const salamatAboutPage = getPage({
       website: salamatWebsite,
       parentPage: defAbout1Page,
       slug: "about",
-      heroConfig: aboutHeroConfig,
+      heroCustomProps: {
+        primaryText: "About Hero Text is from obj",
+        secondaryText: "secondary about hero text yay!",
+      },
     });
     await websitePageRepository.insert([
       // salamatLayoutPage,
