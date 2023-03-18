@@ -11,7 +11,7 @@ import { mapToWebsitePageResponse } from "./website.mapper";
 import { WebsiteDataService } from "./websiteData";
 import { common } from "src/utils";
 import { WebsiteSectionFactory } from "./websitePages/website-sections.factory";
-import { Website } from "./entities";
+import { Website, WebsitePage } from "./entities";
 
 @Injectable()
 export class WebsiteService {
@@ -40,56 +40,54 @@ export class WebsiteService {
     );
 
     // Generate website theme
-    const theme = await this.getWebsiteTheme(website);
+    const pageTheme = await this.getWebsitePageTheme(website, page);
 
     // MetaTags
     if (layout.metaTags.length) {
       page.metaTags = [...layout.metaTags, ...page.metaTags];
     }
 
+    console.log("page", page);
+    console.log("layout", layout);
+
     // Set page navbar section to layout
-    if (page.navbarCustomProps) {
-      layout.navbarCustomProps = common.deepMergeAll([
-        this.sectionFactory.getNavbarDefaultConfig(theme),
-        layout.navbarCustomProps,
-        page.navbarCustomProps,
-      ]);
-      page.navbarCustomProps = null;
-    }
+    page.navbarCustomProps = common.deepMergeAll([
+      this.sectionFactory.getNavbarDefaultConfig(pageTheme),
+      layout.navbarCustomProps,
+      page.navbarCustomProps,
+    ]);
 
     // Set page hero section to layout
-    console.log("page.heroConfig", page.heroCustomProps);
-    if (page.heroCustomProps) {
-      layout.heroCustomProps = common.deepMergeAll([
-        this.sectionFactory.getHeroDefaultConfig(theme),
+    if (page.heroCustomProps || layout.heroCustomProps) {
+      page.heroCustomProps = common.deepMergeAll([
+        this.sectionFactory.getHeroDefaultConfig(pageTheme),
         layout.heroCustomProps,
-        page.heroCustomProps, // ! TODO: might need to inject layout hero as well?
+        page.heroCustomProps,
       ]);
-      page.heroCustomProps = null;
     }
 
-    // injecting parent component props
-    layout.parentPage.navbarCustomProps =
-      this.sectionFactory.getNavbarDefaultConfig(
-        theme,
-        {},
-        layout.parentPage.navbarVariant,
-      );
-    layout.parentPage.footerCustomProps =
-      this.sectionFactory.getFooterDefaultConfig(
-        theme,
-        layout.parentPage.footerVariant,
-      );
+    page.footerCustomProps = common.deepMergeAll([
+      this.sectionFactory.getFooterDefaultConfig(pageTheme),
+      layout.footerCustomProps,
+      page.footerCustomProps,
+    ]);
 
     console.log("page", page);
     console.log("layout", layout);
 
-    return mapToWebsitePageResponse(page, layout, theme, sharedData);
+    return mapToWebsitePageResponse(page, layout, pageTheme, sharedData);
   }
 
-  private async getWebsiteTheme(website: Website): Promise<any> {
+  private async getWebsitePageTheme(
+    website: Website,
+    page: WebsitePage,
+  ): Promise<any> {
     const theme = await this.themesService.getTheme(website.themeId);
-    return common.deepMergeAll([theme, website.themeOverrides]);
+    return common.deepMergeAll([
+      theme,
+      website.themeOverrides,
+      page.themeOverrides,
+    ]);
   }
 
   async getWebsiteData(

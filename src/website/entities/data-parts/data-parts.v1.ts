@@ -28,8 +28,9 @@ export class DataPartHeaderV1 extends DataPartItem {
 }
 export class DataPartFooterV1 extends DataPartItem {
   value: {
-    primaryLinks: MenuLink[];
     rightsText: string;
+    primaryMenu: MenuLink[];
+    secondaryMenu?: MenuLink[];
   };
 }
 export class DataPartSocialLinksV1 extends DataPartItem {

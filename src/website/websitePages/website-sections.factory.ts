@@ -37,6 +37,7 @@ export class WebsiteSectionFactory {
         ...sectionProps,
         showLogo: true,
         showSocialLinks: true,
+        showPrimaryMenu: true,
       },
     };
   }

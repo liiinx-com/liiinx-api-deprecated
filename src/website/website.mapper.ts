@@ -9,8 +9,7 @@ export const mapToWebsitePageResponse = (
   sharedData: any,
 ): GetWebsitePageResponse => {
   return {
-    page: mapToWebsitePageDto(page), // TODO: sharedData?
-    layout: mapToWebsitePageDto(layout),
+    page: mapToWebsitePageDto(page, layout),
     theme,
     sharedData,
   };
@@ -18,29 +17,24 @@ export const mapToWebsitePageResponse = (
 
 export const mapToWebsitePageDto = (
   page: WebsitePage,
-  sharedData?: any,
+  layout: WebsitePage,
 ): WebsitePageDto => {
-  const {
-    config,
-    metaTags,
-    contentOverrides,
-    // layout, // TODO: consider this--------------------------
-    themeOverrides,
-    parentPage,
-    slug,
-  } = page;
+  const { id, config, metaTags, contentOverrides, parentPage, slug } = page;
 
   let leftSections = [];
   let centerSections = [];
   let rightSections = [];
 
   const result: WebsitePageDto = {
+    id,
     slug,
     handle: page.website.handle,
     config,
     metaTags,
-    type: page.parentPage.type,
-    variant: page.parentPage.frontendVariantKey,
+    pageType: page.parentPage.type,
+    pageVariant: page.parentPage.frontendVariantKey,
+    layoutType: layout.parentPage.type,
+    layoutVariant: layout.parentPage.frontendVariantKey,
   };
 
   // navbar

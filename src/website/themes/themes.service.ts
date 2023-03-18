@@ -1,25 +1,18 @@
 import { Injectable } from "@nestjs/common";
 import { ThemesRepository } from "./theme.repository";
 // import { Theme } from "../entities/structure.entity";
-import { BoxSize, Theme } from "../entities/section-props";
+import { BoxSize, Theme, ThemeGlobals } from "../entities/section-props";
 
-const defaultTheme: Theme = {
-  globals: {
-    primaryColor: "#512DA8",
-    primaryTextColor: "#311B92",
-    textColor: "#212121",
-    secondaryColor: "#303F9F",
-    secondaryTextColor: "#0D47A1",
-  },
-
+const getDefaultTheme = (globalSettings: ThemeGlobals): Theme => ({
+  globals: globalSettings,
   navbar: {
     boxSize: BoxSize.CONTAINER,
     navbar: {
-      style: { backgroundColor: "#FAFAFA" },
+      style: { backgroundColor: "#FFF" },
       className: "",
     },
     wrapper: {
-      style: { backgroundColor: "#FAFAFA" },
+      style: { backgroundColor: "#FFF" },
       className: "",
     },
     link: {
@@ -42,7 +35,7 @@ const defaultTheme: Theme = {
     wrapper: {
       className: "",
       style: {
-        backgroundColor: "#EEEEEE",
+        backgroundColor: "#FFF",
       },
     },
   },
@@ -51,11 +44,11 @@ const defaultTheme: Theme = {
     wrapper: {
       className: "",
       style: {
-        backgroundColor: "#E0E0E0",
+        backgroundColor: "#f7f9fb",
       },
     },
     main: {
-      style: { backgroundColor: "purple" },
+      style: { backgroundColor: "#FFF" },
       className: "",
     },
   },
@@ -64,29 +57,29 @@ const defaultTheme: Theme = {
     wrapper: {
       className: "",
       style: {
-        backgroundColor: "#EEEEEE",
+        backgroundColor: "#f7f9fb",
       },
     },
     text: {
       className: "",
       style: {
-        color: "orange",
+        color: globalSettings.secondaryTextColor,
       },
     },
     link: {
       className: "",
       style: {
-        color: "#4CAF50",
+        color: globalSettings.primaryTextColor,
       },
     },
     footer: {
       className: "",
       style: {
-        backgroundColor: "navy",
+        backgroundColor: "#f7f9fb",
       },
     },
   },
-};
+});
 
 // const themeV2: any = {
 //   bodyStyle: {
@@ -183,12 +176,25 @@ export class ThemesService {
   constructor(private readonly themesRepository: ThemesRepository) {}
 
   async getDefaultTheme(): Promise<Theme> {
-    return defaultTheme;
+    return getDefaultTheme(await this.getGlobalColorsPreset());
   }
 
   async getTheme(themeId: string): Promise<Theme> {
-    return defaultTheme;
+    return getDefaultTheme(await this.getGlobalColorsPreset());
   }
+
+  async getGlobalColorsPreset(setName = "default"): Promise<ThemeGlobals> {
+    return {
+      primaryColor: "#673AB7",
+      primaryTextColor: "#673AB7",
+      textColor: "#1f1f1f",
+      secondaryColor: "#1565C0",
+      secondaryTextColor: "#424242",
+    };
+  }
+
+  // {"globals":{"primaryColor":"#673AB7","primaryTextColor":"#673AB7","textColor":"#1f1f1f","secondaryColor":"#1565C0","secondaryTextColor":"#424242"}}
+  // {"globals":{"primaryColor":"#673AB7","primaryTextColor":"#673AB7","textColor":"#1f1f1f","secondaryColor":"#1565C0","secondaryTextColor":"#424242"}}
 
   // async getWebsiteTheme(handle: string): Promise<GetWebsiteThemeResponse> {
   //   const website = await this.websitesService.getWebsite(handle);

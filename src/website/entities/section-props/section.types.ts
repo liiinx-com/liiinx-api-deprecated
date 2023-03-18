@@ -11,14 +11,15 @@ export interface ComponentStyle {
   style?: object;
 }
 
+export interface ThemeGlobals {
+  textColor: string;
+  primaryColor: string;
+  primaryTextColor: string;
+  secondaryColor: string;
+  secondaryTextColor: string;
+}
 export interface Theme {
-  globals: {
-    textColor: string;
-    primaryColor: string;
-    primaryTextColor: string;
-    secondaryColor: string;
-    secondaryTextColor: string;
-  };
+  globals: ThemeGlobals;
 
   body: ComponentStyle;
   navbar: {
@@ -138,6 +139,7 @@ export class FooterSectionInfo extends SectionInfo {
 
   sectionProps: {
     showLogo: boolean;
+    showPrimaryMenu: boolean;
     showSocialLinks: boolean;
   };
 }

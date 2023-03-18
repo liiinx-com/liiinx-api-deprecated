@@ -81,10 +81,40 @@ const getFooter = async (
 ): Promise<{ footer: DataPartFooterV1 }> => ({
   footer: {
     value: {
-      primaryLinks: [
+      primaryMenu: [
         { order: 1, id: "10", title: "Home", url: "/home", target: "_self" },
       ],
-      rightsText: "All rights reserved",
+      secondaryMenu: [
+        {
+          id: "16",
+          title: "Terms of Use",
+          url: "/terms",
+          order: 16,
+          target: "_blank",
+        },
+        {
+          id: "17",
+          title: "Privacy Policy",
+          url: "/privacy",
+          order: 17,
+          target: "_blank",
+        },
+        {
+          id: "18",
+          title: "Disclaimer",
+          url: "/disclaimer",
+          order: 18,
+          target: "_blank",
+        },
+        {
+          id: "19",
+          title: "Sitemap",
+          url: "/sitemap",
+          order: 19,
+          target: "_blank",
+        },
+      ],
+      rightsText: "© Copyright 2021. All Rights Reserved.",
     },
   },
 });

@@ -34,11 +34,14 @@ class SectionInfo {
 export class GetWebsiteThemeResponse {}
 
 export class WebsitePageDto {
+  id: string;
   slug?: string;
   handle: string;
   metaTags?: [];
-  type: string;
-  variant: string;
+  pageType: string;
+  pageVariant: string;
+  layoutType: string;
+  layoutVariant: string;
   config?: object;
   structure?: {
     navbar?: NavbarSectionInfo;
@@ -50,7 +53,6 @@ export class WebsitePageDto {
 
 export class GetWebsitePageResponse {
   page: WebsitePageDto;
-  layout: WebsitePageDto;
   theme: any;
   sharedData: any;
 }
