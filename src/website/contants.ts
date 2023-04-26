@@ -1,4 +1,7 @@
 export const STATUS_LIST = {
-  Active: "ACTIVE",
-  InActive: "INACTIVE",
+  ACTIVE: "ACTIVE",
+  INACTIVE: "INACTIVE",
+  DRAFT: "DRAFT",
+
+  PUBLISHED: "PUBLISHED",
 };

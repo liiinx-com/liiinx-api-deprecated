@@ -19,6 +19,7 @@ export interface ThemeGlobals {
   secondaryTextColor: string;
 }
 export interface Theme {
+  id: string;
   globals: ThemeGlobals;
 
   body: ComponentStyle;
@@ -80,6 +81,10 @@ export interface PageData {
   };
 }
 
+export class WebsitePageConfig {
+  title: string;
+}
+
 export class ContentSectionInfo {
   leftSections?: SectionInfo[];
   centerSections?: SectionInfo[];
@@ -120,13 +125,19 @@ export class HeroSectionInfo extends SectionInfo {
     primaryTextStyles?: SectionStyle;
     secondaryText?: string;
     secondaryTextStyles?: SectionStyle;
+    height: string | number;
+    overlay?: {
+      colorCode: string;
+      opacity: number;
+    };
     button?: {
       text: string;
       enabled: boolean;
       buttonStyles?: SectionStyle;
     };
-    // imageUrl?: string;
-    // videoUrl?: string;
+    imageUrl?: string;
+    heroStyles?: SectionStyle;
+    videoUrl?: string;
   };
 }
 
@@ -144,10 +155,10 @@ export class FooterSectionInfo extends SectionInfo {
   };
 }
 
-export enum Status {
-  DRAFT = "DRAFT",
-  PUBLISHED = "PUBLISHED",
-}
+// export enum Status {
+//   DRAFT = "DRAFT",
+//   PUBLISHED = "PUBLISHED",
+// }
 
 export enum PageTypes {
   LAYOUT = "LAYOUT",

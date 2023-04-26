@@ -10,6 +10,10 @@ export class WebsitesService {
     return this.websitesRepository.getByHandle(handle);
   }
 
+  async newWebsite(params: Partial<Website>): Promise<Website> {
+    return this.websitesRepository.newWebsite(params);
+  }
+
   // async getLayoutConfig(
   //   handle: string,
   //   lang: string,

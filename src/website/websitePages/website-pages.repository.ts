@@ -15,7 +15,7 @@ export class WebsitePagesRepository {
     wPageCondition: string,
     wPageParams: object,
     handle: string,
-    status = STATUS_LIST.Active,
+    status = STATUS_LIST.ACTIVE,
   ): Promise<WebsitePage> {
     return this.wPagesRepository
       .createQueryBuilder("wPage")
@@ -33,9 +33,13 @@ export class WebsitePagesRepository {
       .getOne();
   }
 
+  async newPage(websitePage: Partial<WebsitePage>): Promise<WebsitePage> {
+    return this.wPagesRepository.save(websitePage);
+  }
+
   async getLayout(
     handle: string,
-    status = STATUS_LIST.Active,
+    status = STATUS_LIST.ACTIVE,
   ): Promise<WebsitePage> {
     return this.getOnePage(
       "parentPage.page_type = 'LAYOUT'",
@@ -48,7 +52,7 @@ export class WebsitePagesRepository {
   async getPage(
     handle: string,
     slug: string,
-    status = STATUS_LIST.Active,
+    status = STATUS_LIST.ACTIVE,
   ): Promise<WebsitePage> {
     return this.getOnePage("wPage.slug = :slug", { slug }, handle, status);
   }

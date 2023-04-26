@@ -1,4 +1,4 @@
-POST http://localhost:3003/website/salamat-trading/data
+POST http://localhost:3003/websites/salamat-trading/data
 Content-Type: application/json
 
 {
@@ -17,4 +17,43 @@ Content-Type: application/json
         "version": 1
     }
   ]
+}
+
+###
+
+POST http://localhost:3003/websites/salamat-trading/pages
+Content-Type: application/json
+
+{
+  "pageType": "ABOUT",
+  "pageVariant": "ABOUT1",
+  "slug": "about",
+  "pageTitle": {
+    "text": "About Us",
+    "showAsHero": true
+  }
+}
+
+###
+
+POST http://localhost:3003/websites/
+Content-Type: application/json
+
+{
+  "handle": "salamat-trading"
+}
+
+###
+
+POST http://localhost:3003/websites/salamat-trading/pages
+Content-Type: application/json
+
+{
+  "pageType": "CONTACT",
+  "pageVariant": "CONTACT1",
+  "slug": "contact",
+  "pageTitle": {
+    "text": "Contact Us",
+    "showAsHero": false
+  }
 }

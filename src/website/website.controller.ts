@@ -1,21 +1,25 @@
 import {
   Controller,
   Get,
+  Header,
   Post,
   Body,
   Param,
   Query,
-  Header,
   HttpCode,
   HttpException,
   HttpStatus,
 } from "@nestjs/common";
 import { common } from "src/utils";
-import { GetWebsiteDataRequest } from "./dto";
+import {
+  GetWebsiteDataRequest,
+  PostWebsitePageRequest,
+  PostWebsiteRequest,
+} from "./dto";
 import { WebsiteService } from "./website.service";
 import { WebsiteDataService } from "./websiteData";
 
-@Controller("website")
+@Controller("websites")
 export class WebsiteController {
   constructor(
     private readonly websiteService: WebsiteService,
@@ -41,16 +45,15 @@ export class WebsiteController {
     return this.websiteService.getWebsiteData(handle, pageDataReq.parts, lang);
   }
 
-  // @Get(":handle/:pageName/styles.css")
-  // @Header("content-type", "text/css")
-  // @Header("Cross-Origin-Resource-Policy", "cross-origin")
-  // getStyles(
-  //   @Param("handle") handle: string,
-  //   @Param("pageName") pageName: string,
-  // ) {
-  //   // TODO: if page or handle not found
-  //   return "h1 {color: lime}";
-  // }
+  @Get(":handle/:slug/styles.css")
+  @Header("content-type", "text/css")
+  @Header("Cross-Origin-Resource-Policy", "cross-origin")
+  getStyles(@Param("handle") handle: string, @Param("slug") slug: string) {
+    console.log("handle", handle);
+    console.log("pageName", slug);
+
+    return this.websiteService.getWebsiteCssContent(handle, slug);
+  }
 
   @Get(":handle/pages/:slug")
   async getPage(
@@ -59,5 +62,30 @@ export class WebsiteController {
     @Query("lang") lang = "EN",
   ) {
     return this.websiteService.getPage(handle, slug);
+  }
+
+  @Post()
+  @HttpCode(201)
+  async newWebsite(@Body() { handle }: PostWebsiteRequest) {
+    return this.websiteService.newWebsite({ handle });
+  }
+
+  @Post(":handle/pages")
+  @HttpCode(201)
+  async newPage(
+    @Param("handle") handle: string,
+    @Body() { pageTitle, pageType, pageVariant, slug }: PostWebsitePageRequest,
+  ) {
+    console.log("pageTitle", pageTitle);
+    const params = {
+      handle,
+      pageType,
+      pageVariant,
+      slug,
+      pageTitle: pageTitle.text,
+      isHeroPageTitle: pageTitle.showAsHero, // {text, showAsHero}
+    };
+    // ! TODO:  Validate params
+    return this.websiteService.newPage(params);
   }
 }

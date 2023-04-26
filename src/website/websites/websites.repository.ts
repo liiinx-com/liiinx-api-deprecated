@@ -11,9 +11,13 @@ export class WebsitesRepository {
     private websitesRepository: Repository<Website>,
   ) {}
 
+  async newWebsite(website: Partial<Website>): Promise<Website> {
+    return this.websitesRepository.save(website);
+  }
+
   async getByHandle(
     handle: string,
-    status = STATUS_LIST.Active,
+    status = STATUS_LIST.ACTIVE,
   ): Promise<Website> {
     return this.websitesRepository.findOneBy({ handle, status });
   }

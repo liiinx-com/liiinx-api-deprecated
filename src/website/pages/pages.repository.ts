@@ -3,6 +3,7 @@ import { Page } from "../entities";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { STATUS_LIST } from "../contants";
+import { PageTypes } from "../entities/section-props";
 
 @Injectable()
 export class PagesRepository {
@@ -11,10 +12,11 @@ export class PagesRepository {
     private pagesRepository: Repository<Page>,
   ) {}
 
-  async getByHandle(
-    handle: string,
-    status = STATUS_LIST.Active,
+  async getBy(
+    type: PageTypes,
+    frontendVariantKey: string,
+    status = STATUS_LIST.ACTIVE,
   ): Promise<Page> {
-    return this.pagesRepository.findOneBy({ status });
+    return this.pagesRepository.findOneBy({ type, status, frontendVariantKey });
   }
 }

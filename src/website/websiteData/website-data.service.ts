@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Website } from "../entities/structure.entity";
+import { common } from "src/utils";
 import {
   DataPartAboutV1,
   DataPartFooterV1,
@@ -12,13 +13,19 @@ import {
   DataPartVideosV1,
 } from "../entities/data-parts";
 
+interface DataPartProviderMetadata {
+  website: Website;
+}
+
 // TODO: value
 const getProfile = async (
-  website: Website,
+  metadata: DataPartProviderMetadata,
   params: any,
 ): Promise<{ profile: DataPartProfileV1 }> => ({
   profile: {
     value: {
+      isRtl: true,
+      lang: "fa",
       websiteTitle: "Salamat Trading",
       shortText: "this is the short version of my profile info",
     },
@@ -26,7 +33,7 @@ const getProfile = async (
 });
 
 const getTerms = async (
-  website: Website,
+  metadata: DataPartProviderMetadata,
   params: any,
 ): Promise<{ terms: DataPartTermsV1 }> => ({
   terms: {
@@ -35,7 +42,7 @@ const getTerms = async (
 });
 
 const getPolicy = async (
-  website: Website,
+  metadata: DataPartProviderMetadata,
   params: any,
 ): Promise<{ policy: DataPartPolicyV1 }> => ({
   policy: {
@@ -44,7 +51,7 @@ const getPolicy = async (
 });
 
 const getHeader = async (
-  website: Website,
+  metadata: DataPartProviderMetadata,
   params: any,
 ): Promise<{ header: DataPartHeaderV1 }> => ({
   header: {
@@ -70,13 +77,20 @@ const getHeader = async (
           url: "/about",
           target: "_self",
         },
+        {
+          id: "3",
+          order: 3,
+          title: "Contact",
+          url: "/contact",
+          target: "_self",
+        },
       ],
     },
   },
 });
 
 const getFooter = async (
-  website: Website,
+  { website }: DataPartProviderMetadata,
   params: any,
 ): Promise<{ footer: DataPartFooterV1 }> => ({
   footer: {
@@ -114,13 +128,26 @@ const getFooter = async (
           target: "_blank",
         },
       ],
-      rightsText: "© Copyright 2021. All Rights Reserved.",
+      rightsText: (() => {
+        const params = {
+          createdAtYear: website.createdAt.getFullYear(),
+          currentYear: new Date().getFullYear(),
+        };
+        return common.fillTheGaps(
+          `© Copyright {{createdAtYear}}${
+            params.createdAtYear === params.currentYear
+              ? ""
+              : "-{{currentYear}}"
+          }. All Rights Reserved.`,
+          params,
+        );
+      })(),
     },
   },
 });
 
 const getVideos = async (
-  website: Website,
+  metadata: DataPartProviderMetadata,
   params: any,
 ): Promise<{ videos: DataPartVideosV1 }> => ({
   videos: {
@@ -130,25 +157,28 @@ const getVideos = async (
 });
 
 const getAbout = async (
-  website: Website,
+  metadata: DataPartProviderMetadata,
   params: any,
 ): Promise<{ about: DataPartAboutV1 }> => ({
   about: {
-    value: {
-      someData:
-        "سلام. من مهدی سلامت هستم، معامله گر بازار های مالی به خصوص ارزهای دیجیتال، علاقه مند به بلاکچین و سیستم های غیرمتمرکز واقعی و یکی از آرزوهام اینه که روزی سیستم مالی سنتی کاملا تغییر کنه و یک سیستم  غیرمتمرکز واقعی جای اون رو بگیره." +
-        " " +
-        "من تو این کانال، آخرین اخبار ارزهای دیجیتال به صورت روزانه، آموزش های مربوط به معامله ی این ارزها، بررسی شرایط بازار کریپتو، معرفی استراتژی های معاملاتی و اسکلپ، و کلا هر چیزی که بتونیم تو این بازار برای کسب سود ازش استفاده کنیم رو در اختیارتون قرار میدم." +
-        " " +
-        "تو این کانال هیچ سیگنالی برای خرید و فروش نمیدیم و توصیه میکنم شما هم به دنبال سیگنال نباشید." +
-        " " +
-        "امیدوارم در کنار هم سودهای خوبی به دست بیاریم و حداقل از وقتی که برای دیدن ویدیوها میزارید، پشیمون نشید.",
-    },
+    value: [
+      {
+        title: "درباره سلامت  تریدینگ",
+        text:
+          "سلام. من مهدی سلامت هستم، معامله گر بازار های مالی به خصوص ارزهای دیجیتال، علاقه مند به بلاکچین و سیستم های غیرمتمرکز واقعی و یکی از آرزوهام اینه که روزی سیستم مالی سنتی کاملا تغییر کنه و یک سیستم  غیرمتمرکز واقعی جای اون رو بگیره." +
+          " " +
+          "من تو این کانال، آخرین اخبار ارزهای دیجیتال به صورت روزانه، آموزش های مربوط به معامله ی این ارزها، بررسی شرایط بازار کریپتو، معرفی استراتژی های معاملاتی و اسکلپ، و کلا هر چیزی که بتونیم تو این بازار برای کسب سود ازش استفاده کنیم رو در اختیارتون قرار میدم." +
+          " " +
+          "تو این کانال هیچ سیگنالی برای خرید و فروش نمیدیم و توصیه میکنم شما هم به دنبال سیگنال نباشید." +
+          " " +
+          "امیدوارم در کنار هم سودهای خوبی به دست بیاریم و حداقل از وقتی که برای دیدن ویدیوها میزارید، پشیمون نشید.",
+      },
+    ],
   },
 });
 
 const getSocialLinks = async (
-  website: Website,
+  metadata: DataPartProviderMetadata,
   params: any,
 ): Promise<{ socialLinks: DataPartSocialLinksV1 }> => ({
   socialLinks: {
@@ -194,8 +224,12 @@ export class WebsiteDataService {
     website: Website,
     parts: DataPartParamItem[],
   ): Promise<any> {
+    const metadata: DataPartProviderMetadata = {
+      website,
+    };
+
     const tmp = await Promise.allSettled(
-      parts.map((p: any) => dataParts[p.part](website, p.params)),
+      parts.map((p: any) => dataParts[p.part](metadata, p.params)),
     );
     const result = tmp.reduce(
       (result: any, data: any) => ({ ...result, ...data.value }),

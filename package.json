@@ -41,6 +41,7 @@
     "deepmerge": "^4.3.0",
     "helmet": "^6.0.0",
     "jira-client": "^8.1.0",
+    "json-templater": "^1.2.0",
     "lodash": "^4.17.21",
     "nestjs-i18n": "^9.1.10",
     "node-emoji": "^1.11.0",

@@ -4,13 +4,16 @@ import {
   ArrayMinSize,
   ArrayMaxSize,
   IsInt,
+  IsEnum,
   IsPositive,
   IsArray,
   ValidateNested,
   IsOptional,
+  IsBoolean,
+  IsString,
 } from "class-validator";
 import { Type } from "class-transformer";
-import { NavbarSectionInfo } from "../entities/section-props";
+import { NavbarSectionInfo, PageTypes } from "../entities/section-props";
 import {
   DataPartAboutV1,
   DataPartFooterV1,
@@ -85,4 +88,36 @@ export class GetWebsiteDataRequest {
   @ArrayMaxSize(5)
   @Type(() => DataPartRequest)
   parts: DataPartRequest[];
+}
+
+export class PostWebsiteRequest {
+  @IsNotEmpty()
+  @IsString()
+  handle: string;
+}
+
+export class PostWebsitePageTitleRequest {
+  @IsNotEmpty()
+  @IsString()
+  text: string;
+
+  @IsBoolean()
+  showAsHero: boolean;
+}
+export class PostWebsitePageRequest {
+  @IsNotEmpty()
+  @IsEnum(PageTypes)
+  pageType: PageTypes;
+
+  @IsNotEmpty()
+  @IsString()
+  pageVariant: string;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  pageTitle: PostWebsitePageTitleRequest;
+
+  @IsNotEmpty()
+  @IsString()
+  slug: string;
 }

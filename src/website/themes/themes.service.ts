@@ -4,6 +4,7 @@ import { ThemesRepository } from "./theme.repository";
 import { BoxSize, Theme, ThemeGlobals } from "../entities/section-props";
 
 const getDefaultTheme = (globalSettings: ThemeGlobals): Theme => ({
+  id: "theme-id-1",
   globals: globalSettings,
   navbar: {
     boxSize: BoxSize.CONTAINER,
@@ -26,7 +27,7 @@ const getDefaultTheme = (globalSettings: ThemeGlobals): Theme => ({
   },
 
   body: {
-    style: { backgroundColor: "#EEEEEE" },
+    style: { backgroundColor: "#FFF" },
     className: "",
   },
 
@@ -44,7 +45,7 @@ const getDefaultTheme = (globalSettings: ThemeGlobals): Theme => ({
     wrapper: {
       className: "",
       style: {
-        backgroundColor: "#f7f9fb",
+        backgroundColor: "#FFF",
       },
     },
     main: {

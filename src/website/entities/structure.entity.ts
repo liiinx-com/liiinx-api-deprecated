@@ -6,6 +6,7 @@ import {
   NavbarSectionInfo,
   ContentSectionInfo,
   PageTypes,
+  WebsitePageConfig,
 } from "./section-props";
 
 // @Entity({ name: "def_themes" })
@@ -116,7 +117,7 @@ export class WebsitePage extends BaseEntity {
   website: Website;
 
   @Column({ type: "json", default: {} })
-  config: object;
+  config: WebsitePageConfig;
 
   @Column({ type: "json", name: "navbar_custom_props", nullable: true })
   navbarCustomProps?: object;

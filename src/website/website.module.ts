@@ -10,6 +10,7 @@ import { WebsiteService } from "./website.service";
 import { WebsiteDataService } from "./websiteData";
 import { WebsiteSectionFactory } from "./websitePages/website-sections.factory";
 import { PagesRepository } from "./pages/pages.repository";
+import { WebsiteFactory } from "./websitePages/website-page.factory";
 
 @Module({
   imports: [TypeOrmModule.forFeature([Website, Page, WebsitePage])],
@@ -23,6 +24,7 @@ import { PagesRepository } from "./pages/pages.repository";
     WebsitePagesRepository,
     WebsitePagesService,
     WebsiteSectionFactory,
+    WebsiteFactory,
     WebsiteService,
     WebsiteDataService,
     WebsitesRepository,

@@ -24,6 +24,10 @@ export class WebsitePagesService {
     return this.wPagesRepository.getLayout(handle);
   }
 
+  async newWebsitePage(params: Partial<WebsitePage>): Promise<WebsitePage> {
+    return this.wPagesRepository.newPage(params);
+  }
+
   async getPageData(handle: string, parts: any): Promise<any> {
     // mapWebsitePageToWebsitePageBaseResponse
     // const webPage: WebsitePage =

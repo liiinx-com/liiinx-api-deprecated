@@ -4,6 +4,8 @@ export class DataPartProfileV1 extends DataPartItem {
   value: {
     websiteTitle: string;
     shortText: string;
+    isRtl: boolean;
+    lang: string;
     logoUrl?: string; // if no logo then use websiteTitle as the text logo
   };
 }
@@ -38,5 +40,7 @@ export class DataPartSocialLinksV1 extends DataPartItem {
     links: SocialMediaLink[];
   };
 }
-export class DataPartAboutV1 extends DataPartItem {}
+export class DataPartAboutV1 extends DataPartItem {
+  value: [{ title: string; text: string }];
+}
 export class DataPartVideosV1 extends DataPartItem {}
